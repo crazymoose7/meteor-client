@@ -37,6 +37,7 @@ public abstract class InGameHudMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        float tickDelta = tickCounter.getTickDelta(true);
         client.getProfiler().push(MeteorClient.MOD_ID + "_render_2d");
 
         Utils.unscaledProjection();

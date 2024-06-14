@@ -48,6 +48,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -269,7 +270,12 @@ public class Utils {
     }
 
     public static String getEnchantSimpleName(Enchantment enchantment, int length) {
-        String name = I18n.translate(enchantment.getTranslationKey());
+        String name;
+        if (enchantment.description().getContent() instanceof TranslatableTextContent content) {
+            name = content.getKey();
+        } else {
+            name = enchantment.description().getString();
+        }
         return name.length() > length ? name.substring(0, length) : name;
     }
 
