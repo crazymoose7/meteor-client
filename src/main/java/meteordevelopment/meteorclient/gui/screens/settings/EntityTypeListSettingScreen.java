@@ -18,7 +18,7 @@ import meteordevelopment.meteorclient.settings.EntityTypeListSetting;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Names;
 import net.minecraft.entity.EntityType;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Pair;
 
 import java.util.ArrayList;
@@ -158,10 +158,10 @@ public class EntityTypeListSettingScreen extends WindowScreen {
 
         // Sort all entities
         if (filterText.isEmpty()) {
-            Registries.ENTITY_TYPE.forEach(entityTypeForEach);
+            Registry.ENTITY_TYPE.forEach(entityTypeForEach);
         } else {
             List<Pair<EntityType<?>, Integer>> entities = new ArrayList<>();
-            Registries.ENTITY_TYPE.forEach(entity -> {
+            Registry.ENTITY_TYPE.forEach(entity -> {
                 int words = Utils.searchInWords(Names.get(entity), filterText);
                 int diff = Utils.searchLevenshteinDefault(Names.get(entity), filterText, false);
 

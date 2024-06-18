@@ -114,7 +114,7 @@ public class MiddleClickExtra extends Module {
             return;
         }
 
-        selectedSlot = mc.player.getInventory().selectedSlot;
+        selectedSlot = mc.player.inventory.selectedSlot;
         itemSlot = result.slot();
         wasHeld = result.isMainHand();
 
@@ -124,10 +124,10 @@ public class MiddleClickExtra extends Module {
         }
 
         if (mode.get().immediate) {
-            mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
+            mc.interactionManager.interactItem(mc.player, mc.world, Hand.MAIN_HAND);
             swapBack(false);
         } else {
-            mc.options.useKey.setPressed(true);
+            mc.options.keyUse.setPressed(true);
             isUsing = true;
         }
     }
@@ -141,7 +141,7 @@ public class MiddleClickExtra extends Module {
             pressed = BowItem.getPullProgress(mc.player.getItemUseTime()) < 1;
         }
 
-        mc.options.useKey.setPressed(pressed);
+        mc.options.keyUse.setPressed(pressed);
     }
 
     @EventHandler
@@ -164,7 +164,7 @@ public class MiddleClickExtra extends Module {
     private void stopIfUsing(boolean wasCancelled) {
         if (isUsing) {
             swapBack(wasCancelled);
-            mc.options.useKey.setPressed(false);
+            mc.options.keyUse.setPressed(false);
             isUsing = false;
         }
     }

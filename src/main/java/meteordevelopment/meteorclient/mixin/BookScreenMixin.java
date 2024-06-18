@@ -98,7 +98,7 @@ public abstract class BookScreenMixin extends Screen {
 
         addDrawableChild(
                 new ButtonWidget.Builder(Text.literal("Edit title & author"), button -> {
-                    mc.setScreen(new EditBookTitleAndAuthorScreen(GuiThemes.get(), book, hand2));
+                    mc.openScreen(new EditBookTitleAndAuthorScreen(GuiThemes.get(), book, hand2));
                 })
                 .position(4, 4 + 20 + 2)
                 .size(120, 20)

@@ -93,7 +93,7 @@ public class BowAimbot extends Module {
     @EventHandler
     private void onRender(Render3DEvent event) {
         if (!PlayerUtils.isAlive() || !itemInHand()) return;
-        if (!mc.player.getAbilities().creativeMode && !InvUtils.find(itemStack -> itemStack.getItem() instanceof ArrowItem).found()) return;
+        if (!mc.player.abilities.creativeMode && !InvUtils.find(itemStack -> itemStack.getItem() instanceof ArrowItem).found()) return;
 
         target = TargetUtils.get(entity -> {
             if (entity == mc.player || entity == mc.cameraEntity) return false;
@@ -117,7 +117,7 @@ public class BowAimbot extends Module {
             return;
         }
 
-        if (mc.options.useKey.isPressed() && itemInHand()) {
+        if (mc.options.keyUse.isPressed() && itemInHand()) {
             if (pauseOnCombat.get() && PathManagers.get().isPathing() && !wasPathing) {
                 PathManagers.get().pause();
                 wasPathing = true;

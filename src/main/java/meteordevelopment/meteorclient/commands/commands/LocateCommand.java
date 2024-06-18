@@ -18,17 +18,17 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LodestoneTrackerComponent;
-import net.minecraft.component.type.MapDecorationsComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EyeOfEnderEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.BaseText;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -79,91 +79,79 @@ public class LocateCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         // Overworld structures
-
         builder.then(literal("buried_treasure").executes(s -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
-            if (stack.getItem() != Items.FILLED_MAP
-                || stack.get(DataComponentTypes.ITEM_NAME) == null
-                || !stack.get(DataComponentTypes.ITEM_NAME).getString().equals(Text.translatable("filled_map.buried_treasure").getString())) {
+            ItemStack stack = mc.player.inventory.getMainHandStack();
+            if (stack.getItem() != Items.FILLED_MAP) {
                 error("You need to hold a (highlight)buried treasure map(default)!");
                 return SINGLE_SUCCESS;
             }
 
-            MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);
-            if (mapDecorationsComponent == null) {
+            NbtCompound tag = stack.getTag();
+            NbtList nbt1 = (NbtList) tag.get("Decorations");
+            if (nbt1 == null) {
                 error("Couldn't locate the map icons!");
                 return SINGLE_SUCCESS;
             }
 
-            for (MapDecorationsComponent.Decoration decoration : mapDecorationsComponent.decorations().values()) {
-                if (decoration.type().value().assetId().toString().equals("minecraft:red_x")) {
-                    Vec3d coords = new Vec3d(decoration.x(), 62, decoration.z());
-                    MutableText text = Text.literal("Buried Treasure located at ");
-                    text.append(ChatUtils.formatCoords(coords));
-                    text.append(".");
-                    info(text);
-                    return SINGLE_SUCCESS;
-                }
+            NbtCompound iconNBT = nbt1.getCompound(0);
+            if (iconNBT == null) {
+                error("Couldn't locate the cross. Are you holding a (highlight)treasure map(default)?");
+                return SINGLE_SUCCESS;
             }
 
-            error("Couldn't locate the buried treasure!");
+            Vec3d coords = new Vec3d(iconNBT.getDouble("x"),iconNBT.getDouble("y"),iconNBT.getDouble("z"));
+            BaseText text = new LiteralText("Buried Treasure located at ");
+            text.append(ChatUtils.formatCoords(coords));
+            text.append(".");
+            info(text);
             return SINGLE_SUCCESS;
         }));
 
         builder.then(literal("mansion").executes(s -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
-            if (stack.getItem() != Items.FILLED_MAP
-                || stack.get(DataComponentTypes.ITEM_NAME) == null
-                || !stack.get(DataComponentTypes.ITEM_NAME).getString().equals(Text.translatable("filled_map.mansion").getString())) {
+            ItemStack stack = mc.player.inventory.getMainHandStack();
+            if (stack.getItem() != Items.FILLED_MAP) {
                 error("You need to hold a (highlight)woodland explorer map(default)!");
                 return SINGLE_SUCCESS;
             }
 
-            MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);
-            if (mapDecorationsComponent == null) {
+            NbtCompound tag = stack.getTag();
+            NbtList nbt1 = (NbtList) tag.get("Decorations");
+            if (nbt1 == null) {
                 error("Couldn't locate the map icons!");
                 return SINGLE_SUCCESS;
             }
 
-            for (MapDecorationsComponent.Decoration decoration : mapDecorationsComponent.decorations().values()) {
-                if (decoration.type().value().assetId().toString().equals("minecraft:woodland_mansion")) {
-                    Vec3d coords = new Vec3d(decoration.x(), 62, decoration.z());
-                    MutableText text = Text.literal("Mansion located at ");
-                    text.append(ChatUtils.formatCoords(coords));
-                    text.append(".");
-                    info(text);
-                    return SINGLE_SUCCESS;
-                }
+            NbtCompound iconNBT = nbt1.getCompound(0);
+            if (iconNBT == null) {
+                error("Couldn't locate the mansion. Are you holding a (highlight)woodland explorer map(default)?");
+                return SINGLE_SUCCESS;
             }
 
-            error("Couldn't locate the mansion!");
+            Vec3d coords = new Vec3d(iconNBT.getDouble("x"),iconNBT.getDouble("y"),iconNBT.getDouble("z"));
+            BaseText text = new LiteralText("Mansion located at ");
+            text.append(ChatUtils.formatCoords(coords));
+            text.append(".");
+            info(text);
             return SINGLE_SUCCESS;
         }));
 
         builder.then(literal("monument").executes(s -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
-            if (stack.getItem() == Items.FILLED_MAP
-                && stack.get(DataComponentTypes.ITEM_NAME) != null
-                && stack.get(DataComponentTypes.ITEM_NAME).getString().equals(Text.translatable("filled_map.monument").getString())) {
+            ItemStack stack = mc.player.inventory.getMainHandStack();
+            if (stack.getItem() == Items.FILLED_MAP) {
 
-                MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);
-                if (mapDecorationsComponent == null) {
+                NbtCompound tag = stack.getTag();
+                NbtList nbt1 = (NbtList) tag.get("Decorations");
+                if (nbt1 == null) {
                     error("Couldn't locate the map icons!");
                     return SINGLE_SUCCESS;
                 }
 
-                for (MapDecorationsComponent.Decoration decoration : mapDecorationsComponent.decorations().values()) {
-                    if (decoration.type().value().assetId().toString().equals("minecraft:ocean_monument")) {
-                        Vec3d coords = new Vec3d(decoration.x(), 62, decoration.z());
-                        MutableText text = Text.literal("Monument located at ");
-                        text.append(ChatUtils.formatCoords(coords));
-                        text.append(".");
-                        info(text);
-                        return SINGLE_SUCCESS;
-                    }
-                }
-
-                error("Couldn't locate the monument!");
+                NbtCompound iconNBT = nbt1.getCompound(0);
+                Vec3d coords = new Vec3d(iconNBT.getDouble("x"),iconNBT.getDouble("y"),iconNBT.getDouble("z"));
+                BaseText text = new LiteralText("Monument located at ");
+                text.append(ChatUtils.formatCoords(coords));
+                text.append(".");
+                info(text);
                 return SINGLE_SUCCESS;
             }
 
@@ -174,7 +162,7 @@ public class LocateCommand extends Command {
                     error("No monument found. Try using an (highlight)ocean explorer map(default) for more success.");
                     return SINGLE_SUCCESS;
                 }
-                MutableText text = Text.literal("Monument located at ");
+                BaseText text = new LiteralText("Monument located at ");
                 text.append(ChatUtils.formatCoords(coords));
                 text.append(".");
                 info(text);
@@ -207,7 +195,7 @@ public class LocateCommand extends Command {
                     error("No stronghold found nearby. You can use (highlight)Ender Eyes(default) for more success.");
                     return SINGLE_SUCCESS;
                 }
-                MutableText text = Text.literal("Stronghold located at ");
+                BaseText text = new LiteralText("Stronghold located at ");
                 text.append(ChatUtils.formatCoords(coords));
                 text.append(".");
                 info(text);
@@ -233,7 +221,7 @@ public class LocateCommand extends Command {
                 error("No nether fortress found.");
                 return SINGLE_SUCCESS;
             }
-            MutableText text = Text.literal("Fortress located at ");
+            BaseText text = new LiteralText("Fortress located at ");
             text.append(ChatUtils.formatCoords(coords));
             text.append(".");
             info(text);
@@ -258,7 +246,7 @@ public class LocateCommand extends Command {
                 error("No end city found.");
                 return SINGLE_SUCCESS;
             }
-            MutableText text = Text.literal("End city located at ");
+            BaseText text = new LiteralText("End city located at ");
             text.append(ChatUtils.formatCoords(coords));
             text.append(".");
             info(text);
@@ -268,7 +256,7 @@ public class LocateCommand extends Command {
         // Misc structures
 
         builder.then(literal("lodestone").executes(s -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
             if (stack.getItem() != Items.COMPASS) {
                 error("You need to hold a (highlight)lodestone(default) compass!");
                 return SINGLE_SUCCESS;

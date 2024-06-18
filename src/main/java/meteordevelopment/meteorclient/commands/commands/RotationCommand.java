@@ -51,17 +51,17 @@ public class RotationCommand extends Command {
             .then(literal("add")
                 .then(argument("pitch", FloatArgumentType.floatArg(-90, 90))
                     .executes(context -> {
-                        float pitch = mc.player.getPitch() + context.getArgument("pitch", Float.class);
+                        float pitch = mc.player.getPitch(mc.getTickDelta()) + context.getArgument("pitch", Float.class);
                         mc.player.setPitch(pitch >= 0 ? Math.min(pitch, 90) : Math.max(pitch, -90));
 
                         return SINGLE_SUCCESS;
                     })
                     .then(argument("yaw", FloatArgumentType.floatArg(-180, 180))
                         .executes(context -> {
-                            float pitch = mc.player.getPitch() + context.getArgument("pitch", Float.class);
+                            float pitch = mc.player.getPitch(mc.getTickDelta()) + context.getArgument("pitch", Float.class);
                             mc.player.setPitch(pitch >= 0 ? Math.min(pitch, 90) : Math.max(pitch, -90));
 
-                            float yaw = mc.player.getYaw() + context.getArgument("yaw", Float.class);
+                            float yaw = mc.player.getYaw(mc.getTickDelta()) + context.getArgument("yaw", Float.class);
                             mc.player.setYaw(MathHelper.wrapDegrees(yaw));
 
                             return SINGLE_SUCCESS;

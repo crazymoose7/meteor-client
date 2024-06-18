@@ -24,7 +24,7 @@ public class HClipCommand extends Command {
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(argument("blocks", DoubleArgumentType.doubleArg()).executes(context -> {
             double blocks = context.getArgument("blocks", Double.class);
-            Vec3d forward = Vec3d.fromPolar(0, mc.player.getYaw()).normalize();
+            Vec3d forward = Vec3d.fromPolar(0, mc.player.getYaw(mc.getTickDelta())).normalize();
 
             if (mc.player.hasVehicle()) {
                 Entity vehicle = mc.player.getVehicle();

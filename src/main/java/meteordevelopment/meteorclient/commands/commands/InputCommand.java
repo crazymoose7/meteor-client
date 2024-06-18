@@ -25,14 +25,14 @@ public class InputCommand extends Command {
     private static final List<KeypressHandler> activeHandlers = new ArrayList<>();
 
     private static final Map<KeyBinding, String> keys = Map.of(
-        mc.options.forwardKey, "forwards",
-        mc.options.backKey, "backwards",
-        mc.options.leftKey, "left",
-        mc.options.rightKey, "right",
-        mc.options.jumpKey, "jump",
-        mc.options.sneakKey, "sneak",
-        mc.options.useKey, "use",
-        mc.options.attackKey, "attack"
+        mc.options.keyForward, "forwards",
+        mc.options.keyBack, "backwards",
+        mc.options.keyLeft, "left",
+        mc.options.keyRight, "right",
+        mc.options.keyJump, "jump",
+        mc.options.keySneak, "sneak",
+        mc.options.keyUse, "use",
+        mc.options.keyAttack, "attack"
     );
 
     public InputCommand() {

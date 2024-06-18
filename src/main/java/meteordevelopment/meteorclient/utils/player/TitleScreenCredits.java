@@ -126,7 +126,7 @@ public class TitleScreenCredits {
 
             if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + mc.textRenderer.fontHeight + 2) {
                 if (credit.addon.getRepo() != null && credit.addon.getCommit() != null) {
-                    mc.setScreen(new CommitsScreen(GuiThemes.get(), credit.addon));
+                    mc.openScreen(new CommitsScreen(GuiThemes.get(), credit.addon));
                     return true;
                 }
             }

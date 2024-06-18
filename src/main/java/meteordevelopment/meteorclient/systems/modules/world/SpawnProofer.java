@@ -133,7 +133,7 @@ public class SpawnProofer extends Module {
         }
         else {
             // Check if light source
-            if (isLightSource(Block.getBlockFromItem(mc.player.getInventory().getStack(block.slot()).getItem()))) {
+            if (isLightSource(Block.getBlockFromItem(mc.player.inventory.getStack(block.slot()).getItem()))) {
 
                 // Find lowest light level
                 int lowestLightLevel = 16;

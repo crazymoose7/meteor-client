@@ -8,8 +8,8 @@ package meteordevelopment.meteorclient.utils.network;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 import meteordevelopment.meteorclient.utils.misc.MeteorIdentifier;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.registry.Registry;
+import net.minecraft.network.Packet;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -161,10 +161,10 @@ public class PacketUtils {
         C2S_PACKETS_R.put("PlayerMoveC2SPacket.LookAndOnGround", net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.LookAndOnGround.class);
         C2S_PACKETS.put(net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly.class, "PlayerMoveC2SPacket.OnGroundOnly");
         C2S_PACKETS_R.put("PlayerMoveC2SPacket.OnGroundOnly", net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly.class);
-        C2S_PACKETS.put(net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.Full.class, "PlayerMoveC2SPacket.Full");
-        C2S_PACKETS_R.put("PlayerMoveC2SPacket.Full", net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.Full.class);
-        C2S_PACKETS.put(net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.PositionAndOnGround.class, "PlayerMoveC2SPacket.PositionAndOnGround");
-        C2S_PACKETS_R.put("PlayerMoveC2SPacket.PositionAndOnGround", net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.PositionAndOnGround.class);
+        C2S_PACKETS.put(net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.Both.class, "PlayerMoveC2SPacket.Both");
+        C2S_PACKETS_R.put("PlayerMoveC2SPacket.Both", net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.Both.class);
+        C2S_PACKETS.put(net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.PositionOnly.class, "PlayerMoveC2SPacket.PositionOnly");
+        C2S_PACKETS_R.put("PlayerMoveC2SPacket.PositionOnly", net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.PositionOnly.class);
 
         S2C_PACKETS.put(net.minecraft.network.packet.s2c.play.WorldBorderSizeChangedS2CPacket.class, "WorldBorderSizeChangedS2CPacket");
         S2C_PACKETS_R.put("WorldBorderSizeChangedS2CPacket", net.minecraft.network.packet.s2c.play.WorldBorderSizeChangedS2CPacket.class);

@@ -46,7 +46,7 @@ public class AntiVoid extends Module {
 
     @EventHandler
     private void onPreTick(TickEvent.Pre event) {
-        int minY = mc.world.getBottomY();
+        int minY = 0;
 
         if (mc.player.getY() > minY || mc.player.getY() < minY - 15) {
             if (hasRun && mode.get() == Mode.Flight && Modules.get().isActive(Flight.class)) {

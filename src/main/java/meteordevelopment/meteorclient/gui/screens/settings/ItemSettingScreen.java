@@ -15,7 +15,7 @@ import meteordevelopment.meteorclient.settings.ItemSetting;
 import meteordevelopment.meteorclient.utils.misc.Names;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.StringUtils;
 
 public class ItemSettingScreen extends WindowScreen {
@@ -48,7 +48,7 @@ public class ItemSettingScreen extends WindowScreen {
     }
 
     public void initTable() {
-        for (Item item : Registries.ITEM) {
+        for (Item item : Registry.ITEM) {
             if (setting.filter != null && !setting.filter.test(item)) continue;
             if (item == Items.AIR) continue;
 

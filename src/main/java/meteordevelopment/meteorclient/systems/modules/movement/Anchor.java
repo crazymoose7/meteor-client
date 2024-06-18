@@ -83,7 +83,7 @@ public class Anchor extends Module {
 
     @EventHandler
     private void onPreTick(TickEvent.Pre event) {
-        cancelJump = foundHole && cancelMove.get() && mc.player.getPitch() >= minPitch.get();
+        cancelJump = foundHole && cancelMove.get() && mc.player.getPitch(mc.getTickDelta()) >= minPitch.get();
     }
 
     @EventHandler
@@ -104,7 +104,7 @@ public class Anchor extends Module {
         if (wasInHole && holeX == x && holeZ == z) return;
         else if (wasInHole) wasInHole = false;
 
-        if (mc.player.getPitch() < minPitch.get()) return;
+        if (mc.player.getPitch(mc.getTickDelta()) < minPitch.get()) return;
 
         foundHole = false;
         double holeX = 0;
@@ -112,7 +112,7 @@ public class Anchor extends Module {
 
         for (int i = 0; i < maxHeight.get(); i++) {
             y--;
-            if (y <= mc.world.getBottomY() || !isAir(x, y, z)) break;
+            if (y <= 0 || !isAir(x, y, z)) break;
 
             if (isHole(x, y, z)) {
                 foundHole = true;

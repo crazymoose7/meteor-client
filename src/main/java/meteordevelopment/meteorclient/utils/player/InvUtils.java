@@ -59,7 +59,7 @@ public class InvUtils {
         if (testInHands(predicate)) return true;
 
         for (int i = SlotUtils.HOTBAR_START; i < SlotUtils.HOTBAR_END; i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (predicate.test(stack)) return true;
         }
 
@@ -94,7 +94,7 @@ public class InvUtils {
         }
 
         if (testInMainHand(isGood)) {
-            return new FindItemResult(mc.player.getInventory().selectedSlot, mc.player.getMainHandStack().getCount());
+            return new FindItemResult(mc.player.inventory.selectedSlot, mc.player.getMainHandStack().getCount());
         }
 
         return find(isGood, 0, 8);
@@ -111,7 +111,7 @@ public class InvUtils {
 
     public static FindItemResult find(Predicate<ItemStack> isGood) {
         if (mc.player == null) return new FindItemResult(0, 0);
-        return find(isGood, 0, mc.player.getInventory().size());
+        return find(isGood, 0, mc.player.inventory.size());
     }
 
     public static FindItemResult find(Predicate<ItemStack> isGood, int start, int end) {
@@ -120,7 +120,7 @@ public class InvUtils {
         int slot = -1, count = 0;
 
         for (int i = start; i <= end; i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
 
             if (isGood.test(stack)) {
                 if (slot == -1) slot = i;
@@ -136,7 +136,7 @@ public class InvUtils {
         int slot = -1;
 
         for (int i = 0; i < 9; i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (!stack.isSuitableFor(state)) continue;
 
             float score = stack.getMiningSpeedMultiplier(state);
@@ -154,10 +154,10 @@ public class InvUtils {
     public static boolean swap(int slot, boolean swapBack) {
         if (slot == SlotUtils.OFFHAND) return true;
         if (slot < 0 || slot > 8) return false;
-        if (swapBack && previousSlot == -1) previousSlot = mc.player.getInventory().selectedSlot;
+        if (swapBack && previousSlot == -1) previousSlot = mc.player.inventory.selectedSlot;
         else if (!swapBack) previousSlot = -1;
 
-        mc.player.getInventory().selectedSlot = slot;
+        mc.player.inventory.selectedSlot = slot;
         ((IClientPlayerInteractionManager) mc.interactionManager).meteor$syncSelected();
         return true;
     }

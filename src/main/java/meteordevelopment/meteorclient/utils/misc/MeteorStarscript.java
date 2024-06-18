@@ -43,7 +43,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.stat.Stat;
@@ -287,7 +287,7 @@ public class MeteorStarscript {
 
         Identifier name = popIdentifier(ss, "First argument to player.has_potion_effect() needs to a string.");
 
-        Optional<RegistryEntry.Reference<StatusEffect>> effect = Registries.STATUS_EFFECT.getEntry(name);
+        Optional<RegistryEntry.Reference<StatusEffect>> effect = Registry.STATUS_EFFECT.getEntry(name);
         if (effect.isEmpty()) return Value.bool(false);
 
         StatusEffectInstance effectInstance = mc.player.getStatusEffect(effect.get());
@@ -300,7 +300,7 @@ public class MeteorStarscript {
 
         Identifier name = popIdentifier(ss, "First argument to player.get_potion_effect() needs to a string.");
 
-        Optional<RegistryEntry.Reference<StatusEffect>> effect = Registries.STATUS_EFFECT.getEntry(name);
+        Optional<RegistryEntry.Reference<StatusEffect>> effect = Registry.STATUS_EFFECT.getEntry(name);
         if (effect.isEmpty()) return Value.null_();
 
         StatusEffectInstance effectInstance = mc.player.getStatusEffect(effect.get());
@@ -323,16 +323,16 @@ public class MeteorStarscript {
         Identifier name = popIdentifier(ss, (argCount > 1 ? "Second" : "First") + " argument to player.get_stat() needs to be a string.");
 
         Stat<?> stat = switch (type) {
-            case "mined" -> Stats.MINED.getOrCreateStat(Registries.BLOCK.get(name));
-            case "crafted" -> Stats.CRAFTED.getOrCreateStat(Registries.ITEM.get(name));
-            case "used" -> Stats.USED.getOrCreateStat(Registries.ITEM.get(name));
-            case "broken" -> Stats.BROKEN.getOrCreateStat(Registries.ITEM.get(name));
-            case "picked_up" -> Stats.PICKED_UP.getOrCreateStat(Registries.ITEM.get(name));
-            case "dropped" -> Stats.DROPPED.getOrCreateStat(Registries.ITEM.get(name));
-            case "killed" -> Stats.KILLED.getOrCreateStat(Registries.ENTITY_TYPE.get(name));
-            case "killed_by" -> Stats.KILLED_BY.getOrCreateStat(Registries.ENTITY_TYPE.get(name));
+            case "mined" -> Stats.MINED.getOrCreateStat(Registry.BLOCK.get(name));
+            case "crafted" -> Stats.CRAFTED.getOrCreateStat(Registry.ITEM.get(name));
+            case "used" -> Stats.USED.getOrCreateStat(Registry.ITEM.get(name));
+            case "broken" -> Stats.BROKEN.getOrCreateStat(Registry.ITEM.get(name));
+            case "picked_up" -> Stats.PICKED_UP.getOrCreateStat(Registry.ITEM.get(name));
+            case "dropped" -> Stats.DROPPED.getOrCreateStat(Registry.ITEM.get(name));
+            case "killed" -> Stats.KILLED.getOrCreateStat(Registry.ENTITY_TYPE.get(name));
+            case "killed_by" -> Stats.KILLED_BY.getOrCreateStat(Registry.ENTITY_TYPE.get(name));
             case "custom" -> {
-                name = Registries.CUSTOM_STAT.get(name);
+                name = Registry.CUSTOM_STAT.get(name);
                 yield name != null ? Stats.CUSTOM.getOrCreateStat(name) : null;
             }
             default -> null;
@@ -367,13 +367,17 @@ public class MeteorStarscript {
             ss.error("Unable to get setting %s for module %s for meteor.get_module_setting()", settingName, moduleName);
         }
         var value = setting.get();
-        return switch (value) {
-            case Double d -> Value.number(d);
-            case Integer i -> Value.number(i);
-            case Boolean b -> Value.bool(b);
-            case List<?> list -> Value.number(list.size());
-            case null, default -> Value.string(value.toString());
-        };
+        if (value instanceof Double) {
+            return Value.number((Double) value);
+        } else if (value instanceof Integer) {
+            return Value.number((Integer) value);
+        } else if (value instanceof Boolean) {
+            return Value.bool((Boolean) value);
+        } else if (value instanceof List<?>) {
+            return Value.number(((List<?>) value).size());
+        } else {
+            return Value.string(value.toString());
+        }
     }
 
     private static Value isModuleActive(Starscript ss, int argCount) {
@@ -387,7 +391,7 @@ public class MeteorStarscript {
         if (argCount != 1) ss.error("player.get_item() requires 1 argument, got %d.", argCount);
 
         int i = (int) ss.popNumber("First argument to player.get_item() needs to be a number.");
-        return mc.player != null ? wrap(mc.player.getInventory().getStack(i)) : Value.null_();
+        return mc.player != null ? wrap(mc.player.inventory.getStack(i)) : Value.null_();
     }
 
     private static Value countItems(Starscript ss, int argCount) {
@@ -397,12 +401,12 @@ public class MeteorStarscript {
         Identifier id = Identifier.tryParse(idRaw);
         if (id == null) return Value.number(0);
 
-        Item item = Registries.ITEM.get(id);
+        Item item = Registry.ITEM.get(id);
         if (item == Items.AIR || mc.player == null) return Value.number(0);
 
         int count = 0;
-        for (int i = 0; i < mc.player.getInventory().size(); i++) {
-            ItemStack itemStack = mc.player.getInventory().getStack(i);
+        for (int i = 0; i < mc.player.inventory.size(); i++) {
+            ItemStack itemStack = mc.player.inventory.getStack(i);
             if (itemStack.getItem() == item) count += itemStack.getCount();
         }
 
@@ -474,7 +478,7 @@ public class MeteorStarscript {
     private static Value yaw(boolean camera) {
         float yaw;
         if (camera) yaw = mc.gameRenderer.getCamera().getYaw();
-        else yaw = mc.player != null ? mc.player.getYaw() : 0;
+        else yaw = mc.player != null ? mc.player.getYaw(mc.getTickDelta()) : 0;
         yaw %= 360;
 
         if (yaw < 0) yaw += 360;
@@ -486,7 +490,7 @@ public class MeteorStarscript {
     private static Value pitch(boolean camera) {
         float pitch;
         if (camera) pitch = mc.gameRenderer.getCamera().getPitch();
-        else pitch = mc.player != null ? mc.player.getPitch() : 0;
+        else pitch = mc.player != null ? mc.player.getPitch(mc.getTickDelta()) : 0;
         pitch %= 360;
 
         if (pitch < 0) pitch += 360;
@@ -498,7 +502,7 @@ public class MeteorStarscript {
     private static Value direction(boolean camera) {
         float yaw;
         if (camera) yaw = mc.gameRenderer.getCamera().getYaw();
-        else yaw = mc.player != null ? mc.player.getYaw() : 0;
+        else yaw = mc.player != null ? mc.player.getYaw(mc.getTickDelta()) : 0;
 
         return wrap(HorizontalDirection.get(yaw));
     }
@@ -603,7 +607,7 @@ public class MeteorStarscript {
         return Value.map(new ValueMap()
             .set("_toString", Value.string(itemStack.getCount() <= 1 ? name : String.format("%s %dx", name, itemStack.getCount())))
             .set("name", Value.string(name))
-            .set("id", Value.string(Registries.ITEM.getId(itemStack.getItem()).toString()))
+            .set("id", Value.string(Registry.ITEM.getId(itemStack.getItem()).toString()))
             .set("count", Value.number(itemStack.getCount()))
             .set("durability", Value.number(durability))
             .set("max_durability", Value.number(itemStack.getMaxDamage()))
@@ -613,7 +617,7 @@ public class MeteorStarscript {
     public static Value wrap(BlockPos blockPos, BlockState blockState) {
         return Value.map(new ValueMap()
             .set("_toString", Value.string(Names.get(blockState.getBlock())))
-            .set("id", Value.string(Registries.BLOCK.getId(blockState.getBlock()).toString()))
+            .set("id", Value.string(Registry.BLOCK.getId(blockState.getBlock()).toString()))
             .set("pos", Value.map(new ValueMap()
                 .set("_toString", posString(blockPos.getX(), blockPos.getY(), blockPos.getZ()))
                 .set("x", Value.number(blockPos.getX()))
@@ -626,7 +630,7 @@ public class MeteorStarscript {
     public static Value wrap(Entity entity) {
         return Value.map(new ValueMap()
             .set("_toString", Value.string(entity.getName().getString()))
-            .set("id", Value.string(Registries.ENTITY_TYPE.getId(entity.getType()).toString()))
+            .set("id", Value.string(Registry.ENTITY_TYPE.getId(entity.getType()).toString()))
             .set("health", Value.number(entity instanceof LivingEntity e ? e.getHealth(): 0))
             .set("absorption", Value.number(entity instanceof LivingEntity e ? e.getAbsorptionAmount() : 0))
             .set("pos", Value.map(new ValueMap()

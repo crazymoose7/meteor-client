@@ -135,8 +135,8 @@ public class Freecam extends Module {
             mc.options.getFovEffectScale().setValue((double)0);
             mc.options.getBobView().setValue(false);
         }
-        yaw = mc.player.getYaw();
-        pitch = mc.player.getPitch();
+        yaw = mc.player.getYaw(mc.getTickDelta());
+        pitch = mc.player.getPitch(mc.getTickDelta());
 
         perspective = mc.options.getPerspective();
         speedValue = speed.get();
@@ -152,12 +152,12 @@ public class Freecam extends Module {
         prevYaw = yaw;
         prevPitch = pitch;
 
-        forward = mc.options.forwardKey.isPressed();
-        backward = mc.options.backKey.isPressed();
-        right = mc.options.rightKey.isPressed();
-        left = mc.options.leftKey.isPressed();
-        up = mc.options.jumpKey.isPressed();
-        down = mc.options.sneakKey.isPressed();
+        forward = mc.options.keyForward.isPressed();
+        backward = mc.options.keyBack.isPressed();
+        right = mc.options.keyRight.isPressed();
+        left = mc.options.keyLeft.isPressed();
+        up = mc.options.keyJump.isPressed();
+        down = mc.options.keySneak.isPressed();
 
         unpress();
         if (reloadChunks.get()) mc.worldRenderer.reload();
@@ -183,12 +183,12 @@ public class Freecam extends Module {
     }
 
     private void unpress() {
-        mc.options.forwardKey.setPressed(false);
-        mc.options.backKey.setPressed(false);
-        mc.options.rightKey.setPressed(false);
-        mc.options.leftKey.setPressed(false);
-        mc.options.jumpKey.setPressed(false);
-        mc.options.sneakKey.setPressed(false);
+        mc.options.keyForward.setPressed(false);
+        mc.options.keyBack.setPressed(false);
+        mc.options.keyRight.setPressed(false);
+        mc.options.keyLeft.setPressed(false);
+        mc.options.keyJump.setPressed(false);
+        mc.options.keySneak.setPressed(false);
     }
 
     @EventHandler
@@ -220,7 +220,7 @@ public class Freecam extends Module {
         }
 
         double s = 0.5;
-        if (mc.options.sprintKey.isPressed()) s = 1;
+        if (mc.options.keySprint.isPressed()) s = 1;
 
         boolean a = false;
         if (this.forward) {
@@ -270,29 +270,29 @@ public class Freecam extends Module {
 
         boolean cancel = true;
 
-        if (mc.options.forwardKey.matchesKey(event.key, 0)) {
+        if (mc.options.keyForward.matchesKey(event.key, 0)) {
             forward = event.action != KeyAction.Release;
-            mc.options.forwardKey.setPressed(false);
+            mc.options.keyForward.setPressed(false);
         }
-        else if (mc.options.backKey.matchesKey(event.key, 0)) {
+        else if (mc.options.keyBack.matchesKey(event.key, 0)) {
             backward = event.action != KeyAction.Release;
-            mc.options.backKey.setPressed(false);
+            mc.options.keyBack.setPressed(false);
         }
-        else if (mc.options.rightKey.matchesKey(event.key, 0)) {
+        else if (mc.options.keyRight.matchesKey(event.key, 0)) {
             right = event.action != KeyAction.Release;
-            mc.options.rightKey.setPressed(false);
+            mc.options.keyRight.setPressed(false);
         }
-        else if (mc.options.leftKey.matchesKey(event.key, 0)) {
+        else if (mc.options.keyLeft.matchesKey(event.key, 0)) {
             left = event.action != KeyAction.Release;
-            mc.options.leftKey.setPressed(false);
+            mc.options.keyLeft.setPressed(false);
         }
-        else if (mc.options.jumpKey.matchesKey(event.key, 0)) {
+        else if (mc.options.keyJump.matchesKey(event.key, 0)) {
             up = event.action != KeyAction.Release;
-            mc.options.jumpKey.setPressed(false);
+            mc.options.keyJump.setPressed(false);
         }
-        else if (mc.options.sneakKey.matchesKey(event.key, 0)) {
+        else if (mc.options.keySneak.matchesKey(event.key, 0)) {
             down = event.action != KeyAction.Release;
-            mc.options.sneakKey.setPressed(false);
+            mc.options.keySneak.setPressed(false);
         }
         else {
             cancel = false;
@@ -307,29 +307,29 @@ public class Freecam extends Module {
 
         boolean cancel = true;
 
-        if (mc.options.forwardKey.matchesMouse(event.button)) {
+        if (mc.options.keyForward.matchesMouse(event.button)) {
             forward = event.action != KeyAction.Release;
-            mc.options.forwardKey.setPressed(false);
+            mc.options.keyForward.setPressed(false);
         }
-        else if (mc.options.backKey.matchesMouse(event.button)) {
+        else if (mc.options.keyBack.matchesMouse(event.button)) {
             backward = event.action != KeyAction.Release;
-            mc.options.backKey.setPressed(false);
+            mc.options.keyBack.setPressed(false);
         }
-        else if (mc.options.rightKey.matchesMouse(event.button)) {
+        else if (mc.options.keyRight.matchesMouse(event.button)) {
             right = event.action != KeyAction.Release;
-            mc.options.rightKey.setPressed(false);
+            mc.options.keyRight.setPressed(false);
         }
-        else if (mc.options.leftKey.matchesMouse(event.button)) {
+        else if (mc.options.keyLeft.matchesMouse(event.button)) {
             left = event.action != KeyAction.Release;
-            mc.options.leftKey.setPressed(false);
+            mc.options.keyLeft.setPressed(false);
         }
-        else if (mc.options.jumpKey.matchesMouse(event.button)) {
+        else if (mc.options.keyJump.matchesMouse(event.button)) {
             up = event.action != KeyAction.Release;
-            mc.options.jumpKey.setPressed(false);
+            mc.options.keyJump.setPressed(false);
         }
-        else if (mc.options.sneakKey.matchesMouse(event.button)) {
+        else if (mc.options.keySneak.matchesMouse(event.button)) {
             down = event.action != KeyAction.Release;
-            mc.options.sneakKey.setPressed(false);
+            mc.options.keySneak.setPressed(false);
         }
         else {
             cancel = false;

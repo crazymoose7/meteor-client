@@ -14,14 +14,14 @@ import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 
 import java.util.List;
 import java.util.Optional;
 
 public class StatusEffectListSettingScreen extends LeftRightListSettingScreen<StatusEffect> {
     public StatusEffectListSettingScreen(GuiTheme theme, Setting<List<StatusEffect>> setting) {
-        super(theme, "Select Effects", setting, setting.get(), Registries.STATUS_EFFECT);
+        super(theme, "Select Effects", setting, setting.get(), Registry.STATUS_EFFECT);
     }
 
     @Override

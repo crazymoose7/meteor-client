@@ -5,7 +5,7 @@
 
 package meteordevelopment.meteorclient.commands.arguments;
 
-import net.minecraft.command.argument.EnumArgumentType;
+import net.minecraft.command.argumentd.EnumArgumentType;
 import net.minecraft.util.math.Direction;
 
 public class DirectionArgumentType extends EnumArgumentType<Direction> {

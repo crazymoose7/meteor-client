@@ -1,6 +1,5 @@
 package meteordevelopment.meteorclient.utils.render;
 
-import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.renderer.Texture;
 import meteordevelopment.meteorclient.utils.misc.MeteorIdentifier;

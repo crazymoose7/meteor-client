@@ -113,7 +113,7 @@ public class NoFall extends Module {
 
     @EventHandler
     private void onSendPacket(PacketEvent.Send event) {
-        if (mc.player.getAbilities().creativeMode
+        if (mc.player.abilities.creativeMode
             || !(event.packet instanceof PlayerMoveC2SPacket)
             || mode.get() != Mode.Packet
             || ((IPlayerMoveC2SPacket) event.packet).getTag() == 1337) return;
@@ -135,7 +135,7 @@ public class NoFall extends Module {
             timer = 0;
         }
 
-        if (mc.player.getAbilities().creativeMode) return;
+        if (mc.player.abilities.creativeMode) return;
 
         // Airplace mode
         if (mode.get() == Mode.AirPlace) {
@@ -145,7 +145,7 @@ public class NoFall extends Module {
             // Center and place block
             if (anchor.get()) PlayerUtils.centerPlayer();
 
-            Rotations.rotate(mc.player.getYaw(), 90, Integer.MAX_VALUE, () -> {
+            Rotations.rotate(mc.player.getYaw(mc.getTickDelta()), 90, Integer.MAX_VALUE, () -> {
                 double preY = mc.player.getVelocity().y;
                 ((IVec3d) mc.player.getVelocity()).setY(0);
 
@@ -176,16 +176,13 @@ public class NoFall extends Module {
                     targetPos = result.getBlockPos().up();
                     if (placedItem1 == PlacedItem.Bucket)
                         useItem(findItemResult, true, targetPos, true);
-                    else {
-                        useItem(findItemResult, placedItem1 == PlacedItem.PowderSnow, targetPos, false);
-                    }
                 }
             }
 
             // Remove placed
             if (placedWater) {
                 timer++;
-                if (mc.player.getBlockStateAtPos().getBlock() == placedItem1.block) {
+                if (mc.player.getBlockState().getBlock() == placedItem1.block) {
                     useItem(InvUtils.findInHotbar(Items.BUCKET), false, targetPos, true);
                 }
             }
@@ -202,10 +199,10 @@ public class NoFall extends Module {
         if (interactItem) {
             Rotations.rotate(Rotations.getYaw(blockPos), Rotations.getPitch(blockPos), 10, true, () -> {
                 if (item.isOffhand()) {
-                    mc.interactionManager.interactItem(mc.player, Hand.OFF_HAND);
+                    mc.interactionManager.interactItem(mc.player, mc.world, Hand.OFF_HAND);
                 } else {
                     InvUtils.swap(item.slot(), true);
-                    mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
+                    mc.interactionManager.interactItem(mc.player, mc.world, Hand.MAIN_HAND);
                     InvUtils.swapBack();
                 }
             });
@@ -229,7 +226,6 @@ public class NoFall extends Module {
 
     public enum PlacedItem {
         Bucket(Items.WATER_BUCKET, Blocks.WATER),
-        PowderSnow(Items.POWDER_SNOW_BUCKET, Blocks.POWDER_SNOW),
         HayBale(Items.HAY_BLOCK, Blocks.HAY_BLOCK),
         Cobweb(Items.COBWEB, Blocks.COBWEB),
         SlimeBlock(Items.SLIME_BLOCK, Blocks.SLIME_BLOCK);

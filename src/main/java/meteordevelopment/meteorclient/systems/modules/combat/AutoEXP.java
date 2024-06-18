@@ -80,8 +80,8 @@ public class AutoEXP extends Module {
     private void onTick(TickEvent.Pre event) {
         if (repairingI == -1) {
             if (mode.get() != Mode.Hands) {
-                for (int i = 0; i < mc.player.getInventory().armor.size(); i++) {
-                    if (needsRepair(mc.player.getInventory().armor.get(i), minThreshold.get())) {
+                for (int i = 0; i < mc.player.inventory.armor.size(); i++) {
+                    if (needsRepair(mc.player.inventory.armor.get(i), minThreshold.get())) {
                         repairingI = SlotUtils.ARMOR_START + i;
                         break;
                     }
@@ -91,7 +91,7 @@ public class AutoEXP extends Module {
             if (mode.get() != Mode.Armor && repairingI == -1) {
                 for (Hand hand : Hand.values()) {
                     if (needsRepair(mc.player.getStackInHand(hand), minThreshold.get())) {
-                        repairingI = hand == Hand.MAIN_HAND ? mc.player.getInventory().selectedSlot : SlotUtils.OFFHAND;
+                        repairingI = hand == Hand.MAIN_HAND ? mc.player.inventory.selectedSlot : SlotUtils.OFFHAND;
                         break;
                     }
                 }
@@ -99,7 +99,7 @@ public class AutoEXP extends Module {
         }
 
         if (repairingI != -1) {
-            if (!needsRepair(mc.player.getInventory().getStack(repairingI), maxThreshold.get())) {
+            if (!needsRepair(mc.player.inventory.getStack(repairingI), maxThreshold.get())) {
                 repairingI = -1;
                 return;
             }
@@ -112,13 +112,13 @@ public class AutoEXP extends Module {
                     InvUtils.move().from(exp.slot()).toHotbar(slot.get() - 1);
                 }
 
-                Rotations.rotate(mc.player.getYaw(), 90, () -> {
+                Rotations.rotate(mc.player.getYaw(mc.getTickDelta()), 90, () -> {
                     if (exp.getHand() != null) {
-                        mc.interactionManager.interactItem(mc.player, exp.getHand());
+                        mc.interactionManager.interactItem(mc.player, mc.world, exp.getHand());
                     }
                     else {
                         InvUtils.swap(exp.slot(), true);
-                        mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
+                        mc.interactionManager.interactItem(mc.player, mc.world, Hand.MAIN_HAND);
                         InvUtils.swapBack();
                     }
                 });

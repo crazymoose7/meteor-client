@@ -49,7 +49,7 @@ public class GuiTab extends Tab {
             themeW.action = () -> {
                 GuiThemes.select(themeW.get());
 
-                mc.setScreen(null);
+                mc.openScreen(null);
                 tab.openScreen(GuiThemes.get());
             };
 

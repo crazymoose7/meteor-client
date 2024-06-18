@@ -9,12 +9,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.command.CommandSource;
-import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class DisconnectCommand extends Command {
     public DisconnectCommand() {
@@ -24,12 +21,12 @@ public class DisconnectCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.executes(context -> {
-            mc.player.networkHandler.onDisconnect(new DisconnectS2CPacket(Text.literal("%s[%sDisconnectCommand%s] Disconnected by user.".formatted(Formatting.GRAY, Formatting.BLUE, Formatting.GRAY))));
+            mc.player.networkHandler.onDisconnect(new DisconnectS2CPacket(Text.of("%s[%sDisconnectCommand%s] Disconnected by user.".formatted(Formatting.GRAY, Formatting.BLUE, Formatting.GRAY))));
             return SINGLE_SUCCESS;
         });
 
         builder.then(argument("reason", StringArgumentType.greedyString()).executes(context -> {
-            mc.player.networkHandler.onDisconnect(new DisconnectS2CPacket(Text.literal(StringArgumentType.getString(context, "reason"))));
+            mc.player.networkHandler.onDisconnect(new DisconnectS2CPacket(Text.of(StringArgumentType.getString(context, "reason"))));
             return SINGLE_SUCCESS;
         }));
     }

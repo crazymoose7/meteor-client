@@ -152,7 +152,7 @@ public class EChestFarmer extends Module {
             int bestSlot = -1;
 
             for (int i = 0; i < 9; i++) {
-                ItemStack itemStack = mc.player.getInventory().getStack(i);
+                ItemStack itemStack = mc.player.inventory.getStack(i);
                 if (EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, itemStack) > 0) continue;
 
                 double score = itemStack.getMiningSpeedMultiplier(Blocks.ENDER_CHEST.getDefaultState());

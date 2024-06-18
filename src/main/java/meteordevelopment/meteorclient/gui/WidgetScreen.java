@@ -61,7 +61,7 @@ public abstract class WidgetScreen extends Screen {
     protected boolean firstInit = true;
 
     public WidgetScreen(GuiTheme theme, String title) {
-        super(Text.literal(title));
+        super(Text.of(title));
 
         this.parent = mc.currentScreen;
         this.root = new WFullScreenRoot();
@@ -333,7 +333,7 @@ public abstract class WidgetScreen extends Screen {
             if (onClose) {
                 taskAfterRender = () -> {
                     locked = true;
-                    mc.setScreen(parent);
+                    mc.openScreen(parent);
                 };
             }
         }

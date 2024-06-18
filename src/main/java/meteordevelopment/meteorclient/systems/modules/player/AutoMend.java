@@ -14,12 +14,12 @@ import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AutoMend extends Module {
@@ -28,7 +28,8 @@ public class AutoMend extends Module {
     private final Setting<List<Item>> blacklist = sgGeneral.add(new ItemListSetting.Builder()
         .name("blacklist")
         .description("Item blacklist.")
-        .filter(item -> item.getComponents().get(DataComponentTypes.DAMAGE) != null)
+        .defaultValue(new ArrayList<>(0))
+        .filter(Item::isDamageable)
         .build()
     );
 
@@ -93,8 +94,8 @@ public class AutoMend extends Module {
     }
 
     private int getSlot() {
-        for (int i = 0; i < mc.player.getInventory().main.size(); i++) {
-            ItemStack itemStack = mc.player.getInventory().getStack(i);
+        for (int i = 0; i < mc.player.inventory.main.size(); i++) {
+            ItemStack itemStack = mc.player.inventory.getStack(i);
             if (blacklist.get().contains(itemStack.getItem())) continue;
 
             if (EnchantmentHelper.getLevel(Enchantments.MENDING, itemStack) > 0 && itemStack.getDamage() > 0) {
@@ -106,8 +107,8 @@ public class AutoMend extends Module {
     }
 
     private int getEmptySlot() {
-        for (int i = 0; i < mc.player.getInventory().main.size(); i++) {
-            if (mc.player.getInventory().getStack(i).isEmpty()) return i;
+        for (int i = 0; i < mc.player.inventory.main.size(); i++) {
+            if (mc.player.inventory.getStack(i).isEmpty()) return i;
         }
 
         return -1;

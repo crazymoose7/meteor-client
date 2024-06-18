@@ -117,8 +117,8 @@ public class Rotations {
     }
 
     private static void setClientRotation(Rotation rotation) {
-        preYaw = mc.player.getYaw();
-        prePitch = mc.player.getPitch();
+        preYaw = mc.player.getYaw(mc.getTickDelta());
+        prePitch = mc.player.getPitch(mc.getTickDelta());
 
         mc.player.setYaw((float) rotation.yaw);
         mc.player.setPitch((float) rotation.pitch);
@@ -165,11 +165,11 @@ public class Rotations {
     }
 
     public static double getYaw(Entity entity) {
-        return mc.player.getYaw() + MathHelper.wrapDegrees((float) Math.toDegrees(Math.atan2(entity.getZ() - mc.player.getZ(), entity.getX() - mc.player.getX())) - 90f - mc.player.getYaw());
+        return mc.player.getYaw(mc.getTickDelta()) + MathHelper.wrapDegrees((float) Math.toDegrees(Math.atan2(entity.getZ() - mc.player.getZ(), entity.getX() - mc.player.getX())) - 90f - mc.player.getYaw(mc.getTickDelta()));
     }
 
     public static double getYaw(Vec3d pos) {
-        return mc.player.getYaw() + MathHelper.wrapDegrees((float) Math.toDegrees(Math.atan2(pos.getZ() - mc.player.getZ(), pos.getX() - mc.player.getX())) - 90f - mc.player.getYaw());
+        return mc.player.getYaw(mc.getTickDelta()) + MathHelper.wrapDegrees((float) Math.toDegrees(Math.atan2(pos.getZ() - mc.player.getZ(), pos.getX() - mc.player.getX())) - 90f - mc.player.getYaw(mc.getTickDelta()));
     }
 
     public static double getPitch(Vec3d pos) {
@@ -179,7 +179,7 @@ public class Rotations {
 
         double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
-        return mc.player.getPitch() + MathHelper.wrapDegrees((float) -Math.toDegrees(Math.atan2(diffY, diffXZ)) - mc.player.getPitch());
+        return mc.player.getPitch(mc.getTickDelta()) + MathHelper.wrapDegrees((float) -Math.toDegrees(Math.atan2(diffY, diffXZ)) - mc.player.getPitch(mc.getTickDelta()));
     }
 
     public static double getPitch(Entity entity, Target target) {
@@ -194,7 +194,7 @@ public class Rotations {
 
         double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
-        return mc.player.getPitch() + MathHelper.wrapDegrees((float) -Math.toDegrees(Math.atan2(diffY, diffXZ)) - mc.player.getPitch());
+        return mc.player.getPitch(mc.getTickDelta()) + MathHelper.wrapDegrees((float) -Math.toDegrees(Math.atan2(diffY, diffXZ)) - mc.player.getPitch(mc.getTickDelta()));
     }
 
     public static double getPitch(Entity entity) {
@@ -202,7 +202,7 @@ public class Rotations {
     }
 
     public static double getYaw(BlockPos pos) {
-        return mc.player.getYaw() + MathHelper.wrapDegrees((float) Math.toDegrees(Math.atan2(pos.getZ() + 0.5 - mc.player.getZ(), pos.getX() + 0.5 - mc.player.getX())) - 90f - mc.player.getYaw());
+        return mc.player.getYaw(mc.getTickDelta()) + MathHelper.wrapDegrees((float) Math.toDegrees(Math.atan2(pos.getZ() + 0.5 - mc.player.getZ(), pos.getX() + 0.5 - mc.player.getX())) - 90f - mc.player.getYaw(mc.getTickDelta()));
     }
 
     public static double getPitch(BlockPos pos) {
@@ -212,7 +212,7 @@ public class Rotations {
 
         double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
-        return mc.player.getPitch() + MathHelper.wrapDegrees((float) -Math.toDegrees(Math.atan2(diffY, diffXZ)) - mc.player.getPitch());
+        return mc.player.getPitch(mc.getTickDelta()) + MathHelper.wrapDegrees((float) -Math.toDegrees(Math.atan2(diffY, diffXZ)) - mc.player.getPitch(mc.getTickDelta()));
     }
 
     public static void setCamRotation(double yaw, double pitch) {

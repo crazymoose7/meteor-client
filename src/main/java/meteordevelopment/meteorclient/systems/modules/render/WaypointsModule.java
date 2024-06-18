@@ -219,7 +219,7 @@ public class WaypointsModule extends Module {
             };
 
             WButton edit = table.add(theme.button(GuiRenderer.EDIT)).widget();
-            edit.action = () -> mc.setScreen(new EditWaypointScreen(theme, waypoint, null));
+            edit.action = () -> mc.openScreen(new EditWaypointScreen(theme, waypoint, null));
 
             // Goto
             if (validDim) {
@@ -245,7 +245,7 @@ public class WaypointsModule extends Module {
         table.row();
 
         WButton create = table.add(theme.button("Create")).expandX().widget();
-        create.action = () -> mc.setScreen(new EditWaypointScreen(theme, null, () -> initTable(theme, table)));
+        create.action = () -> mc.openScreen(new EditWaypointScreen(theme, null, () -> initTable(theme, table)));
     }
 
     private class EditWaypointScreen extends EditSystemScreen<Waypoint> {

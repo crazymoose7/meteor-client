@@ -19,7 +19,6 @@ import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import meteordevelopment.meteorclient.utils.render.RenderUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -60,8 +59,6 @@ public class GuiRenderer {
     public WWidget tooltipWidget;
     private double tooltipAnimProgress;
 
-    private DrawContext drawContext;
-
     public static GuiTexture addTexture(Identifier id) {
         return TEXTURE_PACKER.add(id);
     }
@@ -78,9 +75,7 @@ public class GuiRenderer {
         TEXTURE = TEXTURE_PACKER.pack();
     }
 
-    public void begin(DrawContext drawContext) {
-        this.drawContext = drawContext;
-
+    public void begin() {
         GL.enableBlend();
         GL.enableScissorTest();
         scissorStart(0, 0, getWindowWidth(), getWindowHeight());
@@ -155,7 +150,7 @@ public class GuiRenderer {
         scissorPool.free(scissor);
     }
 
-    public boolean renderTooltip(DrawContext drawContext, double mouseX, double mouseY, double delta) {
+    public boolean renderTooltip(double mouseX, double mouseY, double delta) {
         tooltipAnimProgress += (tooltip != null ? 1 : -1) * delta * 14;
         tooltipAnimProgress = MathHelper.clamp(tooltipAnimProgress, 0, 1);
 
@@ -171,7 +166,7 @@ public class GuiRenderer {
 
             setAlpha(tooltipAnimProgress);
 
-            begin(drawContext);
+            begin();
             tooltipWidget.render(this, mouseX, mouseY, delta);
             end();
 

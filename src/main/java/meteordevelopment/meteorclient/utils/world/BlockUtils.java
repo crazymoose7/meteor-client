@@ -26,7 +26,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
-import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -76,7 +76,7 @@ public class BlockUtils {
 
     public static boolean place(BlockPos blockPos, FindItemResult findItemResult, boolean rotate, int rotationPriority, boolean swingHand, boolean checkEntities, boolean swapBack) {
         if (findItemResult.isOffhand()) {
-            return place(blockPos, Hand.OFF_HAND, mc.player.getInventory().selectedSlot, rotate, rotationPriority, swingHand, checkEntities, swapBack);
+            return place(blockPos, Hand.OFF_HAND, mc.player.inventory.selectedSlot, rotate, rotationPriority, swingHand, checkEntities, swapBack);
         } else if (findItemResult.isHotbar()) {
             return place(blockPos, Hand.MAIN_HAND, findItemResult.slot(), rotate, rotationPriority, swingHand, checkEntities, swapBack);
         }
@@ -87,7 +87,7 @@ public class BlockUtils {
         if (slot < 0 || slot > 8) return false;
 
         Block toPlace = Blocks.OBSIDIAN;
-        ItemStack i = hand == Hand.MAIN_HAND ? mc.player.getInventory().getStack(slot) : mc.player.getInventory().getStack(SlotUtils.OFFHAND);
+        ItemStack i = hand == Hand.MAIN_HAND ? mc.player.inventory.getStack(slot) : mc.player.inventory.getStack(SlotUtils.OFFHAND);
         if (i.getItem() instanceof BlockItem blockItem) toPlace = blockItem.getBlock();
         if (!canPlaceBlock(blockPos, checkEntities, toPlace)) return false;
 
@@ -147,7 +147,7 @@ public class BlockUtils {
         if (!World.isValid(blockPos)) return false;
 
         // Check if current block is replaceable
-        if (!mc.world.getBlockState(blockPos).isReplaceable()) return false;
+        if (!mc.world.getBlockState(blockPos).getMaterial().isReplaceable()) return false;
 
         // Check if intersects entities
         return !checkEntities || mc.world.canPlace(block.getDefaultState(), blockPos, ShapeContext.absent());
@@ -295,7 +295,7 @@ public class BlockUtils {
             || block instanceof CartographyTableBlock
             || block instanceof GrindstoneBlock
             || block instanceof StonecutterBlock
-            || block instanceof ButtonBlock
+            || block instanceof AbstractButtonBlock
             || block instanceof AbstractPressurePlateBlock
             || block instanceof BlockWithEntity
             || block instanceof BedBlock
@@ -337,10 +337,10 @@ public class BlockUtils {
     public static Direction getDirection(BlockPos pos) {
         Vec3d eyesPos = new Vec3d(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
         if ((double) pos.getY() > eyesPos.y) {
-            if (mc.world.getBlockState(pos.add(0, -1, 0)).isReplaceable()) return Direction.DOWN;
+            if (mc.world.getBlockState(pos.add(0, -1, 0)).getMaterial().isReplaceable()) return Direction.DOWN;
             else return mc.player.getHorizontalFacing().getOpposite();
         }
-        if (!mc.world.getBlockState(pos.add(0, 1, 0)).isReplaceable()) return mc.player.getHorizontalFacing().getOpposite();
+        if (!mc.world.getBlockState(pos.add(0, 1, 0)).getMaterial().isReplaceable()) return mc.player.getHorizontalFacing().getOpposite();
         return Direction.UP;
     }
 
@@ -364,15 +364,15 @@ public class BlockUtils {
         float hardness = state.getHardness(null, null);
         if (hardness == -1) return 0;
         else {
-            return getBlockBreakingSpeed(slot, state) / hardness / (!state.isToolRequired() || mc.player.getInventory().main.get(slot).isSuitableFor(state) ? 30 : 100);
+            return getBlockBreakingSpeed(slot, state) / hardness / (!state.isToolRequired() || mc.player.inventory.main.get(slot).isSuitableFor(state) ? 30 : 100);
         }
     }
 
     private static double getBlockBreakingSpeed(int slot, BlockState block) {
-        double speed = mc.player.getInventory().main.get(slot).getMiningSpeedMultiplier(block);
+        double speed = mc.player.inventory.main.get(slot).getMiningSpeedMultiplier(block);
 
         if (speed > 1) {
-            ItemStack tool = mc.player.getInventory().getStack(slot);
+            ItemStack tool = mc.player.inventory.getStack(slot);
 
             int efficiency = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, tool);
 

@@ -10,8 +10,6 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import it.unimi.dsi.fastutil.objects.ObjectIntImmutablePair;
-import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.commands.arguments.ModuleArgumentType;
 import meteordevelopment.meteorclient.commands.arguments.PlayerArgumentType;
@@ -43,7 +41,7 @@ import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class SwarmCommand extends Command {
 
-    private final static SimpleCommandExceptionType SWARM_NOT_ACTIVE = new SimpleCommandExceptionType(Text.literal("The swarm module must be active to use this command."));
+    private final static SimpleCommandExceptionType SWARM_NOT_ACTIVE = new SimpleCommandExceptionType(Text.of("The swarm module must be active to use this command."));
     private @Nullable ObjectIntPair<String> pendingConnection;
 
     public SwarmCommand() {
@@ -74,7 +72,7 @@ public class SwarmCommand extends Command {
                                     pendingConnection = new ObjectIntImmutablePair<>(ip, port);
 
                                     info("Are you sure you want to connect to '%s:%s'?", ip, port);
-                                    info(Text.literal("Click here to confirm").setStyle(Style.EMPTY
+                                    info(Text.of("Click here to confirm").setStyle(Style.EMPTY
                                         .withFormatting(Formatting.UNDERLINE, Formatting.GREEN)
                                         .withClickEvent(new MeteorClickEvent(ClickEvent.Action.RUN_COMMAND, ".swarm join confirm"))
                                     ));

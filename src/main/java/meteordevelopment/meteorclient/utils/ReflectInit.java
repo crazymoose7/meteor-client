@@ -78,10 +78,12 @@ public class ReflectInit {
     private static <T extends Annotation> Class<?>[] getDependencies(Method task, Class<T> annotation) {
         T init = task.getAnnotation(annotation);
 
-        return switch (init) {
-            case PreInit pre -> pre.dependencies();
-            case PostInit post -> post.dependencies();
-            default -> new Class<?>[]{};
-        };
+        if (init instanceof PreInit) {
+            return ((PreInit) init).dependencies();
+        } else if (init instanceof PostInit) {
+            return ((PostInit) init).dependencies();
+        } else {
+            return new Class<?>[]{};
+        }
     }
 }

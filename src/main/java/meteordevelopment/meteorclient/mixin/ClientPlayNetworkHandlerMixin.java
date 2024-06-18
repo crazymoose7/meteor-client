@@ -41,8 +41,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static meteordevelopment.meteorclient.MeteorClient.mc;
+
 @Mixin(ClientPlayNetworkHandler.class)
-public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkHandler {
+public abstract class ClientPlayNetworkHandlerMixin {
     @Shadow
     private ClientWorld world;
 
@@ -55,14 +57,10 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
     @Unique
     private boolean worldNotNull;
 
-    protected ClientPlayNetworkHandlerMixin(MinecraftClient client, ClientConnection connection, ClientConnectionState connectionState) {
-        super(client, connection, connectionState);
-    }
-
     @Inject(method = "onEntitySpawn", at = @At("HEAD"), cancellable = true)
     private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo info) {
-        if (packet != null && packet.getEntityType() != null) {
-            if (Modules.get().get(NoRender.class).noEntity(packet.getEntityType()) && Modules.get().get(NoRender.class).getDropSpawnPacket()) {
+        if (packet != null && packet.getEntityTypeId() != null) {
+            if (Modules.get().get(NoRender.class).noEntity(packet.getEntityTypeId()) && Modules.get().get(NoRender.class).getDropSpawnPacket()) {
                 info.cancel();
             }
         }
@@ -95,7 +93,7 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
 
     @Inject(method = "onChunkData", at = @At("TAIL"))
     private void onChunkData(ChunkDataS2CPacket packet, CallbackInfo info) {
-        WorldChunk chunk = client.world.getChunk(packet.getChunkX(), packet.getChunkZ());
+        WorldChunk chunk = mc.world.getChunk(packet.getX(), packet.getZ());
         MeteorClient.EVENT_BUS.post(new ChunkDataEvent(chunk));
     }
 
@@ -109,14 +107,14 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
         MeteorClient.EVENT_BUS.post(InventoryEvent.get(packet));
     }
 
-    @Inject(method = "onEntitiesDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/EntitiesDestroyS2CPacket;getEntityIds()Lit/unimi/dsi/fastutil/ints/IntList;"))
+    @Inject(method = "onEntitiesDestroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;removeEntity(I)V"))
     private void onEntitiesDestroy(EntitiesDestroyS2CPacket packet, CallbackInfo ci) {
         for (int id : packet.getEntityIds()) {
-            MeteorClient.EVENT_BUS.post(EntityDestroyEvent.get(client.world.getEntityById(id)));
+            MeteorClient.EVENT_BUS.post(EntityDestroyEvent.get(mc.world.getEntityById(id)));
         }
     }
 
-    @Inject(method = "onExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", shift = At.Shift.AFTER))
+    @Inject(method = "onExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", shift = At.Shift.AFTER))
     private void onExplosionVelocity(ExplosionS2CPacket packet, CallbackInfo ci) {
         Velocity velocity = Modules.get().get(Velocity.class);
         if (!velocity.explosions.get()) return;
@@ -128,10 +126,10 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
 
     @Inject(method = "onItemPickupAnimation", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getEntityById(I)Lnet/minecraft/entity/Entity;", ordinal = 0))
     private void onItemPickupAnimation(ItemPickupAnimationS2CPacket packet, CallbackInfo info) {
-        Entity itemEntity = client.world.getEntityById(packet.getEntityId());
-        Entity entity = client.world.getEntityById(packet.getCollectorEntityId());
+        Entity itemEntity = mc.world.getEntityById(packet.getEntityId());
+        Entity entity = mc.world.getEntityById(packet.getCollectorEntityId());
 
-        if (itemEntity instanceof ItemEntity && entity == client.player) {
+        if (itemEntity instanceof ItemEntity && entity == mc.player) {
             MeteorClient.EVENT_BUS.post(PickItemsEvent.get(((ItemEntity) itemEntity).getStack(), packet.getStackAmount()));
         }
     }
@@ -159,7 +157,7 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
                 ChatUtils.error(e.getMessage());
             }
 
-            client.inGameHud.getChatHud().addToMessageHistory(message);
+            mc.inGameHud.getChatHud().addToMessageHistory(message);
             ci.cancel();
         }
     }

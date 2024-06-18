@@ -6,20 +6,16 @@
 package meteordevelopment.meteorclient.mixin;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.tag.Tag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import java.util.List;
-
 @Mixin(LivingEntity.class)
 public interface LivingEntityAccessor {
     @Invoker("swimUpward")
-    void swimUpwards(TagKey<Fluid> fluid);
+    void swimUpwards(Tag<Fluid> fluid);
 
     @Accessor("jumping")
     boolean isJumping();

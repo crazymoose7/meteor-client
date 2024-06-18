@@ -56,10 +56,10 @@ public class BowSpam extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        if (!mc.player.getAbilities().creativeMode && !InvUtils.find(itemStack -> itemStack.getItem() instanceof ArrowItem).found())
+        if (!mc.player.abilities.creativeMode && !InvUtils.find(itemStack -> itemStack.getItem() instanceof ArrowItem).found())
             return;
 
-        if (!onlyWhenHoldingRightClick.get() || mc.options.useKey.isPressed()) {
+        if (!onlyWhenHoldingRightClick.get() || mc.options.keyUse.isPressed()) {
             boolean isBow = mc.player.getMainHandStack().getItem() == Items.BOW;
             if (!isBow && wasBow) setPressed(false);
 
@@ -73,7 +73,7 @@ public class BowSpam extends Module {
                 setPressed(true);
             }
 
-            wasHoldingRightClick = mc.options.useKey.isPressed();
+            wasHoldingRightClick = mc.options.keyUse.isPressed();
         } else {
             if (wasHoldingRightClick) {
                 setPressed(false);
@@ -83,6 +83,6 @@ public class BowSpam extends Module {
     }
 
     private void setPressed(boolean pressed) {
-        mc.options.useKey.setPressed(pressed);
+        mc.options.keyUse.setPressed(pressed);
     }
 }

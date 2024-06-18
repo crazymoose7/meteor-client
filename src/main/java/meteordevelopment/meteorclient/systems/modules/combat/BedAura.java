@@ -204,7 +204,7 @@ public class BedAura extends Module {
     @EventHandler
     private void onTick(TickEvent.Post event) {
         // Check if beds can explode here
-        if (mc.world.getDimension().bedWorks()) {
+        if (mc.world.getDimension().isBedWorking()) {
             error("You can't blow up beds in this dimension, disabling.");
             toggle();
             return;
@@ -262,7 +262,7 @@ public class BedAura extends Module {
                 float headSelfDamage = DamageUtils.bedDamage(mc.player, Utils.vec3d(centerPos));
                 float offsetSelfDamage = DamageUtils.bedDamage(mc.player, Utils.vec3d(centerPos.offset(dir.toDirection())));
 
-                if (mc.world.getBlockState(centerPos).isReplaceable()
+                if (mc.world.getBlockState(centerPos).getMaterial().isReplaceable()
                     && BlockUtils.canPlace(centerPos.offset(dir.toDirection()))
                     && DamageUtils.bedDamage(target, Utils.vec3d(centerPos)) >= minDamage.get()
                     && offsetSelfDamage < maxSelfDamage.get()
@@ -325,7 +325,7 @@ public class BedAura extends Module {
         boolean wasSneaking = mc.player.isSneaking();
         if (wasSneaking) mc.player.setSneaking(false);
 
-        mc.interactionManager.interactBlock(mc.player, Hand.OFF_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.UP, pos, false));
+        mc.interactionManager.interactBlock(mc.player, mc.world, Hand.OFF_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.UP, pos, false));
 
         mc.player.setSneaking(wasSneaking);
     }

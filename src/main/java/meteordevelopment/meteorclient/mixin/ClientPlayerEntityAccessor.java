@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ClientPlayerEntity.class)
 public interface ClientPlayerEntityAccessor {
-    @Accessor("mountJumpStrength")
+    @Accessor("field_3922")
     void setMountJumpStrength(float strength);
 
     @Accessor("ticksSinceLastPositionPacketSent")

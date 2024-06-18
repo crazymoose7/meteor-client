@@ -45,14 +45,14 @@ public class DropCommand extends Command {
 
         // Main Inv
         builder.then(literal("inventory").executes(context -> drop(player -> {
-            for (int i = 9; i < player.getInventory().main.size(); i++) {
+            for (int i = 9; i < player.inventory.main.size(); i++) {
                 InvUtils.drop().slotMain(i - 9);
             }
         })));
 
         // Hotbar and main inv
         builder.then(literal("all").executes(context -> drop(player -> {
-                    for (int i = 0; i < player.getInventory().size(); i++) {
+                    for (int i = 0; i < player.inventory.size(); i++) {
                         InvUtils.drop().slot(i);
                     }
                     InvUtils.drop().slotOffhand();
@@ -60,7 +60,7 @@ public class DropCommand extends Command {
 
         // Armor
         builder.then(literal("armor").executes(context -> drop(player -> {
-                    for (int i = 0; i < player.getInventory().armor.size(); i++) {
+                    for (int i = 0; i < player.inventory.armor.size(); i++) {
                         InvUtils.drop().slotArmor(i);
                     }
                 })));
@@ -71,8 +71,8 @@ public class DropCommand extends Command {
 
             if (stack == null || stack.getItem() == Items.AIR) throw NO_SUCH_ITEM.create();
 
-            for (int i = 0; i < player.getInventory().size(); i++) {
-                if (stack.getItem() == player.getInventory().getStack(i).getItem()) {
+            for (int i = 0; i < player.inventory.size(); i++) {
+                if (stack.getItem() == player.inventory.getStack(i).getItem()) {
                     InvUtils.drop().slot(i);
                 }
             }

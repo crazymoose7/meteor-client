@@ -14,7 +14,6 @@ import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.misc.text.MeteorClickEvent;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.NbtPathArgumentType;
-import net.minecraft.component.ComponentMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
@@ -41,7 +40,7 @@ public class NbtCommand extends Command {
 
         // TODO: Update using Components over NBT
         /*builder.then(literal("add").then(argument("nbt", CompoundNbtTagArgumentType.create()).executes(s -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
 
             if (validBasic(stack)) {
                 NbtCompound tag = CompoundNbtTagArgumentType.get(s);
@@ -60,7 +59,7 @@ public class NbtCommand extends Command {
         })));
 
         builder.then(literal("set").then(argument("nbt", CompoundNbtTagArgumentType.create()).executes(context -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
 
             if (validBasic(stack)) {
                 stack = ItemStack.fromNbtOrEmpty(mc.world.getRegistryManager(), CompoundNbtTagArgumentType.get(context));
@@ -71,7 +70,7 @@ public class NbtCommand extends Command {
         })));
 
         builder.then(literal("remove").then(argument("nbt_path", NbtPathArgumentType.nbtPath()).executes(context -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
 
             if (validBasic(stack)) {
                 NbtPathArgumentType.NbtPath path = context.getArgument("nbt_path", NbtPathArgumentType.NbtPath.class);
@@ -82,7 +81,7 @@ public class NbtCommand extends Command {
         })));
 
         builder.then(literal("get").executes(context -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
 
             if (stack == null) {
                 error("You must hold an item in your main hand.");
@@ -114,7 +113,7 @@ public class NbtCommand extends Command {
         }));
 
         builder.then(literal("copy").executes(context -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
 
             if (stack == null) {
                 error("You must hold an item in your main hand.");
@@ -140,7 +139,7 @@ public class NbtCommand extends Command {
         }));
 
         builder.then(literal("paste").executes(context -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
 
             if (validBasic(stack)) {
                 NbtCompound nbt = CompoundNbtTagArgumentType.create().parse(new StringReader(mc.keyboard.getClipboard()));
@@ -154,7 +153,7 @@ public class NbtCommand extends Command {
         }));
 
         builder.then(literal("count").then(argument("count", IntegerArgumentType.integer(-127, 127)).executes(context -> {
-            ItemStack stack = mc.player.getInventory().getMainHandStack();
+            ItemStack stack = mc.player.inventory.getMainHandStack();
 
             if (validBasic(stack)) {
                 int count = IntegerArgumentType.getInteger(context, "count");
@@ -168,11 +167,11 @@ public class NbtCommand extends Command {
     }
 
     private void setStack(ItemStack stack) {
-        mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(36 + mc.player.getInventory().selectedSlot, stack));
+        mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(36 + mc.player.inventory.selectedSlot, stack));
     }
 
     private boolean validBasic(ItemStack stack) {
-        if (!mc.player.getAbilities().creativeMode) {
+        if (!mc.player.abilities.creativeMode) {
             error("Creative mode only.");
             return false;
         }

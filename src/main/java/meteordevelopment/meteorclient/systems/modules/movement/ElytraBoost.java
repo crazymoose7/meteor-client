@@ -17,6 +17,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FireworksComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.item.FireworkItem;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -76,7 +77,7 @@ public class ElytraBoost extends Module {
     private void onInteractItem(InteractItemEvent event) {
         ItemStack itemStack = mc.player.getStackInHand(event.hand);
 
-        if (itemStack.getItem() instanceof FireworkRocketItem && dontConsumeFirework.get()) {
+        if (itemStack.getItem() instanceof FireworkItem && dontConsumeFirework.get()) {
             event.toReturn = ActionResult.PASS;
 
             boost();

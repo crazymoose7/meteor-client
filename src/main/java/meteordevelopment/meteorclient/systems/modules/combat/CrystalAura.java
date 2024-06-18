@@ -148,7 +148,7 @@ public class CrystalAura extends Module {
         .name("entities")
         .description("Entities to attack.")
         .onlyAttackable()
-        .defaultValue(EntityType.PLAYER, EntityType.WARDEN, EntityType.WITHER)
+        .defaultValue(EntityType.PLAYER, EntityType.WITHER)
         .build()
     );
 
@@ -614,7 +614,7 @@ public class CrystalAura extends Module {
 
         attacks = 0;
 
-        serverYaw = mc.player.getYaw();
+        serverYaw = mc.player.getYaw(mc.getTickDelta());
 
         bestTargetDamage = 0;
         bestTargetTimer = 0;
@@ -720,7 +720,7 @@ public class CrystalAura extends Module {
         if (placing && event.entity.getBlockPos().equals(placingCrystalBlockPos)) {
             placing = false;
             placingTimer = 0;
-            placedCrystals.add(event.entity.getId());
+            placedCrystals.add(event.entity.getEntityId());
         }
 
         if (fastBreak.get() && !didRotateThisTick && attacks < attackFrequency.get()) {
@@ -732,9 +732,9 @@ public class CrystalAura extends Module {
     @EventHandler
     private void onEntityRemoved(EntityRemovedEvent event) {
         if (event.entity instanceof EndCrystalEntity) {
-            placedCrystals.remove(event.entity.getId());
-            removed.remove(event.entity.getId());
-            waitingToExplode.remove(event.entity.getId());
+            placedCrystals.remove(event.entity.getEntityId());
+            removed.remove(event.entity.getEntityId());
+            waitingToExplode.remove(event.entity.getEntityId());
         }
     }
 
@@ -778,13 +778,13 @@ public class CrystalAura extends Module {
         if (!(entity instanceof EndCrystalEntity)) return 0;
 
         // Check only break own
-        if (onlyBreakOwn.get() && !placedCrystals.contains(entity.getId())) return 0;
+        if (onlyBreakOwn.get() && !placedCrystals.contains(entity.getEntityId())) return 0;
 
         // Check if it should already be removed
-        if (removed.contains(entity.getId())) return 0;
+        if (removed.contains(entity.getEntityId())) return 0;
 
         // Check attempted breaks
-        if (attemptedBreaks.get(entity.getId()) > breakAttempts.get()) return 0;
+        if (attemptedBreaks.get(entity.getEntityId()) > breakAttempts.get()) return 0;
 
         // Check crystal age
         if (checkCrystalAge && entity.age < ticksExisted.get()) return 0;
@@ -850,9 +850,9 @@ public class CrystalAura extends Module {
 
         if (attacked) {
             // Update state
-            removed.add(crystal.getId());
-            attemptedBreaks.put(crystal.getId(), attemptedBreaks.get(crystal.getId()) + 1);
-            waitingToExplode.put(crystal.getId(), 0);
+            removed.add(crystal.getEntityId());
+            attemptedBreaks.put(crystal.getEntityId(), attemptedBreaks.get(crystal.getEntityId()) + 1);
+            waitingToExplode.put(crystal.getEntityId(), 0);
 
             // Break render
             breakRenderPos.set(crystal.getBlockPos().down());
@@ -921,7 +921,7 @@ public class CrystalAura extends Module {
         BlockIterator.register((int) Math.ceil(placeRange.get()), (int) Math.ceil(placeRange.get()), (bp, blockState) -> {
             // Check if its bedrock or obsidian and return if isSupport is false
             boolean hasBlock = blockState.isOf(Blocks.BEDROCK) || blockState.isOf(Blocks.OBSIDIAN);
-            if (!hasBlock && (!isSupport.get() || !blockState.isReplaceable())) return;
+            if (!hasBlock && (!isSupport.get() || !blockState.getMaterial().isReplaceable())) return;
 
             // Check if there is air on top
             blockPos.set(bp.getX(), bp.getY() + 1, bp.getZ());
@@ -1025,7 +1025,7 @@ public class CrystalAura extends Module {
         FindItemResult item = InvUtils.findInHotbar(targetItem);
         if (!item.found()) return;
 
-        int prevSlot = mc.player.getInventory().selectedSlot;
+        int prevSlot = mc.player.inventory.selectedSlot;
 
         if (autoSwitch.get() != AutoSwitchMode.None && !item.isOffhand()) InvUtils.swap(item.slot(), false);
 
@@ -1035,7 +1035,7 @@ public class CrystalAura extends Module {
         // Place
         if (supportBlock == null) {
             // Place crystal
-            mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(hand, result, 0));
+            mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(hand, result));
 
             if (swingMode.get().client()) mc.player.swingHand(hand);
             if (swingMode.get().packet()) mc.getNetworkHandler().sendPacket(new HandSwingC2SPacket(hand));
@@ -1138,7 +1138,7 @@ public class CrystalAura extends Module {
     // Others
 
     private boolean shouldPause(PauseMode process) {
-        if (mc.player.isUsingItem() || mc.options.useKey.isPressed()) {
+        if (mc.player.isUsingItem() || mc.options.keyUse.isPressed()) {
             if (pauseOnUse.get().equals(process)) return true;
         }
 
@@ -1216,16 +1216,16 @@ public class CrystalAura extends Module {
 
             // Player
             if (livingEntity instanceof PlayerEntity player) {
-                if (player.getAbilities().creativeMode || livingEntity == mc.player) continue;
+                if (player.abilities.creativeMode || livingEntity == mc.player) continue;
                 if (!player.isAlive() || !Friends.get().shouldAttack(player)) continue;
 
                 if (ignoreNakeds.get()) {
                     if (player.getOffHandStack().isEmpty()
                         && player.getMainHandStack().isEmpty()
-                        && player.getInventory().armor.get(0).isEmpty()
-                        && player.getInventory().armor.get(1).isEmpty()
-                        && player.getInventory().armor.get(2).isEmpty()
-                        && player.getInventory().armor.get(3).isEmpty()
+                        && player.inventory.armor.get(0).isEmpty()
+                        && player.inventory.armor.get(1).isEmpty()
+                        && player.inventory.armor.get(2).isEmpty()
+                        && player.inventory.armor.get(3).isEmpty()
                     ) continue;
                 }
             }
@@ -1241,7 +1241,7 @@ public class CrystalAura extends Module {
     }
 
     private boolean intersectsWithEntities(Box box) {
-        return EntityUtils.intersectsWithEntity(box, entity -> !entity.isSpectator() && !removed.contains(entity.getId()));
+        return EntityUtils.intersectsWithEntity(box, entity -> !entity.isSpectator() && !removed.contains(entity.getEntityId()));
     }
 
     // Rendering

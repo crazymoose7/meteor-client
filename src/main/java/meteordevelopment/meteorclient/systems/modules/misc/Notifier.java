@@ -26,6 +26,7 @@ import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -154,23 +155,23 @@ public class Notifier extends Module {
         if (!event.entity.getUuid().equals(mc.player.getUuid()) && entities.get().contains(event.entity.getType()) && visualRange.get() && this.event.get() != Event.Despawn) {
             if (event.entity instanceof PlayerEntity) {
                 if ((!visualRangeIgnoreFriends.get() || !Friends.get().isFriend(((PlayerEntity) event.entity))) && (!visualRangeIgnoreFakes.get() || !(event.entity instanceof FakePlayerEntity))) {
-                    ChatUtils.sendMsg(event.entity.getId() + 100, Formatting.GRAY, "(highlight)%s(default) has entered your visual range!", event.entity.getName().getString());
+                    ChatUtils.sendMsg(event.entity.getEntityId() + 100, Formatting.GRAY, "(highlight)%s(default) has entered your visual range!", event.entity.getName().getString());
 
                     if (visualMakeSound.get())
                         mc.world.playSoundFromEntity(mc.player, mc.player, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 3.0F, 1.0F);
                 }
             } else {
-                MutableText text = Text.literal(event.entity.getType().getName().getString()).formatted(Formatting.WHITE);
-                text.append(Text.literal(" has spawned at ").formatted(Formatting.GRAY));
+                MutableText text = new LiteralText(event.entity.getType().getName().getString()).formatted(Formatting.WHITE);
+                text.append(new LiteralText(" has spawned at ").formatted(Formatting.GRAY));
                 text.append(formatCoords(event.entity.getPos()));
-                text.append(Text.literal(".").formatted(Formatting.GRAY));
+                text.append(new LiteralText(".").formatted(Formatting.GRAY));
                 info(text);
             }
         }
 
         if (pearl.get()) {
             if (event.entity instanceof EnderPearlEntity pearl) {
-                pearlStartPosMap.put(pearl.getId(), new Vec3d(pearl.getX(), pearl.getY(), pearl.getZ()));
+                pearlStartPosMap.put(pearl.getEntityId(), new Vec3d(pearl.getX(), pearl.getY(), pearl.getZ()));
             }
         }
     }
@@ -180,23 +181,23 @@ public class Notifier extends Module {
         if (!event.entity.getUuid().equals(mc.player.getUuid()) && entities.get().contains(event.entity.getType()) && visualRange.get() && this.event.get() != Event.Spawn) {
             if (event.entity instanceof PlayerEntity) {
                 if ((!visualRangeIgnoreFriends.get() || !Friends.get().isFriend(((PlayerEntity) event.entity))) && (!visualRangeIgnoreFakes.get() || !(event.entity instanceof FakePlayerEntity))) {
-                    ChatUtils.sendMsg(event.entity.getId() + 100, Formatting.GRAY, "(highlight)%s(default) has left your visual range!", event.entity.getName().getString());
+                    ChatUtils.sendMsg(event.entity.getEntityId() + 100, Formatting.GRAY, "(highlight)%s(default) has left your visual range!", event.entity.getName().getString());
 
                     if (visualMakeSound.get())
                         mc.world.playSoundFromEntity(mc.player, mc.player, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 3.0F, 1.0F);
                 }
             } else {
-                MutableText text = Text.literal(event.entity.getType().getName().getString()).formatted(Formatting.WHITE);
-                text.append(Text.literal(" has despawned at ").formatted(Formatting.GRAY));
+                MutableText text = new LiteralText(event.entity.getType().getName().getString()).formatted(Formatting.WHITE);
+                text.append(new LiteralText(" has despawned at ").formatted(Formatting.GRAY));
                 text.append(formatCoords(event.entity.getPos()));
-                text.append(Text.literal(".").formatted(Formatting.GRAY));
+                text.append(new LiteralText(".").formatted(Formatting.GRAY));
                 info(text);
             }
         }
 
         if (pearl.get()) {
             Entity e = event.entity;
-            int i = e.getId();
+            int i = e.getEntityId();
             if (pearlStartPosMap.containsKey(i)) {
                 EnderPearlEntity pearl = (EnderPearlEntity) e;
                 if (pearl.getOwner() != null && pearl.getOwner() instanceof PlayerEntity p) {

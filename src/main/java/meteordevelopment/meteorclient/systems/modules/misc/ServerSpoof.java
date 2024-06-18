@@ -12,13 +12,10 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.text.RunnableClickEvent;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.BrandCustomPayload;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.c2s.common.ResourcePackStatusC2SPacket;
-import net.minecraft.network.packet.s2c.common.ResourcePackSendS2CPacket;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.play.ResourcePackSendS2CPacket;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.StringUtils;
@@ -102,18 +99,18 @@ public class ServerSpoof extends Module {
             if (!(event.packet instanceof ResourcePackSendS2CPacket packet)) return;
             event.cancel();
 
-            MutableText msg = Text.literal("This server has ");
+            MutableText msg = new LiteralText("This server has ");
             msg.append(packet.required() ? "a required " : "an optional ").append("resource pack. ");
 
-            MutableText link = Text.literal("[Download]");
+            MutableText link = new LiteralText("[Download]");
             link.setStyle(link.getStyle()
                 .withColor(Formatting.BLUE)
                 .withUnderline(true)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, packet.url()))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to download")))
+                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, packet.getURL()))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to download")))
             );
 
-            MutableText acceptance = Text.literal("[Spoof Acceptance]");
+            MutableText acceptance = new LiteralText("[Spoof Acceptance]");
             acceptance.setStyle(acceptance.getStyle()
                 .withColor(Formatting.DARK_GREEN)
                 .withUnderline(true)
@@ -121,7 +118,7 @@ public class ServerSpoof extends Module {
                     event.connection.send(new ResourcePackStatusC2SPacket(packet.id(), ResourcePackStatusC2SPacket.Status.ACCEPTED));
                     event.connection.send(new ResourcePackStatusC2SPacket(packet.id(), ResourcePackStatusC2SPacket.Status.SUCCESSFULLY_LOADED));
                 }))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to spoof accepting the recourse pack.")))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to spoof accepting the recourse pack.")))
             );
 
             msg.append(link).append(" ");

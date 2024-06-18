@@ -9,9 +9,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class ScreenHandlerListSetting extends Setting<List<ScreenHandlerType<?>>
 
         try {
             for (String value : values) {
-                ScreenHandlerType<?> handler = parseId(Registries.SCREEN_HANDLER, value);
+                ScreenHandlerType<?> handler = parseId(Registry.SCREEN_HANDLER, value);
                 if (handler != null) handlers.add(handler);
             }
         } catch (Exception ignored) {
@@ -51,14 +51,14 @@ public class ScreenHandlerListSetting extends Setting<List<ScreenHandlerType<?>>
 
     @Override
     public Iterable<Identifier> getIdentifierSuggestions() {
-        return Registries.SCREEN_HANDLER.getIds();
+        return Registry.SCREEN_HANDLER.getIds();
     }
 
     @Override
     public NbtCompound save(NbtCompound tag) {
         NbtList valueTag = new NbtList();
         for (ScreenHandlerType<?> type : get()) {
-            Identifier id = Registries.SCREEN_HANDLER.getId(type);
+            Identifier id = Registry.SCREEN_HANDLER.getId(type);
             if (id != null) valueTag.add(NbtString.of(id.toString()));
         }
         tag.put("value", valueTag);
@@ -72,7 +72,7 @@ public class ScreenHandlerListSetting extends Setting<List<ScreenHandlerType<?>>
 
         NbtList valueTag = tag.getList("value", 8);
         for (NbtElement tagI : valueTag) {
-            ScreenHandlerType<?> type = Registries.SCREEN_HANDLER.get(new Identifier(tagI.asString()));
+            ScreenHandlerType<?> type = Registry.SCREEN_HANDLER.get(new Identifier(tagI.asString()));
             if (type != null) get().add(type);
         }
 

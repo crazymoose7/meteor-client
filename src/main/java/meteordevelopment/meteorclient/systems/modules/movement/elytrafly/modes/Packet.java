@@ -23,33 +23,33 @@ public class Packet extends ElytraFlightMode {
 
     @Override
     public void onDeactivate() {
-        mc.player.getAbilities().flying = false;
-        mc.player.getAbilities().allowFlying = false;
+        mc.player.abilities.flying = false;
+        mc.player.abilities.allowFlying = false;
     }
 
     @Override
     public void onTick() {
         super.onTick();
 
-        if (mc.player.getInventory().getArmorStack(2).getItem() != Items.ELYTRA || mc.player.fallDistance <= 0.2 || mc.options.sneakKey.isPressed()) return;
+        if (mc.player.inventory.getArmorStack(2).getItem() != Items.ELYTRA || mc.player.fallDistance <= 0.2 || mc.options.keySneak.isPressed()) return;
 
-        if (mc.options.forwardKey.isPressed()) {
+        if (mc.options.keyForward.isPressed()) {
             vec3d.add(0, 0, elytraFly.horizontalSpeed.get());
-            vec3d.rotateY(-(float) Math.toRadians(mc.player.getYaw()));
-        } else if (mc.options.backKey.isPressed()) {
+            vec3d.rotateY(-(float) Math.toRadians(mc.player.getYaw(mc.getTickDelta())));
+        } else if (mc.options.keyBack.isPressed()) {
             vec3d.add(0, 0, elytraFly.horizontalSpeed.get());
-            vec3d.rotateY((float) Math.toRadians(mc.player.getYaw()));
+            vec3d.rotateY((float) Math.toRadians(mc.player.getYaw(mc.getTickDelta())));
         }
 
-        if (mc.options.jumpKey.isPressed()) {
+        if (mc.options.keyJump.isPressed()) {
             vec3d.add(0, elytraFly.verticalSpeed.get(), 0);
-        } else if (!mc.options.jumpKey.isPressed()) {
+        } else if (!mc.options.keyJump.isPressed()) {
             vec3d.add(0, -elytraFly.verticalSpeed.get(), 0);
         }
 
         mc.player.setVelocity(vec3d);
         mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
-        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly());
     }
 
     //Walalalalalalalalalalalala
@@ -62,7 +62,7 @@ public class Packet extends ElytraFlightMode {
 
     @Override
     public void onPlayerMove() {
-        mc.player.getAbilities().flying = true;
-        mc.player.getAbilities().setFlySpeed(elytraFly.horizontalSpeed.get().floatValue() / 20);
+        mc.player.abilities.flying = true;
+        mc.player.abilities.setFlySpeed(elytraFly.horizontalSpeed.get().floatValue() / 20);
     }
 }

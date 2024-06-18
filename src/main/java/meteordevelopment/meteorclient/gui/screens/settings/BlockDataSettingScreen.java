@@ -18,7 +18,7 @@ import meteordevelopment.meteorclient.utils.misc.ICopyable;
 import meteordevelopment.meteorclient.utils.misc.ISerializable;
 import meteordevelopment.meteorclient.utils.misc.Names;
 import net.minecraft.block.Block;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class BlockDataSettingScreen extends WindowScreen {
     }
 
     public <T extends ICopyable<T> & ISerializable<T> & IChangeable & IBlockData<T>> void initTable() {
-        for (Block block : Registries.BLOCK) {
+        for (Block block : Registry.BLOCK) {
             T blockData = (T) setting.get().get(block);
 
             if (blockData != null && blockData.isChanged()) BLOCKS.addFirst(block);
@@ -78,7 +78,7 @@ public class BlockDataSettingScreen extends WindowScreen {
                 T data = blockData;
                 if (data == null) data = (T) setting.defaultData.get().copy();
 
-                mc.setScreen(data.createScreen(theme, block, (BlockDataSetting<T>) setting));
+                mc.openScreen(data.createScreen(theme, block, (BlockDataSetting<T>) setting));
             };
 
             WButton reset = table.add(theme.button(GuiRenderer.RESET)).widget();

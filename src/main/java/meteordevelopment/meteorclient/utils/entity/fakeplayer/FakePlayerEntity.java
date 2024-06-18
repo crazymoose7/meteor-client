@@ -47,7 +47,7 @@ public class FakePlayerEntity extends OtherClientPlayerEntity {
             setAbsorptionAmount(health - 20);
         }
 
-        if (copyInv) getInventory().clone(player.getInventory());
+        if (copyInv) getInventory().clone(player.inventory);
     }
 
     public void spawn() {

@@ -119,7 +119,7 @@ public class TunnelESP extends Module {
             for (int z = startZ; z <= endZ; z++) {
                 int height = chunk.getHeightmap(Heightmap.Type.WORLD_SURFACE).get(x - startX, z - startZ);
 
-                for (short y = (short) mc.world.getBottomY(); y < height; y++) {
+                for (short y = (short) 0; y < height; y++) {
                     if (isTunnel(ctx, x, y, z)) set.add(pack(x - startX, y, z - startZ));
                 }
             }

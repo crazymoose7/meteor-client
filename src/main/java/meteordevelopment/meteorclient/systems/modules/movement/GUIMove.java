@@ -22,7 +22,6 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.ingame.*;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.util.math.MathHelper;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -48,7 +47,7 @@ public class GUIMove extends Module {
         .description("Allows you to jump while in GUIs.")
         .defaultValue(true)
         .onChanged(aBoolean -> {
-            if (isActive() && !aBoolean) set(mc.options.jumpKey, false);
+            if (isActive() && !aBoolean) set(mc.options.keyJump, false);
         })
         .build()
     );
@@ -58,7 +57,7 @@ public class GUIMove extends Module {
         .description("Allows you to sneak while in GUIs.")
         .defaultValue(true)
         .onChanged(aBoolean -> {
-            if (isActive() && !aBoolean) set(mc.options.sneakKey, false);
+            if (isActive() && !aBoolean) set(mc.options.keySneak, false);
         })
         .build()
     );
@@ -68,7 +67,7 @@ public class GUIMove extends Module {
         .description("Allows you to sprint while in GUIs.")
         .defaultValue(true)
         .onChanged(aBoolean -> {
-            if (isActive() && !aBoolean) set(mc.options.sprintKey, false);
+            if (isActive() && !aBoolean) set(mc.options.keySprint, false);
         })
         .build()
     );
@@ -87,25 +86,25 @@ public class GUIMove extends Module {
         .min(0)
         .build()
     );
-    
+
     public GUIMove() {
         super(Categories.Movement, "gui-move", "Allows you to perform various actions while in GUIs.");
     }
 
     @Override
     public void onDeactivate() {
-        set(mc.options.forwardKey, false);
-        set(mc.options.backKey, false);
-        set(mc.options.leftKey, false);
-        set(mc.options.rightKey, false);
+        set(mc.options.keyForward, false);
+        set(mc.options.keyBack, false);
+        set(mc.options.keyLeft, false);
+        set(mc.options.keyRight, false);
 
-        if (jump.get()) set(mc.options.jumpKey, false);
-        if (sneak.get()) set(mc.options.sneakKey, false);
-        if (sprint.get()) set(mc.options.sprintKey, false);
+        if (jump.get()) set(mc.options.keyJump, false);
+        if (sneak.get()) set(mc.options.keySneak, false);
+        if (sprint.get()) set(mc.options.keySprint, false);
     }
 
     public boolean disableSpace() {
-        return isActive() && jump.get() && mc.options.jumpKey.isDefault();
+        return isActive() && jump.get() && mc.options.keyJump.isDefault();
     }
     public boolean disableArrows() {
         return isActive() && arrowsRotate.get();
@@ -117,14 +116,14 @@ public class GUIMove extends Module {
         if (screens.get() == Screens.GUI && !(mc.currentScreen instanceof WidgetScreen)) return;
         if (screens.get() == Screens.Inventory && mc.currentScreen instanceof WidgetScreen) return;
 
-        set(mc.options.forwardKey, Input.isPressed(mc.options.forwardKey));
-        set(mc.options.backKey, Input.isPressed(mc.options.backKey));
-        set(mc.options.leftKey, Input.isPressed(mc.options.leftKey));
-        set(mc.options.rightKey, Input.isPressed(mc.options.rightKey));
+        set(mc.options.keyForward, Input.isPressed(mc.options.keyForward));
+        set(mc.options.keyBack, Input.isPressed(mc.options.keyBack));
+        set(mc.options.keyLeft, Input.isPressed(mc.options.keyLeft));
+        set(mc.options.keyRight, Input.isPressed(mc.options.keyRight));
 
-        if (jump.get()) set(mc.options.jumpKey, Input.isPressed(mc.options.jumpKey));
-        if (sneak.get()) set(mc.options.sneakKey, Input.isPressed(mc.options.sneakKey));
-        if (sprint.get()) set(mc.options.sprintKey, Input.isPressed(mc.options.sprintKey));
+        if (jump.get()) set(mc.options.keyJump, Input.isPressed(mc.options.keyJump));
+        if (sneak.get()) set(mc.options.keySneak, Input.isPressed(mc.options.keySneak));
+        if (sprint.get()) set(mc.options.keySprint, Input.isPressed(mc.options.keySprint));
 
     }
 
@@ -137,8 +136,8 @@ public class GUIMove extends Module {
         float rotationDelta = Math.min((float) (rotateSpeed.get() * event.frameTime * 20f), 100);
 
         if (arrowsRotate.get()) {
-            float yaw = mc.player.getYaw();
-            float pitch = mc.player.getPitch();
+            float yaw = mc.player.getYaw(mc.getTickDelta());
+            float pitch = mc.player.getPitch(mc.getTickDelta());
 
             if (Input.isKeyPressed(GLFW_KEY_LEFT)) yaw -= rotationDelta;
             if (Input.isKeyPressed(GLFW_KEY_RIGHT)) yaw += rotationDelta;
@@ -148,8 +147,8 @@ public class GUIMove extends Module {
 
             pitch = MathHelper.clamp(pitch, -90, 90);
 
-            mc.player.setYaw(yaw);
-            mc.player.setPitch(pitch);
+            mc.player.yaw = yaw;
+            mc.player.pitch = pitch;
         }
     }
 

@@ -63,8 +63,8 @@ public class AntiAFK extends Module {
             direction = false;
 
             if (isActive()) {
-                mc.options.leftKey.setPressed(false);
-                mc.options.rightKey.setPressed(false);
+                mc.options.keyLeft.setPressed(false);
+                mc.options.keyRight.setPressed(false);
             }
         })
         .build()
@@ -161,15 +161,15 @@ public class AntiAFK extends Module {
             sendMessages.set(false);
         }
 
-        prevYaw = mc.player.getYaw();
+        prevYaw = mc.player.getYaw(mc.getTickDelta());
         messageTimer = delay.get() * 20;
     }
 
     @Override
     public void onDeactivate() {
         if (strafe.get()) {
-            mc.options.leftKey.setPressed(false);
-            mc.options.rightKey.setPressed(false);
+            mc.options.keyLeft.setPressed(false);
+            mc.options.keyRight.setPressed(false);
         }
     }
 
@@ -179,8 +179,8 @@ public class AntiAFK extends Module {
 
         // Jump
         if (jump.get()) {
-            if (mc.options.jumpKey.isPressed()) mc.options.jumpKey.setPressed(false);
-            else if (random.nextInt(99) == 0) mc.options.jumpKey.setPressed(true);
+            if (mc.options.keyJump.isPressed()) mc.options.keyJump.setPressed(false);
+            else if (random.nextInt(99) == 0) mc.options.keyJump.setPressed(true);
         }
 
         // Swing
@@ -191,15 +191,15 @@ public class AntiAFK extends Module {
         // Sneak
         if (sneak.get()) {
             if (sneakTimer++ >= sneakTime.get()) {
-                mc.options.sneakKey.setPressed(false);
+                mc.options.keySneak.setPressed(false);
                 if (random.nextInt(99) == 0) sneakTimer = 0; // Sneak after ~5 seconds
-            } else mc.options.sneakKey.setPressed(true);
+            } else mc.options.keySneak.setPressed(true);
         }
 
         // Strafe
         if (strafe.get() && strafeTimer-- <= 0) {
-            mc.options.leftKey.setPressed(!direction);
-            mc.options.rightKey.setPressed(direction);
+            mc.options.keyLeft.setPressed(!direction);
+            mc.options.keyRight.setPressed(direction);
             direction = !direction;
             strafeTimer = 20;
         }
@@ -208,7 +208,7 @@ public class AntiAFK extends Module {
         if (spin.get()) {
             prevYaw += spinSpeed.get();
             switch (spinMode.get()) {
-                case Client -> mc.player.setYaw(prevYaw);
+                case Client -> mc.player.yaw = prevYaw;
                 case Server -> Rotations.rotate(prevYaw, pitch.get(), -15);
             }
         }

@@ -180,7 +180,7 @@ public class ArmorHud extends HudElement {
             };
         }
 
-        return mc.player.getInventory().getArmorStack(i);
+        return mc.player.inventory.getArmorStack(i);
     }
 
     public enum Durability {

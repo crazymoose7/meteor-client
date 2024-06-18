@@ -62,21 +62,21 @@ public class AutoClicker extends Module {
     public void onActivate() {
         rightClickTimer = 0;
         leftClickTimer = 0;
-        mc.options.attackKey.setPressed(false);
-        mc.options.useKey.setPressed(false);
+        mc.options.keyAttack.setPressed(false);
+        mc.options.keyUse.setPressed(false);
     }
 
     @Override
     public void onDeactivate() {
-        mc.options.attackKey.setPressed(false);
-        mc.options.useKey.setPressed(false);
+        mc.options.keyAttack.setPressed(false);
+        mc.options.keyUse.setPressed(false);
     }
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
         switch (leftClickMode.get()) {
             case Disabled -> {}
-            case Hold -> mc.options.attackKey.setPressed(true);
+            case Hold -> mc.options.keyAttack.setPressed(true);
             case Press -> {
                 leftClickTimer++;
                 if (leftClickTimer > leftClickDelay.get()) {
@@ -87,7 +87,7 @@ public class AutoClicker extends Module {
         }
         switch (rightClickMode.get()) {
             case Disabled -> {}
-            case Hold -> mc.options.useKey.setPressed(true);
+            case Hold -> mc.options.keyUse.setPressed(true);
             case Press -> {
                 rightClickTimer++;
                 if (rightClickTimer > rightClickDelay.get()) {

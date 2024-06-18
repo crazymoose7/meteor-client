@@ -31,7 +31,7 @@ import net.minecraft.item.BedItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4fStack;
 
@@ -358,7 +358,7 @@ public class CombatHud extends HudElement {
                 Map<Enchantment, Integer> enchantmentsToShow = new HashMap<>();
 
                 for (Enchantment enchantment : displayedEnchantments.get()) {
-                    if (enchantments.getEnchantments().contains(Registries.ENCHANTMENT.getEntry(enchantment))) {
+                    if (enchantments.getEnchantments().contains(Registry.ENCHANTMENT.getEntry(enchantment))) {
                         enchantmentsToShow.put(enchantment, enchantments.getLevel(enchantment));
                     }
                 }
@@ -444,7 +444,7 @@ public class CombatHud extends HudElement {
     public static List<Enchantment> getDefaultEnchantments() {
         List<Enchantment> enchantments = new ArrayList<>();
 
-        for (Enchantment enchantment : Registries.ENCHANTMENT) {
+        for (Enchantment enchantment : Registry.ENCHANTMENT) {
             enchantments.add(enchantment);
         }
 

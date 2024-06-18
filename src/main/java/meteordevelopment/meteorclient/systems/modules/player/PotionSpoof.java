@@ -15,7 +15,7 @@ import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 
 import java.util.List;
 
@@ -42,10 +42,10 @@ public class PotionSpoof extends Module {
         .name("blocked-potions")
         .description("Potions to block.")
         .defaultValue(
-            LEVITATION.value(),
-            JUMP_BOOST.value(),
-            SLOW_FALLING.value(),
-            DOLPHINS_GRACE.value()
+            LEVITATION,
+            JUMP_BOOST,
+            SLOW_FALLING,
+            DOLPHINS_GRACE
         )
         .build()
     );
@@ -60,7 +60,7 @@ public class PotionSpoof extends Module {
 
         for (Reference2IntMap.Entry<StatusEffect> entry : spoofPotions.get().reference2IntEntrySet()) {
             if (entry.getIntValue() <= 0) continue;
-            if (mc.player.hasStatusEffect(Registries.STATUS_EFFECT.getEntry(entry.getKey()))) mc.player.removeStatusEffect(Registries.STATUS_EFFECT.getEntry(entry.getKey()));
+            if (mc.player.hasStatusEffect(Registry.STATUS_EFFECT.getEntry(entry.getKey()))) mc.player.removeStatusEffect(Registry.STATUS_EFFECT.getEntry(entry.getKey()));
         }
     }
 
@@ -70,12 +70,12 @@ public class PotionSpoof extends Module {
             int level = entry.getIntValue();
             if (level <= 0) continue;
 
-            if (mc.player.hasStatusEffect(Registries.STATUS_EFFECT.getEntry(entry.getKey()))) {
-                StatusEffectInstance instance = mc.player.getStatusEffect(Registries.STATUS_EFFECT.getEntry(entry.getKey()));
+            if (mc.player.hasStatusEffect(Registry.STATUS_EFFECT.getEntry(entry.getKey()))) {
+                StatusEffectInstance instance = mc.player.getStatusEffect(Registry.STATUS_EFFECT.getEntry(entry.getKey()));
                 ((StatusEffectInstanceAccessor) instance).setAmplifier(level - 1);
                 if (instance.getDuration() < 20) ((StatusEffectInstanceAccessor) instance).setDuration(20);
             } else {
-                mc.player.addStatusEffect(new StatusEffectInstance(Registries.STATUS_EFFECT.getEntry(entry.getKey()), 20, level - 1));
+                mc.player.addStatusEffect(new StatusEffectInstance(Registry.STATUS_EFFECT.getEntry(entry.getKey()), 20, level - 1));
             }
         }
     }

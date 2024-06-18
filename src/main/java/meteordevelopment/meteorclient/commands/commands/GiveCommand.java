@@ -31,7 +31,7 @@ public class GiveCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(argument("item", ItemStackArgumentType.itemStack(REGISTRY_ACCESS)).executes(context -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
 
             ItemStack item = ItemStackArgumentType.getItemStackArgument(context, "item").createStack(1, false);
             FindItemResult fir = InvUtils.find(ItemStack::isEmpty, 0, 8);
@@ -41,7 +41,7 @@ public class GiveCommand extends Command {
 
             return SINGLE_SUCCESS;
         }).then(argument("number", IntegerArgumentType.integer()).executes(context -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
 
             ItemStack item = ItemStackArgumentType.getItemStackArgument(context, "item").createStack(IntegerArgumentType.getInteger(context, "number"), false);
             FindItemResult fir = InvUtils.find(ItemStack::isEmpty, 0, 8);

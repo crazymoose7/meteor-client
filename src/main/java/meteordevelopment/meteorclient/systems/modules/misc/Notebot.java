@@ -451,7 +451,7 @@ public class Notebot extends Module {
 
             if (song.getNotesMap().containsKey(currentTick)) {
                 if (playingMode == PlayingMode.Preview) onTickPreview();
-                else if (mc.player.getAbilities().creativeMode) {
+                else if (mc.player.abilities.creativeMode) {
                     error("You need to be in survival mode.");
                     stop();
                     return;
@@ -563,7 +563,7 @@ public class Notebot extends Module {
 
         // Open Song GUI
         WButton openSongGUI = table.add(theme.button("Open Song GUI")).expandX().minWidth(100).widget();
-        openSongGUI.action = () -> mc.setScreen(theme.notebotSongs());
+        openSongGUI.action = () -> mc.openScreen(theme.notebotSongs());
 
         table.row();
 
@@ -614,7 +614,7 @@ public class Notebot extends Module {
      */
     public void play() {
         if (mc.player == null) return;
-        if (mc.player.getAbilities().creativeMode && playingMode != PlayingMode.Preview) {
+        if (mc.player.abilities.creativeMode && playingMode != PlayingMode.Preview) {
             error("You need to be in survival mode.");
         } else if (stage == Stage.Playing) {
             isPlaying = true;

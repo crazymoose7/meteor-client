@@ -29,10 +29,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -276,7 +273,7 @@ public class BetterChat extends Module {
         }
 
         if (timestamps.get()) {
-            Text timestamp = Text.literal("<" + dateFormat.format(new Date()) + "> ").formatted(Formatting.GRAY);
+            Text timestamp = new LiteralText("<" + dateFormat.format(new Date()) + "> ").formatted(Formatting.GRAY);
 
             message = Text.empty().append(timestamp).append(message);
         }
@@ -321,7 +318,7 @@ public class BetterChat extends Module {
         }
 
         if (returnText != null) {
-            List<ChatHudLine.Visible> visible = ((ChatHudAccessor) mc.inGameHud.getChatHud()).getVisibleMessages();
+            List<ChatHudLine<OrderedText>> visible = ((ChatHudAccessor) mc.inGameHud.getChatHud()).getVisibleMessages();
 
             int start = -1;
             for (int i = 0; i < messageIndex; i++) {
@@ -352,7 +349,7 @@ public class BetterChat extends Module {
         message = getPrefix() + message + getSuffix();
 
         if (coordsProtection.get() && containsCoordinates(message)) {
-            MutableText warningMessage = Text.literal("It looks like there are coordinates in your message! ");
+            BaseText warningMessage = new LiteralText("It looks like there are coordinates in your message! ");
 
             MutableText sendButton = getSendButton(message);
             warningMessage.append(sendButton);
@@ -526,14 +523,14 @@ public class BetterChat extends Module {
     }
 
     private MutableText getSendButton(String message) {
-        MutableText sendButton = Text.literal("[SEND ANYWAY]");
-        MutableText hintBaseText = Text.literal("");
+        MutableText sendButton = new LiteralText("[SEND ANYWAY]");
+        MutableText hintBaseText = new LiteralText("");
 
-        MutableText hintMsg = Text.literal("Send your message to the global chat even if there are coordinates:");
+        MutableText hintMsg = new LiteralText("Send your message to the global chat even if there are coordinates:");
         hintMsg.setStyle(hintBaseText.getStyle().withFormatting(Formatting.GRAY));
         hintBaseText.append(hintMsg);
 
-        hintBaseText.append(Text.literal('\n' + message));
+        hintBaseText.append(new LiteralText('\n' + message));
 
         sendButton.setStyle(sendButton.getStyle()
             .withFormatting(Formatting.DARK_RED)

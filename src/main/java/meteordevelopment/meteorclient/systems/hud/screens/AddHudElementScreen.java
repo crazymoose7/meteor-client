@@ -116,7 +116,7 @@ public class AddHudElementScreen extends WindowScreen {
                 HudElementPresetsScreen screen = new HudElementPresetsScreen(theme, info, x, y);
                 screen.parent = parent;
 
-                mc.setScreen(screen);
+                mc.openScreen(screen);
             }
             else {
                 Hud.get().add(info, x, y);

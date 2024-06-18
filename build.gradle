@@ -35,6 +35,9 @@ repositories {
         name = "ViaVersion"
         url = "https://repo.viaversion.com"
     }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
     mavenCentral()
 }
 
@@ -78,6 +81,8 @@ dependencies {
 
     // Launch sub project
     shadow project(":launch")
+
+    implementation "org.joml:joml:1.10.5"
 }
 
 loom {

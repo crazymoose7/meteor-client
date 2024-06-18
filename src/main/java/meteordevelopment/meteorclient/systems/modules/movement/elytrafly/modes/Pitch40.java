@@ -42,12 +42,12 @@ public class Pitch40 extends ElytraFlightMode {
         }
 
         // Pitch upwards
-        if (!pitchingDown && mc.player.getPitch() > -40) {
+        if (!pitchingDown && mc.player.getPitch(mc.getTickDelta()) > -40) {
             pitch -= elytraFly.pitch40rotationSpeed.get();
 
             if (pitch < -40) pitch = -40;
         // Pitch downwards
-        } else if (pitchingDown && mc.player.getPitch() < 40) {
+        } else if (pitchingDown && mc.player.getPitch(mc.getTickDelta()) < 40) {
             pitch += elytraFly.pitch40rotationSpeed.get();
 
             if (pitch > 40) pitch = 40;

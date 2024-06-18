@@ -52,14 +52,14 @@ public class AutoWeapon extends Module {
     }
 
     private int getBestWeapon(EntityType<?> group) {
-        int slotS = mc.player.getInventory().selectedSlot;
-        int slotA = mc.player.getInventory().selectedSlot;
+        int slotS = mc.player.inventory.selectedSlot;
+        int slotA = mc.player.inventory.selectedSlot;
         double damageS = 0;
         double damageA = 0;
         double currentDamageS;
         double currentDamageA;
         for (int i = 0; i < 9; i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (stack.getItem() instanceof SwordItem swordItem
                 && (!antiBreak.get() || (stack.getMaxDamage() - stack.getDamage()) > 10)) {
                 currentDamageS = swordItem.getMaterial().getAttackDamage() + EnchantmentHelper.getAttackDamage(stack, group) + 2;
@@ -80,7 +80,7 @@ public class AutoWeapon extends Module {
         else if (weapon.get() == Weapon.Axe && threshold.get() > damageS - damageA) return slotA;
         else if (weapon.get() == Weapon.Sword && threshold.get() < damageA - damageS) return slotA;
         else if (weapon.get() == Weapon.Axe && threshold.get() < damageS - damageA) return slotS;
-        else return mc.player.getInventory().selectedSlot;
+        else return mc.player.inventory.selectedSlot;
     }
 
     public enum Weapon {

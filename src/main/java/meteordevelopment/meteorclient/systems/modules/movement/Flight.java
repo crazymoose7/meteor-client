@@ -97,9 +97,9 @@ public class Flight extends Module {
     @Override
     public void onActivate() {
         if (mode.get() == Mode.Abilities && !mc.player.isSpectator()) {
-            mc.player.getAbilities().flying = true;
-            if (mc.player.getAbilities().creativeMode) return;
-            mc.player.getAbilities().allowFlying = true;
+            mc.player.abilities.flying = true;
+            if (mc.player.abilities.creativeMode) return;
+            mc.player.abilities.allowFlying = true;
         }
     }
 
@@ -112,9 +112,9 @@ public class Flight extends Module {
 
     @EventHandler
     private void onPreTick(TickEvent.Pre event) {
-        float currentYaw = mc.player.getYaw();
+        float currentYaw = mc.player.getYaw(mc.getTickDelta());
         if (mc.player.fallDistance >= 3f && currentYaw == lastYaw && mc.player.getVelocity().length() < 0.003d) {
-            mc.player.setYaw(currentYaw + (flip ? 1 : -1));
+            mc.player.yaw = currentYaw + (flip ? 1 : -1);
             flip = !flip;
         }
         lastYaw = currentYaw;
@@ -150,16 +150,16 @@ public class Flight extends Module {
             if (shouldReturn) return;
         }
 
-        if (mc.player.getYaw() != lastYaw) mc.player.setYaw(lastYaw);
+        if (mc.player.getYaw(mc.getTickDelta()) != lastYaw) mc.player.yaw = lastYaw;
 
         switch (mode.get()) {
             case Velocity -> {
-                mc.player.getAbilities().flying = false;
+                mc.player.abilities.flying = false;
                 mc.player.setVelocity(0, 0, 0);
                 Vec3d playerVelocity = mc.player.getVelocity();
-                if (mc.options.jumpKey.isPressed())
+                if (mc.options.keyJump.isPressed())
                     playerVelocity = playerVelocity.add(0, speed.get() * (verticalSpeedMatch.get() ? 10f : 5f), 0);
-                if (mc.options.sneakKey.isPressed())
+                if (mc.options.keySneak.isPressed())
                     playerVelocity = playerVelocity.subtract(0, speed.get() * (verticalSpeedMatch.get() ? 10f : 5f), 0);
                 mc.player.setVelocity(playerVelocity);
                 if (noSneak.get()) {
@@ -168,10 +168,10 @@ public class Flight extends Module {
             }
             case Abilities -> {
                 if (mc.player.isSpectator()) return;
-                mc.player.getAbilities().setFlySpeed(speed.get().floatValue());
-                mc.player.getAbilities().flying = true;
-                if (mc.player.getAbilities().creativeMode) return;
-                mc.player.getAbilities().allowFlying = true;
+                mc.player.abilities.setFlySpeed(speed.get().floatValue());
+                mc.player.abilities.flying = true;
+                if (mc.player.abilities.creativeMode) return;
+                mc.player.abilities.allowFlying = true;
             }
         }
     }
@@ -203,7 +203,7 @@ public class Flight extends Module {
             // make it a Full packet or a PositionAndOnGround packet respectively, so it has a Y value
             PlayerMoveC2SPacket fullPacket;
             if (packet.changesLook()) {
-                fullPacket = new PlayerMoveC2SPacket.Full(
+                fullPacket = new PlayerMoveC2SPacket.Both(
                     mc.player.getX(),
                     mc.player.getY(),
                     mc.player.getZ(),
@@ -212,7 +212,7 @@ public class Flight extends Module {
                     packet.isOnGround()
                 );
             } else {
-                fullPacket = new PlayerMoveC2SPacket.PositionAndOnGround(
+                fullPacket = new PlayerMoveC2SPacket.PositionOnly(
                     mc.player.getX(),
                     mc.player.getY(),
                     mc.player.getZ(),
@@ -232,10 +232,10 @@ public class Flight extends Module {
     }
 
     private void abilitiesOff() {
-        mc.player.getAbilities().flying = false;
-        mc.player.getAbilities().setFlySpeed(0.05f);
-        if (mc.player.getAbilities().creativeMode) return;
-        mc.player.getAbilities().allowFlying = false;
+        mc.player.abilities.flying = false;
+        mc.player.abilities.setFlySpeed(0.05f);
+        if (mc.player.abilities.creativeMode) return;
+        mc.player.abilities.allowFlying = false;
     }
 
     // Copied from ServerPlayNetworkHandler#isEntityOnAir

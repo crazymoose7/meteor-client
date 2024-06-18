@@ -111,7 +111,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
             }
             else if (itemStack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT) != null || itemStack.get(DataComponentTypes.WRITABLE_BOOK_CONTENT) != null) {
                 close();
-                mc.setScreen(new BookScreen(BookScreen.Contents.create(itemStack)));
+                mc.openScreen(new BookScreen(BookScreen.Contents.create(itemStack)));
                 cir.setReturnValue(true);
             }
         }

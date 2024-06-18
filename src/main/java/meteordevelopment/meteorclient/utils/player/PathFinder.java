@@ -60,7 +60,7 @@ public class PathFinder {
         Vec3d nextPos = new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ());
         double multiplier = 1.0;
         while (nextPos == mc.player.getPos()) {
-            nextPos = new Vec3d((int) (mc.player.getX() + multiplier * Math.cos(Math.toRadians(mc.player.getYaw()))), (int) (mc.player.getY()), (int) (mc.player.getZ() + multiplier * Math.sin(Math.toRadians(mc.player.getYaw()))));
+            nextPos = new Vec3d((int) (mc.player.getX() + multiplier * Math.cos(Math.toRadians(mc.player.getYaw(mc.getTickDelta())))), (int) (mc.player.getY()), (int) (mc.player.getZ() + multiplier * Math.sin(Math.toRadians(mc.player.getYaw(mc.getTickDelta())))));
             multiplier += .1;
         }
         return nextPos;
@@ -140,11 +140,11 @@ public class PathFinder {
                 if (mc.player.getPos().squaredDistanceTo(new Vec3d(currentPathBlock.blockPos.getX(), currentPathBlock.blockPos.getY(), currentPathBlock.blockPos.getZ())) < .01)
                     currentPathBlock = getNextPathBlock();
                 lookAtDestination(currentPathBlock);
-                if (!mc.options.forwardKey.isPressed())
-                    mc.options.forwardKey.setPressed(true);
+                if (!mc.options.keyForward.isPressed())
+                    mc.options.keyForward.setPressed(true);
             } else {
-                if (mc.options.forwardKey.isPressed())
-                    mc.options.forwardKey.setPressed(false);
+                if (mc.options.keyForward.isPressed())
+                    mc.options.keyForward.setPressed(false);
                 path.clear();
                 currentPathBlock = null;
             }
@@ -160,7 +160,7 @@ public class PathFinder {
     public void disable() {
         target = null;
         path.clear();
-        if (mc.options.forwardKey.isPressed()) mc.options.forwardKey.setPressed(false);
+        if (mc.options.keyForward.isPressed()) mc.options.keyForward.setPressed(false);
         MeteorClient.EVENT_BUS.unsubscribe(this);
     }
 

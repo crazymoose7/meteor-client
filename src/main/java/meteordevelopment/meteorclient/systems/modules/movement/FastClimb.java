@@ -16,8 +16,6 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.world.Timer;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.PowderSnowBlock;
 import net.minecraft.util.math.Vec3d;
 
 public class FastClimb extends Module {
@@ -82,6 +80,6 @@ public class FastClimb extends Module {
     }
 
     private boolean climbing() {
-        return (mc.player.horizontalCollision || ((LivingEntityAccessor) mc.player).isJumping()) && (mc.player.isClimbing() || mc.player.getBlockStateAtPos().isOf(Blocks.POWDER_SNOW) && PowderSnowBlock.canWalkOnPowderSnow(mc.player));
+        return (mc.player.horizontalCollision || ((LivingEntityAccessor) mc.player).isJumping()) && (mc.player.isClimbing());
     }
 }

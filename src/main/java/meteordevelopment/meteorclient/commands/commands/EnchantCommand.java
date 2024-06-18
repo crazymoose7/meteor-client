@@ -14,22 +14,16 @@ import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.text.Text;
 
 import java.util.function.ToIntFunction;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
-
 public class EnchantCommand extends Command {
-    private static final SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(Text.literal("You must be in creative mode to use this."));
-    private static final SimpleCommandExceptionType NOT_HOLDING_ITEM = new SimpleCommandExceptionType(Text.literal("You need to hold some item to enchant."));
+    private static final SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(Text.of("You must be in creative mode to use this."));
+    private static final SimpleCommandExceptionType NOT_HOLDING_ITEM = new SimpleCommandExceptionType(Text.of("You need to hold some item to enchant."));
 
     public EnchantCommand() {
         super("enchant", "Enchants the item in your hand. REQUIRES Creative mode.");
@@ -78,10 +72,10 @@ public class EnchantCommand extends Command {
             return SINGLE_SUCCESS;
         }));
 
-        builder.then(literal("remove").then(argument("enchantment", RegistryEntryReferenceArgumentType.registryEntry(REGISTRY_ACCESS, RegistryKeys.ENCHANTMENT)).executes(context -> {
+        builder.then(literal("remove").then(argument("enchantment", ItemEnchantmentArgumentType.itemEnchantment()).executes(context -> {
             ItemStack itemStack = tryGetItemStack();
-            RegistryEntry.Reference<Enchantment> enchantment = context.getArgument("enchantment", RegistryEntry.Reference.class);
-            Utils.removeEnchantment(itemStack, enchantment.value());
+            Enchantment enchantment = context.getArgument("enchantment", Enchantment.class);
+            Utils.removeEnchantment(itemStack, enchantment);
 
             syncItem();
             return SINGLE_SUCCESS;
@@ -100,7 +94,7 @@ public class EnchantCommand extends Command {
     private void all(boolean onlyPossible, ToIntFunction<Enchantment> level) throws CommandSyntaxException {
         ItemStack itemStack = tryGetItemStack();
 
-        for (Enchantment enchantment : Registries.ENCHANTMENT) {
+        for (Enchantment enchantment : Registry.ENCHANTMENT) {
             if (!onlyPossible || enchantment.isAcceptableItem(itemStack)) {
                 Utils.addEnchantment(itemStack, enchantment, level.applyAsInt(enchantment));
             }
@@ -110,8 +104,8 @@ public class EnchantCommand extends Command {
     }
 
     private void syncItem() {
-        mc.setScreen(new InventoryScreen(mc.player));
-        mc.setScreen(null);
+        mc.openScreen(new InventoryScreen(mc.player));
+        mc.openScreen(null);
     }
 
     private ItemStack tryGetItemStack() throws CommandSyntaxException {

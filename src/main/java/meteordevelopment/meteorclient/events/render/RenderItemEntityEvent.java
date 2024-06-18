@@ -10,7 +10,8 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.util.math.random.Random;
+
+import java.util.Random;
 
 public class RenderItemEntityEvent extends Cancellable {
     private static final RenderItemEntityEvent INSTANCE = new RenderItemEntityEvent();

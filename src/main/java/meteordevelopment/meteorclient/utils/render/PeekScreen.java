@@ -30,7 +30,7 @@ public class PeekScreen extends ShulkerBoxScreen {
     private final ItemStack storageBlock;
 
     public PeekScreen(ItemStack storageBlock, ItemStack[] contents) {
-        super(new ShulkerBoxScreenHandler(0, mc.player.getInventory(), new SimpleInventory(contents)), mc.player.getInventory(), storageBlock.getName());
+        super(new ShulkerBoxScreenHandler(0, mc.player.inventory, new SimpleInventory(contents)), mc.player.inventory, storageBlock.getName());
         this.contents = contents;
         this.storageBlock = storageBlock;
     }
@@ -46,7 +46,7 @@ public class PeekScreen extends ShulkerBoxScreen {
             }
             else if (itemStack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT) != null || itemStack.get(DataComponentTypes.WRITABLE_BOOK_CONTENT) != null) {
                 close();
-                mc.setScreen(new BookScreen(BookScreen.Contents.create(itemStack)));
+                mc.openScreen(new BookScreen(BookScreen.Contents.create(itemStack)));
                 return true;
             }
         }

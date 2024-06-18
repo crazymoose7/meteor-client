@@ -24,7 +24,6 @@ import meteordevelopment.meteorclient.systems.modules.render.Freecam;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ElytraItem;
 import net.minecraft.item.Items;
@@ -265,8 +264,8 @@ public class ElytraFly extends Module {
         .name("replace-durability")
         .description("The durability threshold your elytra will be replaced at.")
         .defaultValue(2)
-        .range(1, Items.ELYTRA.getComponents().get(DataComponentTypes.MAX_DAMAGE) - 1)
-        .sliderRange(1, Items.ELYTRA.getComponents().get(DataComponentTypes.MAX_DAMAGE) - 1)
+        .range(1, Items.ELYTRA.getMaxDamage() - 1)
+        .sliderRange(1, Items.ELYTRA.getMaxDamage() - 1)
         .visible(replace::get)
         .build()
     );
@@ -350,7 +349,7 @@ public class ElytraFly extends Module {
 
     @Override
     public void onDeactivate() {
-        if (autoPilot.get()) mc.options.forwardKey.setPressed(false);
+        if (autoPilot.get()) mc.options.keyForward.setPressed(false);
 
         if (chestSwap.get() == ChestSwapMode.Always && mc.player.getEquippedStack(EquipmentSlot.CHEST).getItem() == Items.ELYTRA) {
             Modules.get().get(ChestSwap.class).swap();
@@ -377,8 +376,8 @@ public class ElytraFly extends Module {
                 currentMode.velX = 0;
                 currentMode.velY = event.movement.y;
                 currentMode.velZ = 0;
-                currentMode.forward = Vec3d.fromPolar(0, mc.player.getYaw()).multiply(0.1);
-                currentMode.right = Vec3d.fromPolar(0, mc.player.getYaw() + 90).multiply(0.1);
+                currentMode.forward = Vec3d.fromPolar(0, mc.player.getYaw(mc.getTickDelta())).multiply(0.1);
+                currentMode.right = Vec3d.fromPolar(0, mc.player.getYaw(mc.getTickDelta()) + 90).multiply(0.1);
 
                 // Handle stopInWater
                 if (mc.player.isTouchingWater() && stopInWater.get()) {
@@ -407,7 +406,7 @@ public class ElytraFly extends Module {
             if (flightMode.get() != ElytraFlightModes.Bounce) currentMode.onPlayerMove();
         } else {
             if (currentMode.lastForwardPressed && flightMode.get() != ElytraFlightModes.Bounce) {
-                mc.options.forwardKey.setPressed(false);
+                mc.options.keyForward.setPressed(false);
                 currentMode.lastForwardPressed = false;
             }
         }
@@ -433,13 +432,13 @@ public class ElytraFly extends Module {
             if (!underCollidable && under2Collidable) {
                 ((IVec3d)event.movement).set(event.movement.x, -0.1f, event.movement.z);
 
-                mc.player.setPitch(MathHelper.clamp(mc.player.getPitch(0), -50.f, 20.f)); // clamp between -50 and 20 (>= 30 will pop you off, but lag makes that threshold lower)
+                mc.player.pitch = MathHelper.clamp(mc.player.getPitch(0), -50.f, 20.f); // clamp between -50 and 20 (>= 30 will pop you off, but lag makes that threshold lower)
             }
 
             if (underCollidable) {
                 ((IVec3d)event.movement).set(event.movement.x, -0.03f, event.movement.z);
 
-                mc.player.setPitch(MathHelper.clamp(mc.player.getPitch(0), -50.f, 20.f));
+                mc.player.pitch = MathHelper.clamp(mc.player.getPitch(0), -50.f, 20.f);
 
                 if (mc.player.getPos().y <= mc.player.getBlockPos().down().getY() + 1.34f) {
                     ((IVec3d)event.movement).set(event.movement.x, 0, event.movement.z);
@@ -515,7 +514,7 @@ public class ElytraFly extends Module {
         private void onInstadropTick(TickEvent.Post event) {
             if (mc.player != null && mc.player.isFallFlying()) {
                 mc.player.setVelocity(0, 0, 0);
-                mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+                mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly());
             } else {
                 disableInstaDropListener();
             }

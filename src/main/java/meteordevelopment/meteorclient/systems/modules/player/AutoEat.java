@@ -123,7 +123,7 @@ public class AutoEat extends Module {
             // If we are eating check if we should still be eating
             if (shouldEat()) {
                 // Check if the item in current slot is not food
-                if (mc.player.getInventory().getStack(slot).get(DataComponentTypes.FOOD) != null) {
+                if (mc.player.inventory.getStack(slot).get(DataComponentTypes.FOOD) != null) {
                     // If not try finding a new slot
                     int slot = findSlot();
 
@@ -163,7 +163,7 @@ public class AutoEat extends Module {
     }
 
     private void startEating() {
-        prevSlot = mc.player.getInventory().selectedSlot;
+        prevSlot = mc.player.inventory.selectedSlot;
         eat();
 
         // Pause auras
@@ -219,7 +219,7 @@ public class AutoEat extends Module {
     }
 
     private void setPressed(boolean pressed) {
-        mc.options.useKey.setPressed(pressed);
+        mc.options.keyUse.setPressed(pressed);
     }
 
     private void changeSlot(int slot) {
@@ -240,7 +240,7 @@ public class AutoEat extends Module {
 
         for (int i = 0; i < 9; i++) {
             // Skip if item isn't food
-            Item item = mc.player.getInventory().getStack(i).getItem();
+            Item item = mc.player.inventory.getStack(i).getItem();
             FoodComponent foodComponent = item.getComponents().get(DataComponentTypes.FOOD);
             if (foodComponent == null) continue;
 

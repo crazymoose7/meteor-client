@@ -25,10 +25,10 @@ import net.minecraft.enchantment.ProtectionEnchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.state.property.Properties;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -184,7 +184,7 @@ public class Jesus extends Module {
             double swimHeight = mc.player.getSwimHeight();
 
             if (mc.player.isTouchingWater() && fluidHeight > swimHeight) {
-                ((LivingEntityAccessor) mc.player).swimUpwards(FluidTags.WATER);
+                ((LivingEntityAccessor) mc.player).swimUpwards (FluidTags.WATER);
             } else if (mc.player.isOnGround() && fluidHeight <= swimHeight && ((LivingEntityAccessor) mc.player).getJumpCooldown() == 0) {
                 mc.player.jump();
                 ((LivingEntityAccessor) mc.player).setJumpCooldown(10);
@@ -199,7 +199,7 @@ public class Jesus extends Module {
 
         // Move up in bubble columns
         if (bubbleColumn) {
-            if (mc.options.jumpKey.isPressed() && mc.player.getVelocity().getY() < 0.11) ((IVec3d) mc.player.getVelocity()).setY(0.11);
+            if (mc.options.keyJump.isPressed() && mc.player.getVelocity().getY() < 0.11) ((IVec3d) mc.player.getVelocity()).setY(0.11);
             return;
         }
 
@@ -254,7 +254,7 @@ public class Jesus extends Module {
         if (mc.player.isInLava() && !lavaShouldBeSolid()) return;
 
         // Check if packet contains a position
-        if (!(packet instanceof PlayerMoveC2SPacket.PositionAndOnGround || packet instanceof PlayerMoveC2SPacket.Full)) return;
+        if (!(packet instanceof PlayerMoveC2SPacket.PositionOnly || packet instanceof PlayerMoveC2SPacket.Both)) return;
 
         // Check inWater, fallDistance and if over liquid
         if (mc.player.isTouchingWater() || mc.player.isInLava() || mc.player.fallDistance > 3f || !isOverLiquid()) return;
@@ -279,11 +279,11 @@ public class Jesus extends Module {
 
         // Create new packet
         Packet<?> newPacket;
-        if (packet instanceof PlayerMoveC2SPacket.PositionAndOnGround) {
-            newPacket = new PlayerMoveC2SPacket.PositionAndOnGround(x, y, z, true);
+        if (packet instanceof PlayerMoveC2SPacket.PositionOnly) {
+            newPacket = new PlayerMoveC2SPacket.PositionOnly(x, y, z, true);
         }
         else {
-            newPacket = new PlayerMoveC2SPacket.Full(x, y, z, packet.getYaw(0), packet.getPitch(0), true);
+            newPacket = new PlayerMoveC2SPacket.Both(x, y, z, packet.getYaw(0), packet.getPitch(0), true);
         }
 
         // Send new packet
@@ -291,12 +291,12 @@ public class Jesus extends Module {
     }
 
     private boolean waterShouldBeSolid() {
-        if (EntityUtils.getGameMode(mc.player) == GameMode.SPECTATOR || mc.player.getAbilities().flying) return false;
+        if (EntityUtils.getGameMode(mc.player) == GameMode.SPECTATOR || mc.player.abilities.flying) return false;
 
 
         if (mc.player.getVehicle() != null) {
             EntityType<?> vehicle = mc.player.getVehicle().getType();
-            if (vehicle == EntityType.BOAT || vehicle == EntityType.CHEST_BOAT) return false;
+            if (vehicle == EntityType.BOAT) return false;
         }
 
         if (Modules.get().get(Flight.class).isActive()) return false;
@@ -304,18 +304,18 @@ public class Jesus extends Module {
 
         if (dipIfBurning.get() && mc.player.isOnFire()) return false;
 
-        if (dipOnSneakWater.get() && mc.options.sneakKey.isPressed()) return false;
+        if (dipOnSneakWater.get() && mc.options.keySneak.isPressed()) return false;
         if (dipOnFallWater.get() && mc.player.fallDistance > dipFallHeightWater.get()) return false;
 
         return waterMode.get() == Mode.Solid;
     }
 
     private boolean lavaShouldBeSolid() {
-        if (EntityUtils.getGameMode(mc.player) == GameMode.SPECTATOR || mc.player.getAbilities().flying) return false;
+        if (EntityUtils.getGameMode(mc.player) == GameMode.SPECTATOR || mc.player.abilities.flying) return false;
 
         if (!lavaIsSafe() && lavaMode.get() == Mode.Solid) return true;
 
-        if (dipOnSneakLava.get() && mc.options.sneakKey.isPressed()) return false;
+        if (dipOnSneakLava.get() && mc.options.keySneak.isPressed()) return false;
         if (dipOnFallLava.get() && mc.player.fallDistance > dipFallHeightLava.get()) return false;
 
         return lavaMode.get() == Mode.Solid;

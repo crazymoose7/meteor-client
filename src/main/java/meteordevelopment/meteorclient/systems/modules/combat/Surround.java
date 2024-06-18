@@ -29,7 +29,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -366,7 +365,7 @@ public class Surround extends Module {
             }
         }
 
-        boolean isThreat = mc.world.getBlockState(placePos).isReplaceable() || beingMined;
+        boolean isThreat = mc.world.getBlockState(placePos).getMaterial().isReplaceable() || beingMined;
 
         // If the block is air or is being mined, destroy nearby crystals to be safe
         if (protect.get() && !placed && isThreat) {

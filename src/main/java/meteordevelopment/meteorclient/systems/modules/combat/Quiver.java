@@ -41,7 +41,7 @@ public class Quiver extends Module {
     private final Setting<List<StatusEffect>> effects = sgGeneral.add(new StatusEffectListSetting.Builder()
         .name("effects")
         .description("Which effects to shoot you with.")
-        .defaultValue(StatusEffects.STRENGTH.value())
+        .defaultValue(StatusEffects.STRENGTH)
         .build()
     );
 
@@ -115,7 +115,7 @@ public class Quiver extends Module {
         bow = InvUtils.find(Items.BOW);
         if (!shouldQuiver()) return;
 
-        mc.options.useKey.setPressed(false);
+        mc.options.keyUse.setPressed(false);
         mc.interactionManager.stopUsingItem(mc.player);
 
         prevSlot = bow.slot();
@@ -124,16 +124,16 @@ public class Quiver extends Module {
 
         if (!bow.isMainHand()) {
             if (wasHotbar) InvUtils.swap(bow.slot(), true);
-            else InvUtils.move().from(mc.player.getInventory().selectedSlot).to(prevSlot);
+            else InvUtils.move().from(mc.player.inventory.selectedSlot).to(prevSlot);
         } else wasMainhand = true;
 
         arrowSlots.clear();
         List<StatusEffect> usedEffects = new ArrayList<>();
 
-        for (int i = mc.player.getInventory().size(); i > 0; i--) {
-            if (i == mc.player.getInventory().selectedSlot) continue;
+        for (int i = mc.player.inventory.size(); i > 0; i--) {
+            if (i == mc.player.inventory.selectedSlot) continue;
 
-            ItemStack item = mc.player.getInventory().getStack(i);
+            ItemStack item = mc.player.inventory.getStack(i);
 
             if (item.getItem() != Items.TIPPED_ARROW)  continue;
 
@@ -141,7 +141,7 @@ public class Quiver extends Module {
 
             if (!effects.hasNext()) continue;
 
-            StatusEffect effect = effects.next().getEffectType().value();
+            StatusEffect effect = effects.next().getEffectType();
 
             if (this.effects.get().contains(effect)
                 && !usedEffects.contains(effect)
@@ -156,7 +156,7 @@ public class Quiver extends Module {
     public void onDeactivate() {
         if (!wasMainhand) {
             if (wasHotbar) InvUtils.swapBack();
-            else InvUtils.move().from(mc.player.getInventory().selectedSlot).to(prevSlot);
+            else InvUtils.move().from(mc.player.inventory.selectedSlot).to(prevSlot);
         }
     }
 
@@ -174,18 +174,18 @@ public class Quiver extends Module {
             return;
         }
 
-        boolean charging = mc.options.useKey.isPressed();
+        boolean charging = mc.options.keyUse.isPressed();
 
         if (!charging) {
             InvUtils.move().from(arrowSlots.getFirst()).to(9);
-            mc.options.useKey.setPressed(true);
+            mc.options.keyUse.setPressed(true);
         } else {
             if (BowItem.getPullProgress(mc.player.getItemUseTime()) >= 0.12) {
                 int targetSlot = arrowSlots.getFirst();
                 arrowSlots.removeFirst();
 
-                mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(mc.player.getYaw(), -90, mc.player.isOnGround()));
-                mc.options.useKey.setPressed(false);
+                mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookOnly(mc.player.getYaw(mc.getTickDelta()), -90, mc.player.isOnGround()));
+                mc.options.keyUse.setPressed(false);
                 mc.interactionManager.stopUsingItem(mc.player);
                 if (targetSlot != 9) InvUtils.move().from(9).to(targetSlot);
 
@@ -240,7 +240,7 @@ public class Quiver extends Module {
 
     private boolean hasEffect(StatusEffect effect) {
         for (StatusEffectInstance statusEffect : mc.player.getStatusEffects()) {
-            if (statusEffect.getEffectType().value().equals(effect)) return true;
+            if (statusEffect.getEffectType().equals(effect)) return true;
         }
 
         return false;

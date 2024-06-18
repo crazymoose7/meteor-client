@@ -188,7 +188,7 @@ public class Scaffold extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (onlyOnClick.get() && !mc.options.useKey.isPressed()) return;
+        if (onlyOnClick.get() && !mc.options.keyUse.isPressed()) return;
 
         Vec3d vec = mc.player.getPos().add(mc.player.getVelocity()).add(0, -0.75, 0);
         if (airPlace.get()) {
@@ -196,15 +196,15 @@ public class Scaffold extends Module {
         } else {
             Vec3d pos = mc.player.getPos();
             if (aheadDistance.get() != 0 && !towering() && !mc.world.getBlockState(mc.player.getBlockPos().down()).getCollisionShape(mc.world, mc.player.getBlockPos()).isEmpty()) {
-                Vec3d dir = Vec3d.fromPolar(0, mc.player.getYaw()).multiply(aheadDistance.get(), 0, aheadDistance.get());
-                if (mc.options.forwardKey.isPressed()) pos = pos.add(dir.x, 0, dir.z);
-                if (mc.options.backKey.isPressed()) pos = pos.add(-dir.x, 0, -dir.z);
-                if (mc.options.leftKey.isPressed()) pos = pos.add(dir.z, 0, -dir.x);
-                if (mc.options.rightKey.isPressed()) pos = pos.add(-dir.z, 0, dir.x);
+                Vec3d dir = Vec3d.fromPolar(0, mc.player.getYaw(mc.getTickDelta())).multiply(aheadDistance.get(), 0, aheadDistance.get());
+                if (mc.options.keyForward.isPressed()) pos = pos.add(dir.x, 0, dir.z);
+                if (mc.options.keyBack.isPressed()) pos = pos.add(-dir.x, 0, -dir.z);
+                if (mc.options.keyLeft.isPressed()) pos = pos.add(dir.z, 0, -dir.x);
+                if (mc.options.keyRight.isPressed()) pos = pos.add(-dir.z, 0, dir.x);
             }
             bp.set(pos.x, vec.y, pos.z);
         }
-        if (mc.options.sneakKey.isPressed() && !mc.options.jumpKey.isPressed() && mc.player.getY() + vec.y > -1) {
+        if (mc.options.keySneak.isPressed() && !mc.options.keyJump.isPressed() && mc.player.getY() + vec.y > -1) {
             bp.setY(bp.getY() - 1);
         }
         if (bp.getY() >= mc.player.getBlockPos().getY()) {
@@ -220,7 +220,7 @@ public class Scaffold extends Module {
             List<BlockPos> blockPosArray = new ArrayList<>();
             for (int x = (int) (mc.player.getX() - placeRange.get()); x < mc.player.getX() + placeRange.get(); x++) {
                 for (int z = (int) (mc.player.getZ() - placeRange.get()); z < mc.player.getZ() + placeRange.get(); z++) {
-                    for (int y = (int) Math.max(mc.world.getBottomY(), mc.player.getY() - placeRange.get()); y < Math.min(mc.world.getTopY(), mc.player.getY() + placeRange.get()); y++) {
+                    for (int y = (int) Math.max(0, mc.player.getY() - placeRange.get()); y < Math.min(255, mc.player.getY() + placeRange.get()); y++) {
                         bp.set(x, y, z);
                         if (BlockUtils.getPlaceSide(bp) == null) continue;
                         if (!BlockUtils.canPlace(bp)) continue;
@@ -265,7 +265,7 @@ public class Scaffold extends Module {
         }
 
         FindItemResult result = InvUtils.findInHotbar(itemStack -> validItem(itemStack, bp));
-        if (fastTower.get() && mc.options.jumpKey.isPressed() && !mc.options.sneakKey.isPressed() && result.found() && (autoSwitch.get() || result.getHand() != null)) {
+        if (fastTower.get() && mc.options.keyJump.isPressed() && !mc.options.keySneak.isPressed() && result.found() && (autoSwitch.get() || result.getHand() != null)) {
             Vec3d velocity = mc.player.getVelocity();
             Box playerBox = mc.player.getBoundingBox();
             if (Streams.stream(mc.world.getBlockCollisions(mc.player, playerBox.offset(0, 1, 0))).toList().isEmpty()) {
@@ -283,12 +283,12 @@ public class Scaffold extends Module {
     }
 
     public boolean scaffolding() {
-        return isActive() && (!onlyOnClick.get() || (onlyOnClick.get() && mc.options.useKey.isPressed()));
+        return isActive() && (!onlyOnClick.get() || (onlyOnClick.get() && mc.options.keyUse.isPressed()));
     }
 
     public boolean towering() {
         FindItemResult result = InvUtils.findInHotbar(itemStack -> validItem(itemStack, bp));
-        return scaffolding() && fastTower.get() && mc.options.jumpKey.isPressed() && !mc.options.sneakKey.isPressed() &&
+        return scaffolding() && fastTower.get() && mc.options.keyJump.isPressed() && !mc.options.keySneak.isPressed() &&
             (whileMoving.get() || !PlayerUtils.isMoving()) && result.found() && (autoSwitch.get() || result.getHand() != null);
     }
 

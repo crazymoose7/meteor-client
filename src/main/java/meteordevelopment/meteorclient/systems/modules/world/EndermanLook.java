@@ -46,7 +46,7 @@ public class EndermanLook extends Module {
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         // if either are true nothing happens when you look at an enderman
-        if (mc.player.getInventory().armor.get(3).isOf(Blocks.CARVED_PUMPKIN.asItem()) || mc.player.getAbilities().creativeMode) return;
+        if (mc.player.inventory.armor.get(3).isOf(Blocks.CARVED_PUMPKIN.asItem()) || mc.player.abilities.creativeMode) return;
 
         for (Entity entity : mc.world.getEntities()) {
             if (!(entity instanceof EndermanEntity enderman) || !enderman.isAlive() || !mc.player.canSee(enderman)) continue;
@@ -54,7 +54,7 @@ public class EndermanLook extends Module {
             switch (lookMode.get()) {
                 case Away -> {
                     if (enderman.isAngry() && stun.get()) Rotations.rotate(Rotations.getYaw(enderman), Rotations.getPitch(enderman, Target.Head), -75, null);
-                    else if (angleCheck(enderman)) Rotations.rotate(mc.player.getYaw(), 90, -75, null);
+                    else if (angleCheck(enderman)) Rotations.rotate(mc.player.getYaw(mc.getTickDelta()), 90, -75, null);
                 }
                 case At -> {
                     if (!enderman.isAngry()) Rotations.rotate(Rotations.getYaw(enderman), Rotations.getPitch(enderman, Target.Head), -75, null);

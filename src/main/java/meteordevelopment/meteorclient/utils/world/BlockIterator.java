@@ -45,14 +45,14 @@ public class BlockIterator {
     private static void onTick(TickEvent.Pre event) {
         if (!Utils.canUpdate()) return;
 
-        int px = mc.player.getBlockX();
-        int py = mc.player.getBlockY();
-        int pz = mc.player.getBlockZ();
+        int px = (int) mc.player.getX();
+        int py = (int) mc.player.getY();
+        int pz = (int) mc.player.getZ();
 
         for (int x = px - hRadius; x <= px + hRadius; x++) {
             for (int z = pz - hRadius; z <= pz + hRadius; z++) {
-                for (int y = Math.max(mc.world.getBottomY(), py - vRadius); y <= py + vRadius; y++) {
-                    if (y > mc.world.getTopY()) break;
+                for (int y = Math.max(0, py - vRadius); y <= py + vRadius; y++) {
+                    if (y > 255) break;
 
                     blockPos.set(x, y, z);
                     BlockState blockState = mc.world.getBlockState(blockPos);

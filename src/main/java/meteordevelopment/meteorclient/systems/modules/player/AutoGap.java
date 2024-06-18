@@ -28,7 +28,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +136,7 @@ public class AutoGap extends Module {
             // If we are eating check if we should still be still eating
             if (shouldEat()) {
                 // Check if the item in current slot is not gap or egap
-                if (isNotGapOrEGap(mc.player.getInventory().getStack(slot))) {
+                if (isNotGapOrEGap(mc.player.inventory.getStack(slot))) {
                     // If not try finding a new slot
                     int slot = findSlot();
 
@@ -178,7 +177,7 @@ public class AutoGap extends Module {
     }
 
     private void startEating() {
-        prevSlot = mc.player.getInventory().selectedSlot;
+        prevSlot = mc.player.inventory.selectedSlot;
         eat();
 
         // Pause auras
@@ -234,7 +233,7 @@ public class AutoGap extends Module {
     }
 
     private void setPressed(boolean pressed) {
-        mc.options.useKey.setPressed(pressed);
+        mc.options.keyUse.setPressed(pressed);
     }
 
     private void changeSlot(int slot) {
@@ -251,7 +250,7 @@ public class AutoGap extends Module {
     }
 
     private boolean shouldEatPotions() {
-        Map<RegistryEntry<StatusEffect>, StatusEffectInstance> effects = mc.player.getActiveStatusEffects();
+        Map<StatusEffect, StatusEffectInstance> effects = mc.player.getActiveStatusEffects();
 
         // Regeneration
         if (potionsRegeneration.get() && !effects.containsKey(StatusEffects.REGENERATION)) return true;
@@ -284,7 +283,7 @@ public class AutoGap extends Module {
 
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (stack.isEmpty()) continue;
 
             // Skip if item isn't a gap or egap

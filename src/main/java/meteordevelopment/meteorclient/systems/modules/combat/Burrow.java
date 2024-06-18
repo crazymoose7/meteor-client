@@ -114,7 +114,7 @@ public class Burrow extends Module {
 
     @Override
     public void onActivate() {
-        if (!mc.world.getBlockState(mc.player.getBlockPos()).isReplaceable()) {
+        if (!mc.world.getBlockState(mc.player.getBlockPos()).getMaterial().isReplaceable()) {
             error("Already burrowed, disabling.");
             toggle();
             return;
@@ -182,7 +182,7 @@ public class Burrow extends Module {
     @EventHandler
     private void onKey(KeyEvent event) {
         if (instant.get() && !shouldBurrow) {
-            if (event.action == KeyAction.Press && mc.options.jumpKey.matchesKey(event.key, 0)) {
+            if (event.action == KeyAction.Press && mc.options.keyJump.matchesKey(event.key, 0)) {
                 shouldBurrow = true;
             }
             blockPos.set(mc.player.getBlockPos());
@@ -193,25 +193,25 @@ public class Burrow extends Module {
         if (center.get()) PlayerUtils.centerPlayer();
 
         if (instant.get()) {
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 0.4, mc.player.getZ(), false));
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 0.75, mc.player.getZ(), false));
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 1.01, mc.player.getZ(), false));
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 1.15, mc.player.getZ(), false));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly(mc.player.getX(), mc.player.getY() + 0.4, mc.player.getZ(), false));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly(mc.player.getX(), mc.player.getY() + 0.75, mc.player.getZ(), false));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly(mc.player.getX(), mc.player.getY() + 1.01, mc.player.getZ(), false));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly(mc.player.getX(), mc.player.getY() + 1.15, mc.player.getZ(), false));
         }
 
 
         FindItemResult block = getItem();
 
-        if (!(mc.player.getInventory().getStack(block.slot()).getItem() instanceof BlockItem)) return;
+        if (!(mc.player.inventory.getStack(block.slot()).getItem() instanceof BlockItem)) return;
         InvUtils.swap(block.slot(), true);
 
-        mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(blockPos), Direction.UP, blockPos, false));
+        mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(blockPos), Direction.UP, blockPos, false));
         mc.player.networkHandler.sendPacket(new HandSwingC2SPacket(Hand.MAIN_HAND));
 
         InvUtils.swapBack();
 
         if (instant.get()) {
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + rubberbandHeight.get(), mc.player.getZ(), false));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly(mc.player.getX(), mc.player.getY() + rubberbandHeight.get(), mc.player.getZ(), false));
         } else {
             mc.player.updatePosition(mc.player.getX(), mc.player.getY() + rubberbandHeight.get(), mc.player.getZ());
         }
@@ -221,7 +221,7 @@ public class Burrow extends Module {
         return switch (block.get()) {
             case EChest -> InvUtils.findInHotbar(Items.ENDER_CHEST);
             case Anvil -> InvUtils.findInHotbar(itemStack -> net.minecraft.block.Block.getBlockFromItem(itemStack.getItem()) instanceof AnvilBlock);
-            case Held -> new FindItemResult(mc.player.getInventory().selectedSlot, mc.player.getMainHandStack().getCount());
+            case Held -> new FindItemResult(mc.player.inventory.selectedSlot, mc.player.getMainHandStack().getCount());
             default -> InvUtils.findInHotbar(Items.OBSIDIAN, Items.CRYING_OBSIDIAN);
         };
     }
@@ -231,10 +231,10 @@ public class Burrow extends Module {
         BlockState blockState2 = mc.world.getBlockState(blockPos.set(mc.player.getX() + .3, mc.player.getY() + 2.3, mc.player.getZ() - .3));
         BlockState blockState3 = mc.world.getBlockState(blockPos.set(mc.player.getX() - .3, mc.player.getY() + 2.3, mc.player.getZ() - .3));
         BlockState blockState4 = mc.world.getBlockState(blockPos.set(mc.player.getX() - .3, mc.player.getY() + 2.3, mc.player.getZ() + .3));
-        boolean air1 = blockState1.isReplaceable();
-        boolean air2 = blockState2.isReplaceable();
-        boolean air3 = blockState3.isReplaceable();
-        boolean air4 = blockState4.isReplaceable();
+        boolean air1 = blockState1.getMaterial().isReplaceable();
+        boolean air2 = blockState2.getMaterial().isReplaceable();
+        boolean air3 = blockState3.getMaterial().isReplaceable();
+        boolean air4 = blockState4.getMaterial().isReplaceable();
         return air1 && air2 && air3 && air4;
     }
 

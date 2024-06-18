@@ -55,7 +55,7 @@ public class VClipCommand extends Command {
                     mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
                 }
                 // Now send the final player move packet
-                mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + blocks, mc.player.getZ(), true));
+                mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly(mc.player.getX(), mc.player.getY() + blocks, mc.player.getZ(), true));
                 mc.player.setPosition(mc.player.getX(), mc.player.getY() + blocks, mc.player.getZ());
             }
 

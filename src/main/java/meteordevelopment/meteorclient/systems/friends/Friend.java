@@ -5,7 +5,6 @@
 
 package meteordevelopment.meteorclient.systems.friends;
 
-import com.mojang.util.UndashedUuid;
 import meteordevelopment.meteorclient.utils.misc.ISerializable;
 import meteordevelopment.meteorclient.utils.network.Http;
 import meteordevelopment.meteorclient.utils.render.PlayerHeadTexture;

@@ -51,7 +51,7 @@ public class EntityUtils {
     }
 
     public static boolean isRideable(EntityType<?> type) {
-        return type == EntityType.MINECART || type == EntityType.BOAT || type == EntityType.CAMEL || type == EntityType.DONKEY || type == EntityType.HORSE || type == EntityType.LLAMA || type == EntityType.MULE || type == EntityType.PIG || type == EntityType.SKELETON_HORSE || type == EntityType.STRIDER || type == EntityType.ZOMBIE_HORSE;
+        return type == EntityType.MINECART || type == EntityType.BOAT || type == EntityType.DONKEY || type == EntityType.HORSE || type == EntityType.LLAMA || type == EntityType.MULE || type == EntityType.PIG || type == EntityType.SKELETON_HORSE || type == EntityType.STRIDER || type == EntityType.ZOMBIE_HORSE;
     }
 
     public static float getTotalHealth(LivingEntity target) {
@@ -79,7 +79,7 @@ public class EntityUtils {
         for (int i = 0; i < 64; i++) {
             BlockState state = mc.world.getBlockState(blockPos);
 
-            if (state.blocksMovement()) break;
+            if (state.getMaterial().blocksMovement()) break;
 
             Fluid fluid = state.getFluidState().getFluid();
             if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER) {
@@ -110,7 +110,7 @@ public class EntityUtils {
     public static boolean isInRenderDistance(double posX, double posZ) {
         double x = Math.abs(mc.gameRenderer.getCamera().getPos().x - posX);
         double z = Math.abs(mc.gameRenderer.getCamera().getPos().z - posZ);
-        double d = (mc.options.getViewDistance().getValue() + 1) * 16;
+        double d = (mc.options.viewDistance + 1) * 16;
 
         return x < d && z < d;
     }

@@ -38,17 +38,17 @@ public class Bounce extends ElytraFlightMode {
     public void onTick() {
         super.onTick();
 
-        if (mc.options.jumpKey.isPressed() && !mc.player.isFallFlying()) mc.getNetworkHandler().sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+        if (mc.options.keyJump.isPressed() && !mc.player.isFallFlying()) mc.getNetworkHandler().sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
 
         // Make sure all the conditions are met (player has an elytra, isn't in water, etc)
         if (checkConditions(mc.player)) {
 
             if (!rubberbanded) {
-                if (prevFov != 0 && !elytraFly.sprint.get()) mc.options.getFovEffectScale().setValue(0.0); // This stops the FOV effects from constantly going on and off.
-                if (elytraFly.autoJump.get()) setPressed(mc.options.jumpKey, true);
-                setPressed(mc.options.forwardKey, true);
-                mc.player.setYaw(getYawDirection());
-                mc.player.setPitch(elytraFly.pitch.get().floatValue());
+                if (prevFov != 0 && !elytraFly.sprint.get()) mc.options.fovEffectScale = 0.0F; // This stops the FOV effects from constantly going on and off.
+                if (elytraFly.autoJump.get()) setPressed(mc.options.keyJump, true);
+                setPressed(mc.options.keyForward, true);
+                mc.player.yaw = getYawDirection();
+                mc.player.pitch = elytraFly.pitch.get().floatValue();
             }
 
             if (!elytraFly.sprint.get()) {
@@ -78,8 +78,8 @@ public class Bounce extends ElytraFlightMode {
     }
 
     private void unpress() {
-        setPressed(mc.options.forwardKey, false);
-        if (elytraFly.autoJump.get()) setPressed(mc.options.jumpKey, false);
+        setPressed(mc.options.keyForward, false);
+        if (elytraFly.autoJump.get()) setPressed(mc.options.keyJump, false);
     }
 
     @Override
@@ -112,13 +112,13 @@ public class Bounce extends ElytraFlightMode {
 
     public static boolean checkConditions(ClientPlayerEntity player) {
         ItemStack itemStack = player.getEquippedStack(EquipmentSlot.CHEST);
-        return (!player.getAbilities().flying && !player.hasVehicle() && !player.isClimbing() && itemStack.isOf(Items.ELYTRA) && ElytraItem.isUsable(itemStack));
+        return (!player.abilities.flying && !player.hasVehicle() && !player.isClimbing() && itemStack.getItem().equals(Items.ELYTRA) && ElytraItem.isUsable(itemStack));
     }
 
     private static boolean ignoreGround(ClientPlayerEntity player) {
         if (!player.isTouchingWater() && !player.hasStatusEffect(StatusEffects.LEVITATION)) {
             ItemStack itemStack = player.getEquippedStack(EquipmentSlot.CHEST);
-            if (itemStack.isOf(Items.ELYTRA) && ElytraItem.isUsable(itemStack)) {
+            if (itemStack.getItem().equals(Items.ELYTRA) && ElytraItem.isUsable(itemStack)) {
                 player.startFallFlying();
                 return true;
             } else return false;
@@ -127,8 +127,8 @@ public class Bounce extends ElytraFlightMode {
 
     private float getYawDirection() {
         return switch (elytraFly.yawLockMode.get()) {
-            case None -> mc.player.getYaw();
-            case Smart -> Math.round((mc.player.getYaw() + 1f) / 45f) * 45f;
+            case None -> mc.player.getYaw(mc.getTickDelta());
+            case Smart -> Math.round((mc.player.getYaw(mc.getTickDelta()) + 1f) / 45f) * 45f;
             case Simple -> elytraFly.yaw.get().floatValue();
         };
 
@@ -136,13 +136,13 @@ public class Bounce extends ElytraFlightMode {
 
     @Override
     public void onActivate() {
-        prevFov = mc.options.getFovEffectScale().getValue();
+        prevFov = mc.options.fovEffectScale;
     }
 
     @Override
     public void onDeactivate() {
         unpress();
         rubberbanded = false;
-        if (prevFov != 0 && !elytraFly.sprint.get()) mc.options.getFovEffectScale().setValue(prevFov);
+        if (prevFov != 0 && !elytraFly.sprint.get()) mc.options.fovEffectScale = (float) prevFov;
     }
 }

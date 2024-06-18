@@ -193,7 +193,7 @@ public class ProjectileEntitySimulator {
         velocity.sub(0, gravity, 0);
 
         // Check if below world
-        if (pos.y < mc.world.getBottomY()) return MissHitResult.INSTANCE;
+        if (pos.y < 0) return MissHitResult.INSTANCE;
 
         // Check if chunk is loaded
         int chunkX = ChunkSectionPos.getSectionCoord(pos.x);

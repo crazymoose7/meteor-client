@@ -136,8 +136,8 @@ public class HudEditorScreen extends WidgetScreen implements Snapper.Container {
             else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
                 HudElement hovered = getHovered((int) mouseX, (int) mouseY);
 
-                if (hovered != null) mc.setScreen(new HudElementScreen(theme, hovered));
-                else mc.setScreen(new AddHudElementScreen(theme, lastMouseX, lastMouseY));
+                if (hovered != null) mc.openScreen(new HudElementScreen(theme, hovered));
+                else mc.openScreen(new AddHudElementScreen(theme, lastMouseX, lastMouseY));
             }
         }
 

@@ -13,7 +13,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -45,13 +45,13 @@ public class EntityTypeListSetting extends Setting<Set<EntityType<?>>> {
 
         try {
             for (String value : values) {
-                EntityType<?> entity = parseId(Registries.ENTITY_TYPE, value);
+                EntityType<?> entity = parseId(Registry.ENTITY_TYPE, value);
                 if (entity != null) entities.add(entity);
                 else {
                     String lowerValue = value.trim().toLowerCase();
                     if (!groups.contains(lowerValue)) continue;
 
-                    Registries.ENTITY_TYPE.forEach(entityType -> {
+                    Registry.ENTITY_TYPE.forEach(entityType -> {
                         switch (lowerValue) {
                             case "animal" -> {
                                 if (entityType.getSpawnGroup() == SpawnGroup.CREATURE) entities.add(entityType);
@@ -89,7 +89,7 @@ public class EntityTypeListSetting extends Setting<Set<EntityType<?>>> {
     public List<String> getSuggestions() {
         if (suggestions == null) {
             suggestions = new ArrayList<>(groups);
-            Registries.ENTITY_TYPE.getIds().forEach(id -> suggestions.add(id.toString()));
+            Registry.ENTITY_TYPE.getIds().forEach(id -> suggestions.add(id.toString()));
         }
 
         return suggestions;
@@ -99,7 +99,7 @@ public class EntityTypeListSetting extends Setting<Set<EntityType<?>>> {
     public NbtCompound save(NbtCompound tag) {
         NbtList valueTag = new NbtList();
         for (EntityType<?> entityType : get()) {
-            valueTag.add(NbtString.of(Registries.ENTITY_TYPE.getId(entityType).toString()));
+            valueTag.add(NbtString.of(Registry.ENTITY_TYPE.getId(entityType).toString()));
         }
         tag.put("value", valueTag);
 
@@ -112,7 +112,7 @@ public class EntityTypeListSetting extends Setting<Set<EntityType<?>>> {
 
         NbtList valueTag = tag.getList("value", 8);
         for (NbtElement tagI : valueTag) {
-            EntityType<?> type = Registries.ENTITY_TYPE.get(new Identifier(tagI.asString()));
+            EntityType<?> type = Registry.ENTITY_TYPE.get(new Identifier(tagI.asString()));
             if (filter == null || filter.test(type)) get().add(type);
         }
 

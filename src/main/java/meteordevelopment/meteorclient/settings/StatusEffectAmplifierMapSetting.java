@@ -10,7 +10,7 @@ import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 
 import java.util.function.Consumer;
@@ -36,7 +36,7 @@ public class StatusEffectAmplifierMapSetting extends Setting<Reference2IntMap<St
             for (String value : values) {
                 String[] split = value.split(" ");
 
-                StatusEffect effect = parseId(Registries.STATUS_EFFECT, split[0]);
+                StatusEffect effect = parseId(Registry.STATUS_EFFECT, split[0]);
                 int level = Integer.parseInt(split[1]);
 
                 effects.put(effect, level);
@@ -55,7 +55,7 @@ public class StatusEffectAmplifierMapSetting extends Setting<Reference2IntMap<St
     public NbtCompound save(NbtCompound tag) {
         NbtCompound valueTag = new NbtCompound();
         for (StatusEffect statusEffect : get().keySet()) {
-            Identifier id = Registries.STATUS_EFFECT.getId(statusEffect);
+            Identifier id = Registry.STATUS_EFFECT.getId(statusEffect);
             if (id != null) valueTag.putInt(id.toString(), get().getInt(statusEffect));
         }
         tag.put("value", valueTag);
@@ -64,9 +64,9 @@ public class StatusEffectAmplifierMapSetting extends Setting<Reference2IntMap<St
     }
 
     private static Reference2IntMap<StatusEffect> createStatusEffectMap() {
-        Reference2IntMap<StatusEffect> map = new Reference2IntArrayMap<>(Registries.STATUS_EFFECT.getIds().size());
+        Reference2IntMap<StatusEffect> map = new Reference2IntArrayMap<>(Registry.STATUS_EFFECT.getIds().size());
 
-        Registries.STATUS_EFFECT.forEach(potion -> map.put(potion, 0));
+        Registry.STATUS_EFFECT.forEach(potion -> map.put(potion, 0));
 
         return map;
     }
@@ -77,7 +77,7 @@ public class StatusEffectAmplifierMapSetting extends Setting<Reference2IntMap<St
 
         NbtCompound valueTag = tag.getCompound("value");
         for (String key : valueTag.getKeys()) {
-            StatusEffect statusEffect = Registries.STATUS_EFFECT.get(new Identifier(key));
+            StatusEffect statusEffect = Registry.STATUS_EFFECT.get(new Identifier(key));
             if (statusEffect != null) get().put(statusEffect, valueTag.getInt(key));
         }
 

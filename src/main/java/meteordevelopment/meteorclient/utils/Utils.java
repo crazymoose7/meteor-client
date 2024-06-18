@@ -6,7 +6,6 @@
 package meteordevelopment.meteorclient.utils;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.systems.VertexSorter;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntArrayMap;
@@ -34,12 +33,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
-import net.minecraft.client.resource.ResourceReloadLogger;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -47,12 +41,13 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.chunk.Chunk;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -97,7 +92,7 @@ public class Utils {
     @EventHandler
     private static void onTick(TickEvent.Post event) {
         if (screenToOpen != null && mc.currentScreen == null) {
-            mc.setScreen(screenToOpen);
+            mc.openScreen(screenToOpen);
             screenToOpen = null;
         }
     }
@@ -149,12 +144,12 @@ public class Utils {
         enchantments.clear();
 
         if (!itemStack.isEmpty()) {
-            Set<RegistryEntry<Enchantment>> itemEnchantments = itemStack.getItem() == Items.ENCHANTED_BOOK
-                ? itemStack.get(DataComponentTypes.STORED_ENCHANTMENTS).getEnchantments()
-                : itemStack.getEnchantments().getEnchantments();
+            NbtList listTag = itemStack.getItem() == Items.ENCHANTED_BOOK ? EnchantedBookItem.getEnchantmentNbt(itemStack) : itemStack.getEnchantments();
 
-            for (RegistryEntry<Enchantment> itemEnchantment : itemEnchantments) {
-                enchantments.put(itemEnchantment.value(), itemStack.getEnchantments().getLevel(itemEnchantment.value()));
+            for (int i = 0; i < listTag.size(); ++i) {
+                NbtCompound tag = listTag.getCompound(i);
+
+                Registry.ENCHANTMENT.getOrEmpty(Identifier.tryParse(tag.getString("id"))).ifPresent((enchantment) -> enchantments.put(enchantment, tag.getInt("lvl")));
             }
         }
     }
@@ -170,7 +165,7 @@ public class Utils {
     }
 
     public static int getRenderDistance() {
-        return Math.max(mc.options.getViewDistance().getValue(), ((ClientPlayNetworkHandlerAccessor) mc.getNetworkHandler()).getChunkLoadDistance());
+        return Math.max(mc.options.viewDistance, ((ClientPlayNetworkHandlerAccessor) mc.getNetworkHandler()).getChunkLoadDistance());
     }
 
     public static int getWindowWidth() {
@@ -200,7 +195,7 @@ public class Utils {
         if (hasItems(itemStack) || itemStack.getItem() == Items.ENDER_CHEST) {
             Utils.getItemsInContainerItem(itemStack, contents);
             if (pause) screenToOpen = new PeekScreen(itemStack, contents);
-            else mc.setScreen(new PeekScreen(itemStack, contents));
+            else mc.openScreen(new PeekScreen(itemStack, contents));
             return true;
         }
 
@@ -217,7 +212,7 @@ public class Utils {
         }
 
         Arrays.fill(items, ItemStack.EMPTY);
-        ComponentMap components = itemStack.getComponents();
+        NbtCompound nbt = itemStack.getTag();
 
         if (components.contains(DataComponentTypes.CONTAINER)) {
             ContainerComponentAccessor container = ((ContainerComponentAccessor) (Object) components.get(DataComponentTypes.CONTAINER));
@@ -350,7 +345,7 @@ public class Utils {
         if (mc.isInSingleplayer()) {
             if (mc.world == null) return "";
 
-            File folder = ((MinecraftServerAccessor) mc.getServer()).getSession().getWorldDirectory(mc.world.getRegistryKey()).toFile();
+            File folder = ((MinecraftServerAccessor) mc.getServer()).getSession().getWorldDirectory(mc.world.getRegistryKey()).getAbsoluteFile();
             if (folder.toPath().relativize(mc.runDirectory.toPath()).getNameCount() != 2) {
                 folder = folder.getParentFile();
             }
@@ -491,9 +486,9 @@ public class Utils {
     }
 
     public static void leftClick() {
-        mc.options.attackKey.setPressed(true);
+        mc.options.keyAttack.setPressed(true);
         ((MinecraftClientAccessor) mc).leftClick();
-        mc.options.attackKey.setPressed(false);
+        mc.options.keyAttack.setPressed(false);
     }
 
     public static void rightClick() {

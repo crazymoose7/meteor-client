@@ -72,8 +72,8 @@ public class FreeLook extends Module {
 
     @Override
     public void onActivate() {
-        cameraYaw = mc.player.getYaw();
-        cameraPitch = mc.player.getPitch();
+        cameraYaw = mc.player.getYaw(mc.getTickDelta());
+        cameraPitch = mc.player.getPitch(mc.getTickDelta());
         prePers = mc.options.getPerspective();
 
         if (prePers != Perspective.THIRD_PERSON_BACK &&  togglePerspective.get()) mc.options.setPerspective(Perspective.THIRD_PERSON_BACK);
@@ -104,8 +104,8 @@ public class FreeLook extends Module {
                         if (Input.isKeyPressed(GLFW.GLFW_KEY_DOWN)) cameraPitch += 0.5;
                     }
                     case Camera -> {
-                        float yaw = mc.player.getYaw();
-                        float pitch = mc.player.getPitch();
+                        float yaw = mc.player.getYaw(mc.getTickDelta());
+                        float pitch = mc.player.getPitch(mc.getTickDelta());
 
                         if (Input.isKeyPressed(GLFW.GLFW_KEY_LEFT)) yaw -= 0.5;
                         if (Input.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) yaw += 0.5;
@@ -119,7 +119,7 @@ public class FreeLook extends Module {
             }
         }
 
-        mc.player.setPitch(MathHelper.clamp(mc.player.getPitch(), -90, 90));
+        mc.player.setPitch(MathHelper.clamp(mc.player.getPitch(mc.getTickDelta()), -90, 90));
         cameraPitch = MathHelper.clamp(cameraPitch, -90, 90);
     }
 

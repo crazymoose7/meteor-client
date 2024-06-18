@@ -21,7 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -117,7 +117,7 @@ public class Trajectories extends Module {
     private List<Item> getDefaultItems() {
         List<Item> items = new ArrayList<>();
 
-        for (Item item : Registries.ITEM) {
+        for (Item item : Registry.ITEM) {
             if (itemFilter(item)) items.add(item);
         }
 

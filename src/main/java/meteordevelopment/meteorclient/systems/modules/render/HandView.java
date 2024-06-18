@@ -215,8 +215,8 @@ public class HandView extends Module {
     }
 
     private void applyServerRotations(MatrixStack matrix) {
-        matrix.multiply(RotationAxis.POSITIVE_X.rotationDegrees(mc.player.getPitch() - Rotations.serverPitch));
-        matrix.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(mc.player.getYaw() - Rotations.serverYaw));
+        matrix.multiply(RotationAxis.POSITIVE_X.rotationDegrees(mc.player.getPitch(mc.getTickDelta()) - Rotations.serverPitch));
+        matrix.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(mc.player.getYaw(mc.getTickDelta()) - Rotations.serverYaw));
     }
 
     public boolean oldAnimations() {

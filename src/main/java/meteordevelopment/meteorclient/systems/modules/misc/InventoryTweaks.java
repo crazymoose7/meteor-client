@@ -318,8 +318,8 @@ public class InventoryTweaks extends Module {
         // Auto Drop
         if (mc.currentScreen instanceof HandledScreen<?> || autoDropItems.get().isEmpty()) return;
 
-        for (int i = autoDropExcludeHotbar.get() ? 9 : 0; i < mc.player.getInventory().size(); i++) {
-            ItemStack itemStack = mc.player.getInventory().getStack(i);
+        for (int i = autoDropExcludeHotbar.get() ? 9 : 0; i < mc.player.inventory.size(); i++) {
+            ItemStack itemStack = mc.player.inventory.getStack(i);
 
             if (autoDropItems.get().contains(itemStack.getItem())) {
                 if ((!autoDropOnlyFullStacks.get() || itemStack.getCount() == itemStack.getMaxCount()) &&
@@ -395,7 +395,7 @@ public class InventoryTweaks extends Module {
             if (steal && stealDrop.get()) {
                 if (dropBackwards.get()) {
                     int iCopy = i;
-                    Rotations.rotate(mc.player.getYaw() - 180, mc.player.getPitch(), () -> InvUtils.drop().slotId(iCopy));
+                    Rotations.rotate(mc.player.getYaw(mc.getTickDelta()) - 180, mc.player.getPitch(mc.getTickDelta()), () -> InvUtils.drop().slotId(iCopy));
                 }
             } else InvUtils.shiftClick().slotId(i);
         }

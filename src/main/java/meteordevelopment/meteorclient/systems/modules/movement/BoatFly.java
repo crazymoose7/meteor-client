@@ -61,9 +61,9 @@ public class BoatFly extends Module {
 
     @EventHandler
     private void onBoatMove(BoatMoveEvent event) {
-        if (event.boat.getControllingPassenger() != mc.player) return;
+        if (event.boat.getPrimaryPassenger() != mc.player) return;
 
-        event.boat.setYaw(mc.player.getYaw());
+        event.boat.yaw = mc.player.getYaw(mc.getTickDelta());
 
         // Horizontal movement
         Vec3d vel = PlayerUtils.getHorizontalVelocity(speed.get());
@@ -72,8 +72,8 @@ public class BoatFly extends Module {
         double velZ = vel.getZ();
 
         // Vertical movement
-        if (mc.options.jumpKey.isPressed()) velY += verticalSpeed.get() / 20;
-        if (mc.options.sprintKey.isPressed()) velY -= verticalSpeed.get() / 20;
+        if (mc.options.keyJump.isPressed()) velY += verticalSpeed.get() / 20;
+        if (mc.options.keySprint.isPressed()) velY -= verticalSpeed.get() / 20;
         else velY -= fallSpeed.get() / 20;
 
         // Apply velocity
