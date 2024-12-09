@@ -61,7 +61,7 @@ public class Criticals extends Module {
 
     @EventHandler
     private void onSendPacket(PacketEvent.Send event) {
-        if (event.packet instanceof IPlayerInteractEntityC2SPacket packet && packet.getType() == PlayerInteractEntityC2SPacket.InteractType.ATTACK) {
+        if (event.packet instanceof IPlayerInteractEntityC2SPacket packet && packet.getType() == PlayerInteractEntityC2SPacket.InteractionType.ATTACK) {
             if (skipCrit()) return;
 
             Entity entity =  packet.getEntity();

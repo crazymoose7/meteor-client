@@ -27,8 +27,10 @@ import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -291,7 +293,7 @@ public class BetterChat extends Module {
         if (messages.isEmpty()) return null;
 
         for (int i = 0; i < Math.min(antiSpamDepth.get(), messages.size()); i++) {
-            String stringToCheck = messages.get(i).content().getString();
+            String stringToCheck = messages.get(i).getText().toString();
 
             Matcher timestampMatcher = timestampRegex.matcher(stringToCheck);
             if (timestampMatcher.find()) {
@@ -404,7 +406,7 @@ public class BetterChat extends Module {
         context.getMatrices().translate(10, 0, 0);
     }
 
-    private void drawTexture(DrawContext context, IChatHudLine line, int y) {
+    private void drawTexture(DrawableHelper context, IChatHudLine line, int y) {
         String text = line.meteor$getText().trim();
 
         // Custom
@@ -419,7 +421,7 @@ public class BetterChat extends Module {
         for (CustomHeadEntry entry : CUSTOM_HEAD_ENTRIES) {
             // Check prefix
             if (text.startsWith(entry.prefix(), startOffset)) {
-                context.drawTexture(entry.texture(), 0, y, 8, 8, 0, 0, 64, 64, 64, 64);
+                context.drawTexture(new MatrixStack(), 0, y, 8, 8, 0, 0, 64, 64, 64, 64);
                 return;
             }
         }

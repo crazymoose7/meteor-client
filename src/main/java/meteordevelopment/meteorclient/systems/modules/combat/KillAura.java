@@ -29,6 +29,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.AxeItem;
@@ -342,7 +343,7 @@ public class KillAura extends Module {
         if (ignoreNamed.get() && entity.hasCustomName()) return false;
         if (!PlayerUtils.canSeeEntity(entity) && !PlayerUtils.isWithin(entity, wallsRange.get())) return false;
         if (ignoreTamed.get()) {
-            if (entity instanceof Tameable tameable
+            if (entity instanceof TameableEntity tameable
                 && tameable.getOwnerUuid() != null
                 && tameable.getOwnerUuid().equals(mc.player.getUuid())
             ) return false;

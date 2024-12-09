@@ -21,11 +21,11 @@ import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 @Mixin(PlayerInteractEntityC2SPacket.class)
 public abstract class PlayerInteractEntityC2SPacketMixin implements IPlayerInteractEntityC2SPacket {
-    @Shadow @Final private PlayerInteractEntityC2SPacket.InteractTypeHandler type;
+    @Shadow @Final private PlayerInteractEntityC2SPacket.InteractionType type;
     @Shadow @Final private int entityId;
 
     @Override
-    public PlayerInteractEntityC2SPacket.InteractType getType() {
+    public PlayerInteractEntityC2SPacket.InteractionType getType() {
         return type.getType();
     }
 

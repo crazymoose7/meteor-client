@@ -28,7 +28,7 @@ public class MountBypass extends Module {
         }
 
         if (event.packet instanceof IPlayerInteractEntityC2SPacket packet) {
-            if (packet.getType() == PlayerInteractEntityC2SPacket.InteractType.INTERACT_AT && packet.getEntity() instanceof AbstractDonkeyEntity) event.cancel();
+            if (packet.getType() == PlayerInteractEntityC2SPacket.InteractionType.INTERACT_AT && packet.getEntity() instanceof AbstractDonkeyEntity) event.cancel();
         }
     }
 }

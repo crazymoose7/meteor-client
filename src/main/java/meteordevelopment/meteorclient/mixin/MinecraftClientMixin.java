@@ -102,7 +102,7 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
     }
 
     @Inject(method = "doAttack", at = @At("HEAD"))
-    private void onAttack(CallbackInfoReturnable<Boolean> cir) {
+    private void onAttack(CallbackInfo ci) {
         CPSUtils.onAttack();
     }
 
@@ -111,8 +111,8 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
         doItemUseCalled = true;
     }
 
-    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;Z)V", at = @At("HEAD"))
-    private void onDisconnect(Screen screen, boolean transferring, CallbackInfo info) {
+    @Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("HEAD"))
+    private void onDisconnect(Screen screen, CallbackInfo ci) {
         if (world != null) {
             MeteorClient.EVENT_BUS.post(GameLeftEvent.get());
         }

@@ -21,11 +21,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin {
     @Inject(method = "applyFog", at = @At("TAIL"))
-    private static void onApplyFog(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, float tickDelta, CallbackInfo info) {
+    private static void onApplyFog(Camera camera, BackgroundRenderer.FogType fogType, float viewDistance, boolean thickFog, CallbackInfo ci) {
         if (Modules.get().get(NoRender.class).noFog() || Modules.get().isActive(Xray.class)) {
             if (fogType == BackgroundRenderer.FogType.FOG_TERRAIN) {
-                RenderSystem.setShaderFogStart(viewDistance * 4);
-                RenderSystem.setShaderFogEnd(viewDistance * 4.25f);
+                RenderSystem.fogStart(viewDistance * 4f);
+                RenderSystem.fogEnd(viewDistance * 4.25f);
             }
         }
     }
