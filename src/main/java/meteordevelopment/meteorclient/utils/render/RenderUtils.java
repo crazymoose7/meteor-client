@@ -14,7 +14,6 @@ import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,8 +45,7 @@ public class RenderUtils {
     }
 
     // Items
-    public static void drawItem(DrawContext drawContext, ItemStack itemStack, int x, int y, float scale, boolean overlay, String countOverride) {
-        MatrixStack matrices = drawContext.getMatrices();
+    public static void drawItem(MatrixStack matrices, ItemStack itemStack, int x, int y, float scale, boolean overlay, String countOverride) {
         matrices.push();
         matrices.scale(scale, scale, 1f);
         matrices.translate(0, 0, 401); // Thanks Mojang
@@ -55,14 +53,16 @@ public class RenderUtils {
         int scaledX = (int) (x / scale);
         int scaledY = (int) (y / scale);
 
-        drawContext.drawItem(itemStack, scaledX, scaledY);
-        if (overlay) drawContext.drawItemInSlot(mc.textRenderer, itemStack, scaledX, scaledY, countOverride);
+        mc.getItemRenderer().renderInGui(itemStack, scaledX, scaledY);
+
+        mc.getItemRenderer().renderInGui(itemStack, scaledX, scaledY);
+        if (overlay) mc.getItemRenderer().renderGuiItemOverlay(mc.textRenderer, itemStack, scaledX, scaledY, countOverride);
 
         matrices.pop();
     }
 
-    public static void drawItem(DrawContext drawContext, ItemStack itemStack, int x, int y, float scale, boolean overlay) {
-        drawItem(drawContext, itemStack, x, y, scale, overlay, null);
+    public static void drawItem(MatrixStack matrices, ItemStack itemStack, int x, int y, float scale, boolean overlay) {
+        drawItem(matrices, itemStack, x, y, scale, overlay, null);
     }
 
     public static void updateScreenCenter() {
@@ -70,7 +70,7 @@ public class RenderUtils {
 
         Vector3f pos = new Vector3f(0, 0, 1);
 
-        if (mc.options.getBobView().getValue()) {
+        if (mc.options.bobView) {
             MatrixStack bobViewMatrices = new MatrixStack();
 
             bobView(bobViewMatrices);

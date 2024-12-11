@@ -7,7 +7,6 @@ package meteordevelopment.meteorclient.renderer.text;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.font.TextRenderer.TextLayerType;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider;

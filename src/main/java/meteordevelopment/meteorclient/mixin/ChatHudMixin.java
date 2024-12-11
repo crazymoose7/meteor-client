@@ -19,7 +19,6 @@ import meteordevelopment.meteorclient.systems.modules.misc.BetterChat;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.MessageIndicator;

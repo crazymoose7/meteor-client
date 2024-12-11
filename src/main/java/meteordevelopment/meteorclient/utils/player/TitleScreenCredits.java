@@ -15,7 +15,7 @@ import meteordevelopment.meteorclient.mixininterface.IText;
 import meteordevelopment.meteorclient.utils.network.Http;
 import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.render.MeteorToast;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -99,7 +99,7 @@ public class TitleScreenCredits {
         credits.add(credit);
     }
 
-    public static void render(DrawContext context) {
+    public static void render(MatrixStack matrices) {
         if (credits.isEmpty()) init();
 
         int y = 3;
@@ -107,7 +107,7 @@ public class TitleScreenCredits {
             synchronized (credit.text) {
                 int x = mc.currentScreen.width - 3 - mc.textRenderer.getWidth(credit.text);
 
-                context.drawTextWithShadow(mc.textRenderer, credit.text, x, y, -1);
+                mc.textRenderer.draw(matrices, credit.text, x, y, -1);
             }
 
             y += mc.textRenderer.fontHeight + 2;

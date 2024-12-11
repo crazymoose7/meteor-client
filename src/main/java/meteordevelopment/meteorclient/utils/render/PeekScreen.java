@@ -10,11 +10,10 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.BetterTooltips;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.BookScreen;
 import net.minecraft.client.gui.screen.ingame.ShulkerBoxScreen;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.component.DataComponentTypes;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -61,7 +60,7 @@ public class PeekScreen extends ShulkerBoxScreen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE || mc.options.inventoryKey.matchesKey(keyCode, scanCode)) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE || mc.options.keyInventory.matchesKey(keyCode, scanCode)) {
             close();
             return true;
         }
@@ -78,7 +77,7 @@ public class PeekScreen extends ShulkerBoxScreen {
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
         Color color = Utils.getShulkerColor(storageBlock);
 
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);

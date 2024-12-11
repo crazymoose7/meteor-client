@@ -26,7 +26,6 @@ import meteordevelopment.meteorclient.utils.misc.text.MeteorClickEvent;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.network.PlayerListEntry;
@@ -433,7 +432,7 @@ public class BetterChat extends Module {
         PlayerListEntry entry = mc.getNetworkHandler().getPlayerListEntry(sender.getId());
         if (entry == null) return;
 
-        Identifier skin = entry.getSkinTextures().texture();
+        Identifier skin = entry.getSkinTexture();
 
         context.drawTexture(skin, 0, y, 8, 8, 8, 8, 8, 8, 64, 64);
         context.drawTexture(skin, 0, y, 8, 8, 40, 8, 8, 8, 64, 64);

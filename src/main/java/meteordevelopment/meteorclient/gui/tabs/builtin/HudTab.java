@@ -17,6 +17,7 @@ import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.screens.HudEditorScreen;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.nbt.NbtCompound;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -72,8 +73,8 @@ public class HudTab extends Tab {
         }
 
         @Override
-        protected void onRenderBefore(DrawContext drawContext, float delta) {
-            HudEditorScreen.renderElements(drawContext);
+        protected void onRenderBefore(MatrixStack matrices, float delta) {
+            HudEditorScreen.renderElements(matrices);
         }
 
         @Override

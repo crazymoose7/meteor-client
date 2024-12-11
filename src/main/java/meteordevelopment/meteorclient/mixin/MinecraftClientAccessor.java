@@ -13,7 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.SocialInteractionsManager;
 import net.minecraft.client.resource.ResourceReloadLogger;
 import net.minecraft.client.session.ProfileKeys;
-import net.minecraft.client.session.Session;
+import net.minecraft.client.util.Session;
 import net.minecraft.client.session.report.AbuseReportContext;
 import net.minecraft.client.texture.PlayerSkinProvider;
 import org.spongepowered.asm.mixin.Mixin;

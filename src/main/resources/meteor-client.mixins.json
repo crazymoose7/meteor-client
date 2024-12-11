@@ -171,7 +171,6 @@
     "TitleScreenMixin",
     "TransformationMixin",
     "TridentItemMixin",
-    "UnbreakableComponentMixin",
     "Vec3dMixin",
     "VertexBufferMixin",
     "WorldAccessor",

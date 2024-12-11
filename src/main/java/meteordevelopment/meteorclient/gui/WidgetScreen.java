@@ -18,7 +18,6 @@ import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.CursorStyle;
 import meteordevelopment.meteorclient.utils.misc.input.Input;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -151,15 +150,6 @@ public abstract class WidgetScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (locked) return false;
-
-        root.mouseScrolled(verticalAmount);
-
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-    }
-
-    @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
         if (locked) return false;
 
@@ -244,8 +234,8 @@ public abstract class WidgetScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (!Utils.canUpdate()) renderBackground(context, mouseX, mouseY, delta);
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        if (!Utils.canUpdate()) renderBackground(matrices);
 
         double s = mc.getWindow().getScaleFactor();
         mouseX *= s;
@@ -259,7 +249,7 @@ public abstract class WidgetScreen extends Screen {
         // Apply projection without scaling
         Utils.unscaledProjection();
 
-        onRenderBefore(context, delta);
+        onRenderBefore(matrices, delta);
 
         RENDERER.theme = theme;
         theme.beforeRender();
@@ -273,8 +263,6 @@ public abstract class WidgetScreen extends Screen {
         boolean tooltip = RENDERER.renderTooltip(context, mouseX, mouseY, delta / 20);
 
         if (debug) {
-            MatrixStack matrices = context.getMatrices();
-
             DEBUG_RENDERER.render(root, matrices);
             if (tooltip) DEBUG_RENDERER.render(RENDERER.tooltipWidget, matrices);
         }
@@ -291,7 +279,7 @@ public abstract class WidgetScreen extends Screen {
         }
     }
 
-    protected void onRenderBefore(DrawContext drawContext, float delta) {}
+    protected void onRenderBefore(MatrixStack matrices, float delta) {}
 
     @Override
     public void resize(MinecraftClient client, int width, int height) {

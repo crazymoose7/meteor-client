@@ -15,7 +15,6 @@ import meteordevelopment.meteorclient.systems.hud.HudRenderer;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.other.Snapper;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
@@ -260,8 +259,8 @@ public class HudEditorScreen extends WidgetScreen implements Snapper.Container {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (!Utils.canUpdate()) renderBackground(context, mouseX, mouseY, delta);
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        if (!Utils.canUpdate()) renderBackground(matrices);
 
         double s = mc.getWindow().getScaleFactor();
 
@@ -272,7 +271,7 @@ public class HudEditorScreen extends WidgetScreen implements Snapper.Container {
 
         boolean renderSplitLines = pressed && !selection.isEmpty() && moved;
         if (renderSplitLines || splitLinesAnimation > 0) renderSplitLines(renderSplitLines, delta / 20);
-        renderElements(context);
+        renderElements(matrices);
 
         Renderer2D.COLOR.begin();
         onRender(mouseX, mouseY);
@@ -282,11 +281,11 @@ public class HudEditorScreen extends WidgetScreen implements Snapper.Container {
         runAfterRenderTasks();
     }
 
-    public static void renderElements(DrawContext drawContext) {
+    public static void renderElements(MatrixStack matrices) {
         Hud hud = Hud.get();
         boolean inactiveOnly = Utils.canUpdate() && hud.active;
 
-        HudRenderer.INSTANCE.begin(drawContext);
+        HudRenderer.INSTANCE.begin(matrices);
 
         for (HudElement element : hud) {
             element.updatePos();

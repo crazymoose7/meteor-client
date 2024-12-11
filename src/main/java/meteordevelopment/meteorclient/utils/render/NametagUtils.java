@@ -7,7 +7,6 @@ package meteordevelopment.meteorclient.utils.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.utils.Utils;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4f;
@@ -86,10 +85,9 @@ public class NametagUtils {
         begin(matrices, pos);
     }
 
-    public static void begin(Vector3d pos, DrawContext drawContext) {
+    public static void begin(Vector3d pos, MatrixStack matrices) {
         begin(pos);
 
-        MatrixStack matrices = drawContext.getMatrices();
         matrices.push();
         matrices.translate((float) pos.x, (float) pos.y, 0);
         matrices.scale((float) scale, (float) scale, 1);
@@ -105,9 +103,9 @@ public class NametagUtils {
         RenderSystem.getModelViewStack().popMatrix();
     }
 
-    public static void end(DrawContext drawContext) {
+    public static void end(MatrixStack matrices) {
         end();
-        drawContext.getMatrices().pop();
+        matrices.pop();
     }
 
     private static double getScale(Vector3d pos) {

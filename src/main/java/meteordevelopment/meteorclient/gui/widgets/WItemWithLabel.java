@@ -7,13 +7,14 @@ package meteordevelopment.meteorclient.gui.widgets;
 
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.utils.misc.Names;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.potion.PotionUtil;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
@@ -39,15 +40,15 @@ public class WItemWithLabel extends WHorizontalList {
         String str = "";
 
         if (itemStack.getItem() == Items.POTION) {
-            Iterator<StatusEffectInstance> effects = itemStack.getItem().getComponents().get(DataComponentTypes.POTION_CONTENTS).getEffects().iterator();
-            if (!effects.hasNext()) return str;
+            List<StatusEffectInstance> effects = PotionUtil.getPotion(itemStack).getEffects();
+            if (!effects.isEmpty()) {
+                str += " ";
 
-            str += " ";
+                StatusEffectInstance effect = effects.get(0);
+                if (effect.getAmplifier() > 0) str += "%d ".formatted(effect.getAmplifier() + 1);
 
-            StatusEffectInstance effect = effects.next();
-            if (effect.getAmplifier() > 0) str += "%d ".formatted(effect.getAmplifier() + 1);
-
-            str += "(%s)".formatted(StatusEffectUtil.getDurationText(effect, 1, mc.world != null ? mc.world.getTickManager().getTickRate() : 20.0F).getString());
+                str += "(%s)".formatted(StatusEffectUtil.durationToString(effect, 1));
+            }
         }
 
         return str;

@@ -10,13 +10,12 @@ import meteordevelopment.meteorclient.systems.modules.misc.InventoryTweaks;
 import meteordevelopment.meteorclient.systems.modules.render.BetterTooltips;
 import meteordevelopment.meteorclient.systems.modules.render.ItemHighlight;
 import meteordevelopment.meteorclient.utils.Utils;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.BookScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.component.DataComponentTypes;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
@@ -119,7 +118,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
     // Item Highlight
     @Inject(method = "drawSlot", at = @At("HEAD"))
-    private void onDrawSlot(DrawContext context, Slot slot, CallbackInfo ci) {
+    private void onDrawSlot(MatrixStack matrices, Slot slot, CallbackInfo ci) {
         int color = Modules.get().get(ItemHighlight.class).getColor(slot.getStack());
         if (color != -1) context.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color);
     }
