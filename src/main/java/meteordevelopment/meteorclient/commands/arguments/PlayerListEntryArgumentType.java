@@ -14,6 +14,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.Collection;
@@ -24,7 +25,7 @@ import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class PlayerListEntryArgumentType implements ArgumentType<PlayerListEntry> {
     private static final PlayerListEntryArgumentType INSTANCE = new PlayerListEntryArgumentType();
-    private static final DynamicCommandExceptionType NO_SUCH_PLAYER = new DynamicCommandExceptionType(name -> Text.literal("Player list entry with name " + name + " doesn't exist."));
+    private static final DynamicCommandExceptionType NO_SUCH_PLAYER = new DynamicCommandExceptionType(name -> new LiteralText("Player list entry with name " + name + " doesn't exist."));
 
     private static final Collection<String> EXAMPLES = List.of("seasnail8169", "MineGame159");
 

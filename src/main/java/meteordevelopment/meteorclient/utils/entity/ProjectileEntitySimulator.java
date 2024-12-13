@@ -10,7 +10,6 @@ import meteordevelopment.meteorclient.mixin.ProjectileInGroundAccessor;
 import meteordevelopment.meteorclient.mixininterface.IVec3d;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.MissHitResult;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.entity.projectile.thrown.*;
@@ -130,7 +129,7 @@ public class ProjectileEntitySimulator {
             set(entity, 0.05, 0.8, accurate);
         }
 
-        else if (entity instanceof WitherSkullEntity || entity instanceof FireballEntity || entity instanceof DragonFireballEntity || entity instanceof WindChargeEntity) {
+        else if (entity instanceof WitherSkullEntity || entity instanceof FireballEntity || entity instanceof DragonFireballEntity) {
             // drag isn't actually 1, but this provides accurate results in 99.9% in of real situations.
             set(entity, 0, 1.0, accurate);
             this.airDrag = 1.0;

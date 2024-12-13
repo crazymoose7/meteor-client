@@ -88,7 +88,7 @@ public class NbtCommand extends Command {
             } else {
                 ComponentMap components = stack.getComponents();
 
-                MutableText copyButton = Text.literal("NBT");
+                MutableText copyButton = new LiteralText("NBT");
                 copyButton.setStyle(copyButton.getStyle()
                     .withFormatting(Formatting.UNDERLINE)
                     .withClickEvent(new MeteorClickEvent(
@@ -97,10 +97,10 @@ public class NbtCommand extends Command {
                     ))
                     .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        Text.literal("Copy the NBT data to your clipboard.")
+                        new LiteralText("Copy the NBT data to your clipboard.")
                     )));
 
-                MutableText text = Text.literal("");
+                MutableText text = new LiteralText("");
                 text.append(copyButton);
 
                 if (components == null) text.append("{}");
@@ -120,7 +120,7 @@ public class NbtCommand extends Command {
             } else {
                 ComponentMap components = stack.getComponents();
                 mc.keyboard.setClipboard(components.toString());
-                MutableText nbt = Text.literal("NBT");
+                MutableText nbt = new LiteralText("NBT");
                 nbt.setStyle(nbt.getStyle()
                     .withFormatting(Formatting.UNDERLINE)
                     .withHoverEvent(new HoverEvent(
@@ -128,9 +128,9 @@ public class NbtCommand extends Command {
                         Text.of(components.toString())
                     )));
 
-                MutableText text = Text.literal("");
+                MutableText text = new LiteralText("");
                 text.append(nbt);
-                text.append(Text.literal(" data copied!"));
+                text.append(new LiteralText(" data copied!"));
 
                 info(text);
             }

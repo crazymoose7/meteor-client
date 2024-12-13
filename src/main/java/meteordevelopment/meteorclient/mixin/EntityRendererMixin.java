@@ -36,7 +36,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements IEntityRe
     public abstract Identifier getTexture(Entity entity);
 
     @Inject(method = "renderLabelIfPresent", at = @At("HEAD"), cancellable = true)
-    private void onRenderLabel(T entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta, CallbackInfo ci) {
+    private void onRenderLabel(T entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         if (PostProcessShaders.rendering) ci.cancel();
         if (Modules.get().get(NoRender.class).noNametags()) ci.cancel();
         if (!(entity instanceof PlayerEntity)) return;
@@ -50,7 +50,7 @@ public abstract class EntityRendererMixin<T extends Entity> implements IEntityRe
         if (Modules.get().get(NoRender.class).noFallingBlocks() && entity instanceof FallingBlockEntity) cir.cancel();
     }
 
-    @ModifyReturnValue(method = "getSkyLight", at = @At("RETURN"))
+    @ModifyReturnValue(method = "method_27950", at = @At("RETURN"))
     private int onGetSkyLight(int original) {
         return Math.max(Modules.get().get(Fullbright.class).getLuminance(LightType.SKY), original);
     }

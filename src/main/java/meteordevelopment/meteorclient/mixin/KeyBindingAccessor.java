@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Mixin(KeyBinding.class)
 public interface KeyBindingAccessor {
-    @Accessor("CATEGORY_ORDER_MAP")
+    @Accessor("categoryOrderMap")
     static Map<String, Integer> getCategoryOrderMap() { return null; }
 
     @Accessor("boundKey")

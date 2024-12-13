@@ -58,9 +58,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     @Shadow
     protected abstract void onMouseClick(Slot slot, int invSlot, int clickData, SlotActionType actionType);
 
-    @Shadow
-    public abstract void close();
-
     @Unique
     private static final ItemStack[] ITEMS = new ItemStack[27];
 
@@ -74,14 +71,14 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
         if (invTweaks.isActive() && invTweaks.showButtons() && invTweaks.canSteal(getScreenHandler())) {
             addDrawableChild(
-                new ButtonWidget.Builder(Text.literal("Steal"), button -> invTweaks.steal(getScreenHandler()))
+                new ButtonWidget.Builder(new LiteralText("Steal"), button -> invTweaks.steal(getScreenHandler()))
                     .position(x, y - 22)
                     .size(40, 20)
                     .build()
             );
 
             addDrawableChild(
-                new ButtonWidget.Builder(Text.literal("Dump"), button -> invTweaks.dump(getScreenHandler()))
+                new ButtonWidget.Builder(new LiteralText("Dump"), button -> invTweaks.dump(getScreenHandler()))
                     .position(x + 42, y - 22)
                     .size(40, 20)
                     .build()

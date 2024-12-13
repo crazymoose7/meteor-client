@@ -13,7 +13,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.block.FluidRenderer;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,13 +21,14 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FluidRenderer.class)
 public abstract class FluidRendererMixin {
     @Unique private final ThreadLocal<Integer> alphas = new ThreadLocal<>();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void onRender(BlockRenderView world, BlockPos pos, VertexConsumer vertexConsumer, BlockState blockState, FluidState fluidState, CallbackInfo info) {
+    private void onRender(BlockRenderView world, BlockPos pos, VertexConsumer vertexConsumer, FluidState fluidState, CallbackInfoReturnable<Boolean> info) {
         Ambience ambience = Modules.get().get(Ambience.class);
 
         if (ambience.isActive() && ambience.customLavaColor.get() && fluidState.isIn(FluidTags.LAVA)) {

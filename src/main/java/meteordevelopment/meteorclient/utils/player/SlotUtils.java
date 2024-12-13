@@ -11,11 +11,9 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.entity.mob.SkeletonHorseEntity;
 import net.minecraft.entity.mob.ZombieHorseEntity;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
-import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.LlamaEntity;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.screen.*;
 

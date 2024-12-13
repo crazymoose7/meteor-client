@@ -12,7 +12,6 @@ import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.mixin.MapRendererAccessor;
 import net.minecraft.client.render.MapRenderer;
 import net.minecraft.command.CommandSource;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,9 +30,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class SaveMapCommand extends Command {
     private static final SimpleCommandExceptionType MAP_NOT_FOUND = new SimpleCommandExceptionType(Text.of("You must be holding a filled map."));
@@ -86,7 +82,7 @@ public class SaveMapCommand extends Command {
         //this is horrible code but it somehow works
 
         MapRenderer mapRenderer = mc.gameRenderer.getMapRenderer();
-        MapRenderer.MapTexture texture = ((MapRendererAccessor) mapRenderer).invokeGetMapTexture(map.get(DataComponentTypes.MAP_ID), state);
+        MapRenderer.MapTexture texture = ((MapRendererAccessor) mapRenderer).invokeGetMapTexture(state);
 
         int[] data = texture.texture.getImage().makePixelArray();
         BufferedImage image = new BufferedImage(128, 128, 2);
@@ -111,7 +107,7 @@ public class SaveMapCommand extends Command {
         ItemStack map = getMap();
         if (map == null) return null;
 
-        return FilledMapItem.getMapState(map.get(DataComponentTypes.MAP_ID), mc.world);
+        return FilledMapItem.getMapState(map, mc.world);
     }
 
     private @Nullable String getPath() {

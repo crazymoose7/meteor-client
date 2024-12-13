@@ -8,10 +8,7 @@ package meteordevelopment.meteorclient.utils.misc.text;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
+import net.minecraft.text.*;
 
 import java.util.*;
 
@@ -37,9 +34,9 @@ public class TextUtils {
      * @return The {@link Text} equivalent of the {@link OrderedText} parameter.
      */
     public static MutableText parseOrderedText(OrderedText orderedText) {
-        MutableText parsedText = Text.empty();
+        MutableText parsedText = new LiteralText("");
         orderedText.accept((i, style, codePoint) -> {
-            parsedText.append(Text.literal(new String(Character.toChars(codePoint))).setStyle(style));
+            parsedText.append(new LiteralText(new String(Character.toChars(codePoint))).setStyle(style));
             return true;
         });
         return parsedText;

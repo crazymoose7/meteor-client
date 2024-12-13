@@ -21,7 +21,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class DamageCommand extends Command {
-    private final static SimpleCommandExceptionType INVULNERABLE = new SimpleCommandExceptionType(Text.literal("You are invulnerable."));
+    private final static SimpleCommandExceptionType INVULNERABLE = new SimpleCommandExceptionType(new LiteralText("You are invulnerable."));
 
     public DamageCommand() {
         super("damage", "Damages self", "dmg");

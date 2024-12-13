@@ -20,7 +20,6 @@ import meteordevelopment.meteorclient.systems.modules.player.PotionSpoof;
 import meteordevelopment.meteorclient.systems.modules.render.HandView;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 import meteordevelopment.meteorclient.utils.Utils;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -28,9 +27,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
@@ -57,26 +56,26 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "damage", at = @At("HEAD"))
     private void onDamageHead(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-        if (Utils.canUpdate() && getWorld().isClient)
+        if (Utils.canUpdate() && this.world.isClient)
             MeteorClient.EVENT_BUS.post(DamageEvent.get((LivingEntity) (Object) this, source));
     }
 
-    @ModifyReturnValue(method = "canWalkOnFluid", at = @At("RETURN"))
-    private boolean onCanWalkOnFluid(boolean original, FluidState fluidState) {
-        if ((Object) this != mc.player) return original;
-        CanWalkOnFluidEvent event = MeteorClient.EVENT_BUS.post(CanWalkOnFluidEvent.get(fluidState));
+    @Inject(method = "canWalkOnFluid", at = @At("HEAD"), cancellable = true)
+    private void onCanWalkOnFluid(Fluid fluid, CallbackInfoReturnable<Boolean> info) {
+        if ((Object) this != mc.player) return;
+        CanWalkOnFluidEvent event = MeteorClient.EVENT_BUS.post(CanWalkOnFluidEvent.get(fluid.getDefaultState()));
 
-        return event.walkOnFluid;
+        info.setReturnValue(event.walkOnFluid);
     }
 
     @Inject(method = "spawnItemParticles", at = @At("HEAD"), cancellable = true)
     private void spawnItemParticles(ItemStack stack, int count, CallbackInfo info) {
         NoRender noRender = Modules.get().get(NoRender.class);
-        if (noRender.noEatParticles() && stack.getComponents().contains(DataComponentTypes.FOOD)) info.cancel();
+        if (noRender.noEatParticles() && stack.isFood()) info.cancel();
     }
 
     @Inject(method = "onEquipStack", at = @At("HEAD"), cancellable = true)
-    private void onEquipStack(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo info) {
+    private void onEquipStack(ItemStack stack, CallbackInfo info) {
         if ((Object) this == mc.player && Modules.get().get(OffhandCrash.class).isAntiCrash()) {
             info.cancel();
         }

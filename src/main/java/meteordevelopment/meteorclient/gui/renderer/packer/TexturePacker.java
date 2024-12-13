@@ -5,7 +5,6 @@
 
 package meteordevelopment.meteorclient.gui.renderer.packer;
 
-import com.mojang.blaze3d.platform.TextureUtil;
 import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import net.minecraft.util.Identifier;
 import org.lwjgl.BufferUtils;
@@ -31,7 +30,7 @@ public class TexturePacker {
 
     public GuiTexture add(Identifier id) {
         try {
-            InputStream in = mc.getResourceManager().getResource(id).get().getInputStream();
+            InputStream in = mc.getResourceManager().getResource(id).getInputStream();
             GuiTexture texture = new GuiTexture();
 
             try (MemoryStack stack = MemoryStack.stackPush()) {

@@ -47,8 +47,8 @@ public class NameHistoryCommand extends Command {
                 }
 
                 String name = lookUpTarget.getProfile().getName();
-                MutableText initial = Text.literal(name);
-                initial.append(Text.literal(name.endsWith("s") ? "'" : "'s"));
+                MutableText initial = new LiteralText(name);
+                initial.append(new LiteralText(name.endsWith("s") ? "'" : "'s"));
 
                 Color nameColor = PlayerUtils.getPlayerColor(mc.world.getPlayerByUuid(uuid), Utils.WHITE);
 
@@ -61,32 +61,32 @@ public class NameHistoryCommand extends Command {
                     )
                     .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        Text.literal("View on laby.net")
+                        new LiteralText("View on laby.net")
                             .formatted(Formatting.YELLOW)
                             .formatted(Formatting.ITALIC)
                     ))
                 );
 
-                info(initial.append(Text.literal(" Username History:").formatted(Formatting.GRAY)));
+                info(initial.append(new LiteralText(" Username History:").formatted(Formatting.GRAY)));
 
                 for (Name entry : history.username_history) {
-                    MutableText nameText = Text.literal(entry.name);
+                    MutableText nameText = new LiteralText(entry.name);
                     nameText.formatted(Formatting.AQUA);
 
                     if (entry.changed_at != null && entry.changed_at.getTime() != 0) {
-                        MutableText changed = Text.literal("Changed at: ");
+                        MutableText changed = new LiteralText("Changed at: ");
                         changed.formatted(Formatting.GRAY);
 
                         DateFormat formatter = new SimpleDateFormat("hh:mm:ss, dd/MM/yyyy");
-                        changed.append(Text.literal(formatter.format(entry.changed_at)).formatted(Formatting.WHITE));
+                        changed.append(new LiteralText(formatter.format(entry.changed_at)).formatted(Formatting.WHITE));
 
                         nameText.setStyle(nameText.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, changed)));
                     }
 
                     if (!entry.accurate) {
-                        MutableText text = Text.literal("*").formatted(Formatting.WHITE);
+                        MutableText text = new LiteralText("*").formatted(Formatting.WHITE);
 
-                        text.setStyle(text.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("This name history entry is not accurate according to laby.net"))));
+                        text.setStyle(text.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("This name history entry is not accurate according to laby.net"))));
 
                         nameText.append(text);
                     }

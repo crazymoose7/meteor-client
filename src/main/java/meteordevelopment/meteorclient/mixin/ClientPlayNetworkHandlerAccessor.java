@@ -13,16 +13,4 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ClientPlayNetworkHandlerAccessor {
     @Accessor("chunkLoadDistance")
     int getChunkLoadDistance();
-
-    @Accessor("messagePacker")
-    MessageChain.Packer getMessagePacker();
-
-    @Accessor("lastSeenMessagesCollector")
-    LastSeenMessagesCollector getLastSeenMessagesCollector();
-
-    @Accessor("combinedDynamicRegistries")
-    DynamicRegistryManager.Immutable getCombinedDynamicRegistries();
-
-    @Accessor("enabledFeatures")
-    FeatureSet getEnabledFeatures();
 }

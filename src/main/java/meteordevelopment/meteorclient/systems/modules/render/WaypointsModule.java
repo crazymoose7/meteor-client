@@ -157,7 +157,7 @@ public class WaypointsModule extends Module {
     public void addDeath(Vec3d deathPos) {
         String time = dateFormat.format(new Date());
         if (dpChat.get()) {
-            MutableText text = Text.literal("Died at ");
+            MutableText text = new LiteralText("Died at ");
             text.append(formatCoords(deathPos));
             text.append(String.format(" on %s.", time));
             info(text);

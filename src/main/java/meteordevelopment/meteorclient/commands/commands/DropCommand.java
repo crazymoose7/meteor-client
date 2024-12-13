@@ -21,8 +21,8 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class DropCommand extends Command {
-    private static final SimpleCommandExceptionType NOT_SPECTATOR = new SimpleCommandExceptionType(Text.literal("Can't drop items while in spectator."));
-    private static final SimpleCommandExceptionType NO_SUCH_ITEM = new SimpleCommandExceptionType(Text.literal("Could not find an item with that name!"));
+    private static final SimpleCommandExceptionType NOT_SPECTATOR = new SimpleCommandExceptionType(new LiteralText("Can't drop items while in spectator."));
+    private static final SimpleCommandExceptionType NO_SUCH_ITEM = new SimpleCommandExceptionType(new LiteralText("Could not find an item with that name!"));
 
     public DropCommand() {
         super("drop", "Automatically drops specified items.");

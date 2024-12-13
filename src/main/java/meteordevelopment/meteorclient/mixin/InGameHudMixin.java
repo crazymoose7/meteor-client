@@ -15,8 +15,8 @@ import meteordevelopment.meteorclient.systems.modules.render.Freecam;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import org.spongepowered.asm.mixin.Final;
@@ -28,6 +28,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import static meteordevelopment.meteorclient.MeteorClient.mc;
+
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
     @Shadow @Final private MinecraftClient client;
@@ -35,12 +37,12 @@ public abstract class InGameHudMixin {
     @Shadow public abstract void clear();
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void onRender(DrawContext context, float tickDelta, CallbackInfo ci) {
+    private void onRender(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
         client.getProfiler().push(MeteorClient.MOD_ID + "_render_2d");
 
         Utils.unscaledProjection();
 
-        MeteorClient.EVENT_BUS.post(Render2DEvent.get(context, context.getScaledWindowWidth(), context.getScaledWindowWidth(), tickDelta));
+        MeteorClient.EVENT_BUS.post(Render2DEvent.get(mc.getWindow().getWidth(), mc.getWindow().getHeight(), tickDelta));
 
         Utils.scaledProjection();
         RenderSystem.applyModelViewMatrix();
@@ -54,7 +56,7 @@ public abstract class InGameHudMixin {
     }
 
     @Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
-    private void onRenderPortalOverlay(DrawContext context, float nauseaStrength, CallbackInfo ci) {
+    private void onRenderPortalOverlay(float nauseaStrength, CallbackInfo ci) {
         if (Modules.get().get(NoRender.class).noPortalOverlay()) ci.cancel();
     }
 
@@ -69,7 +71,7 @@ public abstract class InGameHudMixin {
     }
 
     @Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
-    private void onRenderVignetteOverlay(DrawContext context, Entity entity, CallbackInfo ci) {
+    private void onRenderVignetteOverlay(Entity entity, CallbackInfo ci) {
         if (Modules.get().get(NoRender.class).noVignette()) ci.cancel();
     }
 
@@ -94,7 +96,7 @@ public abstract class InGameHudMixin {
     }
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    private void onRenderCrosshair(DrawContext context, float tickDelta, CallbackInfo ci) {
+    private void onRenderCrosshair(MatrixStack matrices, CallbackInfo ci) {
         if (Modules.get().get(NoRender.class).noCrosshair()) ci.cancel();
     }
 
@@ -104,7 +106,7 @@ public abstract class InGameHudMixin {
     }
 
     @Inject(method = "renderHeldItemTooltip", at = @At("HEAD"), cancellable = true)
-    private void onRenderHeldItemTooltip(DrawContext context, CallbackInfo ci) {
+    private void onRenderHeldItemTooltip(MatrixStack matrices, CallbackInfo ci) {
         if (Modules.get().get(NoRender.class).noHeldItemName()) ci.cancel();
     }
 

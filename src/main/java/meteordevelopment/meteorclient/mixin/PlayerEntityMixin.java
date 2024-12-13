@@ -124,14 +124,4 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private boolean keepSprint$setSprinting(PlayerEntity instance, boolean b) {
         return Modules.get().get(Sprint.class).stopSprinting();
     }
-
-    @ModifyReturnValue(method = "getBlockInteractionRange", at = @At("RETURN"))
-    private double modifyBlockInteractionRange(double original) {
-        return Modules.get().get(Reach.class).blockReach();
-    }
-
-    @ModifyReturnValue(method = "getEntityInteractionRange", at = @At("RETURN"))
-    private double modifyEntityInteractionRange(double original) {
-        return Modules.get().get(Reach.class).entityReach();
-    }
 }

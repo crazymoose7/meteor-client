@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(SignBlockEntityRenderer.class)
 public abstract class SignBlockEntityRendererMixin {
-    @ModifyExpressionValue(method = "renderText", at = @At(value = "CONSTANT", args = {"intValue=4", "ordinal=1"}))
+    @ModifyExpressionValue(method = "render", at = @At(value = "CONSTANT", args = {"intValue=4", "ordinal=1"}))
     private int loopTextLengthProxy(int i) {
         if (Modules.get().get(NoRender.class).noSignText()) return 0;
         return i;

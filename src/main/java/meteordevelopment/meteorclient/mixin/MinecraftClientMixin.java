@@ -32,8 +32,6 @@ import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.Nullable;
@@ -44,9 +42,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -118,7 +116,7 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
         }
     }
 
-    @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "openScreen", at = @At("HEAD"), cancellable = true)
     private void onSetScreen(Screen screen, CallbackInfo info) {
         if (screen instanceof WidgetScreen) screen.mouseMoved(mouse.getX() * window.getScaleFactor(), mouse.getY() * window.getScaleFactor());
 
@@ -128,22 +126,18 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
         if (event.isCancelled()) info.cancel();
     }
 
-    @Inject(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isItemEnabled(Lnet/minecraft/resource/featuretoggle/FeatureSet;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void onDoItemUseHand(CallbackInfo ci, Hand[] var1, int var2, int var3, Hand hand, ItemStack itemStack) {
+    @Redirect(method = "doItemUse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;", ordinal = 1))
+    private HitResult onDoItemUseHand(MinecraftClient client) {
         FastUse fastUse = Modules.get().get(FastUse.class);
         if (fastUse.isActive()) {
-            itemUseCooldown = fastUse.getItemUseCooldown(itemStack);
+            itemUseCooldown = fastUse.getItemUseCooldown(client.player.getActiveItem());
         }
+        return null;
     }
 
     @ModifyExpressionValue(method = "doItemUse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;", ordinal = 1))
     private HitResult doItemUseMinecraftClientCrosshairTargetProxy(HitResult original) {
         return MeteorClient.EVENT_BUS.post(ItemUseCrosshairTargetEvent.get(original)).target;
-    }
-
-    @ModifyReturnValue(method = "reloadResources(ZLnet/minecraft/client/MinecraftClient$LoadingContext;)Ljava/util/concurrent/CompletableFuture;", at = @At("RETURN"))
-    private CompletableFuture<Void> onReloadResourcesNewCompletableFuture(CompletableFuture<Void> original) {
-        return original.thenRun(() -> MeteorClient.EVENT_BUS.post(ResourcePacksReloadedEvent.get()));
     }
 
     @ModifyArg(method = "updateWindowTitle", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/Window;setTitle(Ljava/lang/String;)V"))
@@ -168,7 +162,7 @@ public abstract class MinecraftClientMixin implements IMinecraftClient {
 
     @Inject(method = "getFramerateLimit", at = @At("HEAD"), cancellable = true)
     private void onGetFramerateLimit(CallbackInfoReturnable<Integer> info) {
-        if (Modules.get().isActive(UnfocusedCPU.class) && !isWindowFocused()) info.setReturnValue(Math.min(Modules.get().get(UnfocusedCPU.class).fps.get(), this.options.getMaxFps().getValue()));
+        if (Modules.get().isActive(UnfocusedCPU.class) && !isWindowFocused()) info.setReturnValue(Math.min(Modules.get().get(UnfocusedCPU.class).fps.get(), this.options.maxFps));
     }
 
     // Time delta

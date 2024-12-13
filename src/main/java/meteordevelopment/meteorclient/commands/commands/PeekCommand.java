@@ -18,7 +18,7 @@ import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class PeekCommand extends Command {
     private static final ItemStack[] ITEMS = new ItemStack[27];
-    private static final SimpleCommandExceptionType NOT_HOLDING_SHULKER_BOX = new SimpleCommandExceptionType(Text.literal("You must be holding a storage block with items in it."));
+    private static final SimpleCommandExceptionType NOT_HOLDING_SHULKER_BOX = new SimpleCommandExceptionType(new LiteralText("You must be holding a storage block with items in it."));
 
     public PeekCommand() {
         super("peek", "Lets you see what's inside storage block items.");

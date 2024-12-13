@@ -10,11 +10,8 @@ import meteordevelopment.meteorclient.gui.WindowScreen;
 import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import net.minecraft.client.gui.screen.ingame.BookScreen;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.BookUpdateC2SPacket;
-import net.minecraft.text.RawFilteredPair;
 import net.minecraft.util.Hand;
 
 import java.util.ArrayList;

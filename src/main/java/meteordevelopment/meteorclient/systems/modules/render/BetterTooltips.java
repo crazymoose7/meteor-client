@@ -35,6 +35,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.RawFilteredPair;
 import net.minecraft.text.Text;
@@ -258,13 +259,13 @@ public class BetterTooltips extends Module {
                 BlockStateComponent blockStateComponent = components.get(DataComponentTypes.BLOCK_STATE);
                 if (blockStateComponent != null) {
                     String level = blockStateComponent.properties().get("honey_level");
-                    event.list.add(1, Text.literal(String.format("%sHoney level: %s%s%s.", Formatting.GRAY, Formatting.YELLOW, level, Formatting.GRAY)));
+                    event.list.add(1, new LiteralText(String.format("%sHoney level: %s%s%s.", Formatting.GRAY, Formatting.YELLOW, level, Formatting.GRAY)));
                 }
 
                 NbtComponent nbtComponent = components.get(DataComponentTypes.BLOCK_ENTITY_DATA);
                 if (nbtComponent != null) {
                     NbtList beesTag = nbtComponent.copyNbt().getList("Bees", 10);
-                    event.list.add(1, Text.literal(String.format("%sBees: %s%d%s.", Formatting.GRAY, Formatting.YELLOW, beesTag.size(), Formatting.GRAY)));
+                    event.list.add(1, new LiteralText(String.format("%sBees: %s%d%s.", Formatting.GRAY, Formatting.YELLOW, beesTag.size(), Formatting.GRAY)));
                 }
             }
         }
@@ -282,9 +283,9 @@ public class BetterTooltips extends Module {
                 if (byteCount >= 1024) count = String.format("%.2f kb", byteCount / (float) 1024);
                 else count = String.format("%d bytes", byteCount);
 
-                event.list.add(Text.literal(count).formatted(Formatting.GRAY));
+                event.list.add(new LiteralText(count).formatted(Formatting.GRAY));
             } catch (Exception e) {
-                event.list.add(Text.literal("Error getting bytes.").formatted(Formatting.RED));
+                event.list.add(new LiteralText("Error getting bytes.").formatted(Formatting.RED));
             }
         }
 
@@ -298,8 +299,8 @@ public class BetterTooltips extends Module {
             || (event.itemStack.getItem() instanceof BannerItem && banners.get() && !previewBanners())
             || (event.itemStack.getItem() instanceof BannerPatternItem && banners.get() && !previewBanners())
             || (event.itemStack.getItem() == Items.SHIELD && banners.get() && !previewBanners())) {
-            event.list.add(Text.literal(""));
-            event.list.add(Text.literal("Hold " + Formatting.YELLOW + keybind + Formatting.RESET + " to preview"));
+            event.list.add(new LiteralText(""));
+            event.list.add(new LiteralText("Hold " + Formatting.YELLOW + keybind + Formatting.RESET + " to preview"));
         }
     }
 
@@ -316,7 +317,7 @@ public class BetterTooltips extends Module {
         else if (event.itemStack.getItem() == Items.ENDER_CHEST && previewEChest()) {
             event.tooltipData = EChestMemory.isKnown()
                 ? new ContainerTooltipComponent(EChestMemory.ITEMS.toArray(new ItemStack[27]), ECHEST_COLOR)
-                : new TextTooltipComponent(Text.literal("Unknown ender chest inventory.").formatted(Formatting.DARK_RED));
+                : new TextTooltipComponent(new LiteralText("Unknown ender chest inventory.").formatted(Formatting.DARK_RED));
         }
 
         // Map preview
@@ -361,7 +362,7 @@ public class BetterTooltips extends Module {
 
         if (nbtComponent != null) {
             if (nbtComponent.contains("LootTable")) {
-                tooltip.add(Text.literal("???????"));
+                tooltip.add(new LiteralText("???????"));
             }
 
             if (nbtComponent.contains("Items")) {
@@ -379,7 +380,7 @@ public class BetterTooltips extends Module {
 
                 counts.keySet().stream().sorted(Comparator.comparingInt(value -> -counts.getInt(value))).limit(5).forEach(item -> {
                     MutableText mutableText = item.getName().copyContentOnly();
-                    mutableText.append(Text.literal(" x").append(String.valueOf(counts.getInt(item))).formatted(Formatting.GRAY));
+                    mutableText.append(new LiteralText(" x").append(String.valueOf(counts.getInt(item))).formatted(Formatting.GRAY));
                     tooltip.add(mutableText);
                 });
 
@@ -407,7 +408,7 @@ public class BetterTooltips extends Module {
             List<RawFilteredPair<String>> pages = bookItem.get(DataComponentTypes.WRITABLE_BOOK_CONTENT).pages();
 
             if (pages.isEmpty()) return null;
-            return Text.literal(pages.getFirst().get(false));
+            return new LiteralText(pages.getFirst().get(false));
         }
         else if (bookItem.get(DataComponentTypes.WRITTEN_BOOK_CONTENT) != null) {
             List<RawFilteredPair<Text>> pages = bookItem.get(DataComponentTypes.WRITTEN_BOOK_CONTENT).pages();

@@ -7,7 +7,6 @@ package meteordevelopment.meteorclient.mixin;
 
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.registry.entry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 

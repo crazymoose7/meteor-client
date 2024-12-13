@@ -144,7 +144,7 @@ public class ChatUtils {
     public static void sendMsg(int id, @Nullable String prefixTitle, @Nullable Formatting prefixColor, Text msg) {
         if (mc.world == null) return;
 
-        MutableText message = Text.empty();
+        MutableText message = new LiteralText("");
         message.append(getPrefix());
         if (prefixTitle != null) message.append(getCustomPrefix(prefixTitle, prefixColor));
         message.append(msg);
@@ -155,12 +155,12 @@ public class ChatUtils {
     }
 
     private static MutableText getCustomPrefix(String prefixTitle, Formatting prefixColor) {
-        MutableText prefix = Text.empty();
+        MutableText prefix = new LiteralText("");
         prefix.setStyle(prefix.getStyle().withFormatting(Formatting.GRAY));
 
         prefix.append("[");
 
-        MutableText moduleTitle = Text.literal(prefixTitle);
+        MutableText moduleTitle = new LiteralText(prefixTitle);
         moduleTitle.setStyle(moduleTitle.getStyle().withFormatting(prefixColor));
         prefix.append(moduleTitle);
 
@@ -208,14 +208,14 @@ public class ChatUtils {
 
     private static MutableText formatMsg(String message, Formatting defaultColor) {
         StringReader reader = new StringReader(message);
-        MutableText text = Text.empty();
+        MutableText text = new LiteralText("");
         Style style = Style.EMPTY.withFormatting(defaultColor);
         StringBuilder result = new StringBuilder();
         boolean formatting = false;
         while (reader.canRead()) {
             char c = reader.read();
             if (c == '(') {
-                text.append(Text.literal(result.toString()).setStyle(style));
+                text.append(new LiteralText(result.toString()).setStyle(style));
                 result.setLength(0);
                 result.append(c);
                 formatting = true;
@@ -246,7 +246,7 @@ public class ChatUtils {
             }
         }
 
-        if (!result.isEmpty()) text.append(Text.literal(result.toString()).setStyle(style));
+        if (!result.isEmpty()) text.append(new LiteralText(result.toString()).setStyle(style));
 
         return text;
     }
@@ -259,7 +259,7 @@ public class ChatUtils {
             Style style = coordsText.getStyle().withFormatting(Formatting.BOLD)
                 .withHoverEvent(new HoverEvent(
                     HoverEvent.Action.SHOW_TEXT,
-                    Text.literal("Set as Baritone goal")
+                    new LiteralText("Set as Baritone goal")
                 ))
                 .withClickEvent(new MeteorClickEvent(
                     ClickEvent.Action.RUN_COMMAND,

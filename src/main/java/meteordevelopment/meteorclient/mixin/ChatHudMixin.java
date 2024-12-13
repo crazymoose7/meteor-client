@@ -21,11 +21,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.client.gui.hud.MessageIndicator;
-import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,10 +41,10 @@ public abstract class ChatHudMixin implements IChatHud {
     private MinecraftClient client;
     @Shadow
     @Final
-    private List<ChatHudLine.Visible> visibleMessages;
+    private List<ChatHudLine<OrderedText>>  visibleMessages;
     @Shadow
     @Final
-    private List<ChatHudLine> messages;
+    private List<ChatHudLine<Text>> messages;
 
     @Unique
     private BetterChat betterChat;
@@ -57,7 +54,7 @@ public abstract class ChatHudMixin implements IChatHud {
     private boolean skipOnAddMessage;
 
     @Shadow
-    public abstract void addMessage(Text message, @Nullable MessageSignatureData signatureData, @Nullable MessageIndicator indicator);
+    protected abstract void addMessage(Text message, int messageId, int timestamp, boolean refresh);
 
     @Shadow
     public abstract void addMessage(Text message);

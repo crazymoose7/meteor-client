@@ -26,7 +26,7 @@ public abstract class PlayerInteractEntityC2SPacketMixin implements IPlayerInter
 
     @Override
     public PlayerInteractEntityC2SPacket.InteractionType getType() {
-        return type.getType();
+        return type;
     }
 
     @Override

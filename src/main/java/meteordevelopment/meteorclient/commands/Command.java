@@ -14,9 +14,7 @@ import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 

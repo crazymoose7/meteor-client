@@ -5,7 +5,6 @@
 
 package meteordevelopment.meteorclient.events.render;
 
-import net.minecraft.client.item.TooltipData;
 import net.minecraft.item.ItemStack;
 
 

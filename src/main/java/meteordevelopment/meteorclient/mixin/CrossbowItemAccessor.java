@@ -5,7 +5,6 @@
 
 package meteordevelopment.meteorclient.mixin;
 
-import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

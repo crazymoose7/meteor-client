@@ -9,8 +9,6 @@ import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.utils.misc.Names;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;

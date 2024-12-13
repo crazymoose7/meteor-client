@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -256,14 +257,24 @@ public class BetterChat extends Module {
         }
 
         if (antiClear.get()) {
-            // more than two \n behind each other will be reduced to only two \n
-            String jsonString = Text.Serialization.toJsonString(message, mc.player.getRegistryManager());
+            String messageString = message.getString();
+            if (antiClearRegex.matcher(messageString).find()) {
+                MutableText newMessage = new LiteralText("");
+                TextVisitor.visit(message, (text, style, string) -> {
+                    Matcher antiClearMatcher = antiClearRegex.matcher(string);
+                    if (antiClearMatcher.find()) {
+                        // assume literal text content
+                        newMessage.append(new LiteralText(antiClearMatcher.replaceAll("\n\n")).setStyle(style));
+                    } else {
+                        newMessage.append(text.copyContentOnly().setStyle(style));
+                    }
 
-            Matcher antiClearMatcher = antiClearRegex.matcher(jsonString);
-            String replacedString = antiClearMatcher.replaceAll("\n\n");
-
-            message = (Text) Text.Serialization.fromJson(replacedString, mc.player.getRegistryManager());
+                    return Optional.empty();
+                }, Style.EMPTY);
+                message = newMessage;
+            }
         }
+
 
         if (antiSpam.get()) {
             Text antiSpammed = appendAntiSpam(message);
@@ -301,7 +312,7 @@ public class BetterChat extends Module {
 
             if (textString.equals(stringToCheck)) {
                 messageIndex = i;
-                returnText = text.copy().append(Text.literal(" (2)").formatted(Formatting.GRAY));
+                returnText = text.copy().append(new LiteralText(" (2)").formatted(Formatting.GRAY));
                 break;
             } else {
                 Matcher matcher = antiSpamRegex.matcher(stringToCheck);
@@ -312,7 +323,7 @@ public class BetterChat extends Module {
 
                 if (stringToCheck.substring(0, matcher.start()).equals(textString)) {
                     messageIndex = i;
-                    returnText = text.copy().append(Text.literal(" (" + (number + 1) + ")").formatted(Formatting.GRAY));
+                    returnText = text.copy().append(new LiteralText(" (" + (number + 1) + ")").formatted(Formatting.GRAY));
                     break;
                 }
             }
@@ -387,22 +398,22 @@ public class BetterChat extends Module {
         return width;
     }
 
-    public void drawPlayerHead(DrawContext context, ChatHudLine.Visible line, int y, int color) {
+    public void drawPlayerHead(MatrixStack matrices, ChatHudLine line, int y, int color) {
         if (!isActive() || !playerHeads.get()) return;
 
         // Only draw the first line of multi line messages
-        if (((IChatHudLineVisible) (Object) line).meteor$isStartOfEntry())  {
+        if (((IChatHudLineVisible) line).meteor$isStartOfEntry())  {
             RenderSystem.enableBlend();
-            RenderSystem.setShaderColor(1, 1, 1, Color.toRGBAA(color) / 255f);
+            RenderSystem.color4f(1, 1, 1, Color.toRGBAA(color) / 255f);
 
-            drawTexture(context, (IChatHudLine) (Object) line, y);
+            drawTexture(context, (IChatHudLine) line, y);
 
-            RenderSystem.setShaderColor(1, 1, 1, 1);
+            RenderSystem.color4f(1, 1, 1, 1);
             RenderSystem.disableBlend();
         }
 
         // Offset
-        context.getMatrices().translate(10, 0, 0);
+        matrices.translate(10, 0, 0);
     }
 
     private void drawTexture(DrawableHelper context, IChatHudLine line, int y) {

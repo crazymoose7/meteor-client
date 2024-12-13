@@ -50,7 +50,7 @@ public abstract class BookScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
         addDrawableChild(
-            new ButtonWidget.Builder(Text.literal("Copy"), button -> {
+            new ButtonWidget.Builder(new LiteralText("Copy"), button -> {
                     NbtList listTag = new NbtList();
                     for (int i = 0; i < contents.getPageCount(); i++) listTag.add(NbtString.of(contents.getPage(i).getString()));
 
@@ -97,7 +97,7 @@ public abstract class BookScreenMixin extends Screen {
         Hand hand2 = hand; // Honestly
 
         addDrawableChild(
-                new ButtonWidget.Builder(Text.literal("Edit title & author"), button -> {
+                new ButtonWidget.Builder(new LiteralText("Edit title & author"), button -> {
                     mc.openScreen(new EditBookTitleAndAuthorScreen(GuiThemes.get(), book, hand2));
                 })
                 .position(4, 4 + 20 + 2)

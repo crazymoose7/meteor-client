@@ -7,12 +7,12 @@ package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.misc.AutoReconnect;
-import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
+import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,17 +38,17 @@ public abstract class DisconnectedScreenMixin extends Screen {
     }
 
     @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/DirectionalLayoutWidget;refreshPositions()V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void addButtons(CallbackInfo ci, ButtonWidget buttonWidget) {
+    private void addButtons(CallbackInfo ci) {
         AutoReconnect autoReconnect = Modules.get().get(AutoReconnect.class);
 
         if (autoReconnect.lastServerConnection != null) {
-            reconnectBtn = new ButtonWidget.Builder(Text.literal(getText()), button -> tryConnecting()).build();
+            reconnectBtn = new ButtonWidget.Builder(new LiteralText(getText()), button -> tryConnecting()).build();
             grid.add(reconnectBtn);
 
             grid.add(
-                new ButtonWidget.Builder(Text.literal("Toggle Auto Reconnect"), button -> {
+                new ButtonWidget.Builder(new LiteralText("Toggle Auto Reconnect"), button -> {
                     autoReconnect.toggle();
-                    reconnectBtn.setMessage(Text.literal(getText()));
+                    reconnectBtn.setMessage(new LiteralText(getText()));
                     time = autoReconnect.time.get() * 20;
                 }).build()
             );
@@ -64,7 +64,7 @@ public abstract class DisconnectedScreenMixin extends Screen {
             tryConnecting();
         } else {
             time--;
-            if (reconnectBtn != null) reconnectBtn.setMessage(Text.literal(getText()));
+            if (reconnectBtn != null) reconnectBtn.setMessage(new LiteralText(getText()));
         }
     }
 

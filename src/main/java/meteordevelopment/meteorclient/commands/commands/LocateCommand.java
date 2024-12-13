@@ -278,7 +278,7 @@ public class LocateCommand extends Command {
             }
 
             Vec3d coords = Vec3d.of(lodestoneTrackerComponent.target().get().pos());
-            MutableText text = Text.literal("Lodestone located at ");
+            MutableText text = new LiteralText("Lodestone located at ");
             text.append(ChatUtils.formatCoords(coords));
             text.append(".");
             info(text);
@@ -357,7 +357,7 @@ public class LocateCommand extends Command {
         }
         MeteorClient.EVENT_BUS.unsubscribe(this);
         Vec3d coords = new Vec3d(intersection[0], 0, intersection[1]);
-        MutableText text = Text.literal("Stronghold roughly located at ");
+        MutableText text = new LiteralText("Stronghold roughly located at ");
         text.append(ChatUtils.formatCoords(coords));
         text.append(".");
         info(text);

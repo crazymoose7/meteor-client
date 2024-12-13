@@ -10,7 +10,7 @@ import meteordevelopment.meteorclient.systems.modules.world.Ambience;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.LightningEntityRenderer;
-import org.joml.Matrix4f;
+import net.minecraft.util.math.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +21,7 @@ public abstract class LightningEntityRendererMixin {
     /**
      * @author Walaryne
      */
-    @Inject(method = "drawBranch", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "method_23183", at = @At(value = "HEAD"), cancellable = true)
     private static void onSetLightningVertex(Matrix4f matrix4f, VertexConsumer vertexConsumer, float f, float g, int i, float h, float j, float k, float l, float m, float n, float o, boolean bl, boolean bl2, boolean bl3, boolean bl4, CallbackInfo ci) {
         Ambience ambience = Modules.get().get(Ambience.class);
 

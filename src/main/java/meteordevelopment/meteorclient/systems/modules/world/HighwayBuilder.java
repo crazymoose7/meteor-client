@@ -39,6 +39,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.*;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -502,14 +503,14 @@ public class HighwayBuilder extends Module {
     }
 
     private void disconnect(String message, Object... args) {
-        MutableText text = Text.literal(String.format("%s[%s%s%s] %s", Formatting.GRAY, Formatting.BLUE, title, Formatting.GRAY, Formatting.RED) + String.format(message, args)).append("\n");
+        MutableText text = new LiteralText(String.format("%s[%s%s%s] %s", Formatting.GRAY, Formatting.BLUE, title, Formatting.GRAY, Formatting.RED) + String.format(message, args)).append("\n");
         text.append(getStatsText());
 
         mc.getNetworkHandler().getConnection().disconnect(text);
     }
 
     public MutableText getStatsText() {
-        MutableText text = Text.literal(String.format("%sDistance: %s%.0f\n", Formatting.GRAY, Formatting.WHITE, mc.player == null ? 0.0f : PlayerUtils.distanceTo(start)));
+        MutableText text = new LiteralText(String.format("%sDistance: %s%.0f\n", Formatting.GRAY, Formatting.WHITE, mc.player == null ? 0.0f : PlayerUtils.distanceTo(start)));
         text.append(String.format("%sBlocks broken: %s%d\n", Formatting.GRAY, Formatting.WHITE, blocksBroken));
         text.append(String.format("%sBlocks placed: %s%d", Formatting.GRAY, Formatting.WHITE, blocksPlaced));
 
@@ -534,7 +535,7 @@ public class HighwayBuilder extends Module {
                     b.setState(b.lastState);
                 }
                 else {
-                    b.mc.player.setYaw(0);
+                    b.mc.player.yaw = 0;
 
                     if (!isZ) {
                         b.input.pressingForward = z < 0;
@@ -566,7 +567,7 @@ public class HighwayBuilder extends Module {
         Forward {
             @Override
             protected void start(HighwayBuilder b) {
-                b.mc.player.setYaw(b.dir.yaw);
+                b.mc.player.yaw = b.dir.yaw;
 
                 checkTasks(b);
             }
@@ -707,8 +708,8 @@ public class HighwayBuilder extends Module {
                     return;
                 }
 
-                b.mc.player.setYaw(b.dir.opposite().yaw);
-                b.mc.player.setPitch(-25);
+                b.mc.player.yaw = b.dir.opposite().yaw;
+                b.mc.player.pitch = -25;
 
                 if (firstTick) {
                     firstTick = false;
@@ -808,7 +809,7 @@ public class HighwayBuilder extends Module {
 
                 // Move
                 if (moveTimer > 0) {
-                    b.mc.player.setYaw(dir.yaw);
+                    b.mc.player.yaw = dir.yaw;
                     b.input.pressingForward = moveTimer > 2;
 
                     moveTimer--;

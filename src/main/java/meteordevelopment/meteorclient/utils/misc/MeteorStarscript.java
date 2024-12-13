@@ -44,8 +44,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;

@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 public class SettingArgumentType implements ArgumentType<String> {
     private static final SettingArgumentType INSTANCE = new SettingArgumentType();
-    private static final DynamicCommandExceptionType NO_SUCH_SETTING = new DynamicCommandExceptionType(name -> Text.literal("No such setting '" + name + "'."));
+    private static final DynamicCommandExceptionType NO_SUCH_SETTING = new DynamicCommandExceptionType(name -> new LiteralText("No such setting '" + name + "'."));
 
     public static SettingArgumentType create() {
         return INSTANCE;

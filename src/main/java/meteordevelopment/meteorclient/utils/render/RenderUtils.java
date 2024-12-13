@@ -20,7 +20,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
 

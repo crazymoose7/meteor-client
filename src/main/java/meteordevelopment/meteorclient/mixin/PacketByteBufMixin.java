@@ -7,7 +7,6 @@ package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.misc.AntiPacketKick;
-import net.minecraft.nbt.NbtSizeTracker;
 import net.minecraft.network.PacketByteBuf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

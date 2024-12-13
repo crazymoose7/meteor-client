@@ -66,7 +66,7 @@ public class PlayerHeadTexture extends Texture {
     }
 
     public PlayerHeadTexture() {
-        try (InputStream inputStream = mc.getResourceManager().getResource(new MeteorIdentifier("textures/steve.png")).get().getInputStream()) {
+        try (InputStream inputStream = mc.getResourceManager().getResource(new MeteorIdentifier("textures/steve.png")).getInputStream()) {
             ByteBuffer data = TextureUtil.readResource(inputStream);
             data.rewind();
 

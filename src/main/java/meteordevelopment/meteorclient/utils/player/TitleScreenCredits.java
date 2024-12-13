@@ -17,6 +17,7 @@ import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.render.MeteorToast;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -72,7 +73,7 @@ public class TitleScreenCredits {
                     case Http.SUCCESS -> {
                         if (!credit.addon.getCommit().equals(res.body().commit.sha)) {
                             synchronized (credit.text) {
-                                credit.text.append(Text.literal("*").formatted(Formatting.RED));
+                                credit.text.append(new LiteralText("*").formatted(Formatting.RED));
                                 ((IText) credit.text).meteor$invalidateCache();
                             }
                         }
@@ -85,15 +86,15 @@ public class TitleScreenCredits {
     private static void add(MeteorAddon addon) {
         Credit credit = new Credit(addon);
 
-        credit.text.append(Text.literal(addon.name).styled(style -> style.withColor(addon.color.getPacked())));
-        credit.text.append(Text.literal(" by ").formatted(Formatting.GRAY));
+        credit.text.append(new LiteralText(addon.name).styled(style -> style.withColor(addon.color.toTextColor())));
+        credit.text.append(new LiteralText(" by ").formatted(Formatting.GRAY));
 
         for (int i = 0; i < addon.authors.length; i++) {
             if (i > 0) {
-                credit.text.append(Text.literal(i == addon.authors.length - 1 ? " & " : ", ").formatted(Formatting.GRAY));
+                credit.text.append(new LiteralText(i == addon.authors.length - 1 ? " & " : ", ").formatted(Formatting.GRAY));
             }
 
-            credit.text.append(Text.literal(addon.authors[i]).formatted(Formatting.WHITE));
+            credit.text.append(new LiteralText(addon.authors[i]).formatted(Formatting.WHITE));
         }
 
         credits.add(credit);
@@ -139,7 +140,7 @@ public class TitleScreenCredits {
 
     private static class Credit {
         public final MeteorAddon addon;
-        public final MutableText text = Text.empty();
+        public final MutableText text = new LiteralText("");
 
         public Credit(MeteorAddon addon) {
             this.addon = addon;

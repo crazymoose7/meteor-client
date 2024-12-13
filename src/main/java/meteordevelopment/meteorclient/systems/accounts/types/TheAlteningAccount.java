@@ -16,7 +16,6 @@ import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.systems.accounts.AccountType;
 import meteordevelopment.meteorclient.systems.accounts.TokenAccount;
 import meteordevelopment.meteorclient.utils.misc.NbtException;
-import net.minecraft.client.session.Session;
 import net.minecraft.nbt.NbtCompound;
 
 import java.util.Optional;

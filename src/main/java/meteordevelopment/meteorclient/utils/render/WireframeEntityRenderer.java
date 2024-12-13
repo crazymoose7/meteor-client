@@ -24,7 +24,6 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector4f;

@@ -13,7 +13,6 @@ import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.util.math.Vec3d;
 
 /**

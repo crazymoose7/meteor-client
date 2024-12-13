@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.BookEditScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.nbt.*;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
@@ -43,7 +44,7 @@ public abstract class BookEditScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
         addDrawableChild(
-            new ButtonWidget.Builder(Text.literal("Copy"), button -> {
+            new ButtonWidget.Builder(new LiteralText("Copy"), button -> {
                 NbtList listTag = new NbtList();
                     pages.stream().map(NbtString::of).forEach(listTag::add);
 
@@ -71,7 +72,7 @@ public abstract class BookEditScreenMixin extends Screen {
         );
 
         addDrawableChild(
-                new ButtonWidget.Builder(Text.literal("Paste"), button -> {
+                new ButtonWidget.Builder(new LiteralText("Paste"), button -> {
                     String clipboard = GLFW.glfwGetClipboardString(mc.getWindow().getHandle());
                     if (clipboard == null) return;
 

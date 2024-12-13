@@ -40,6 +40,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -59,10 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -79,7 +77,6 @@ public class Utils {
     public static boolean rendering3D = true;
     public static double frameTime;
     public static Screen screenToOpen;
-    public static VertexSorter vertexSorter;
 
     private Utils() {
     }
@@ -177,14 +174,25 @@ public class Utils {
     }
 
     public static void unscaledProjection() {
-        vertexSorter = RenderSystem.getVertexSorting();
-        RenderSystem.setProjectionMatrix(new Matrix4f().setOrtho(0, mc.getWindow().getFramebufferWidth(), mc.getWindow().getFramebufferHeight(), 0, 1000, 21000), VertexSorter.BY_Z);
-        rendering3D = false;
+        RenderSystem.matrixMode(5889);
+        RenderSystem.loadIdentity();
+        RenderSystem.ortho(0.0, (double) mc.getWindow().getFramebufferWidth(), (double)mc.getWindow().getFramebufferHeight(), 0.0, 1000.0, 3000.0);
+        RenderSystem.matrixMode(5888);
+        RenderSystem.loadIdentity();
+        RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
     }
 
     public static void scaledProjection() {
-        RenderSystem.setProjectionMatrix(new Matrix4f().setOrtho(0, (float) (mc.getWindow().getFramebufferWidth() / mc.getWindow().getScaleFactor()), (float) (mc.getWindow().getFramebufferHeight() / mc.getWindow().getScaleFactor()), 0, 1000, 21000), vertexSorter);
-        rendering3D = true;
+        RenderSystem.matrixMode(5889);
+        RenderSystem.loadIdentity();
+        RenderSystem.ortho(0.0,
+            (double)mc.getWindow().getFramebufferWidth() / mc.getWindow().getScaleFactor(),
+            (double)mc.getWindow().getFramebufferHeight() / mc.getWindow().getScaleFactor(),
+            0.0, 1000.0, 3000.0
+        );
+        RenderSystem.matrixMode(5888);
+        RenderSystem.loadIdentity();
+        RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
     }
 
     public static Vec3d vec3d(BlockPos pos) {
@@ -214,24 +222,15 @@ public class Utils {
         Arrays.fill(items, ItemStack.EMPTY);
         NbtCompound nbt = itemStack.getTag();
 
-        if (components.contains(DataComponentTypes.CONTAINER)) {
-            ContainerComponentAccessor container = ((ContainerComponentAccessor) (Object) components.get(DataComponentTypes.CONTAINER));
-            DefaultedList<ItemStack> stacks = container.getStacks();
-
-            for (int i = 0; i < stacks.size(); i++) {
-                if (i >= 0 && i < items.length) items[i] = stacks.get(i);
-            }
-        }
-        else if (components.contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
-            NbtComponent nbt2 = components.get(DataComponentTypes.BLOCK_ENTITY_DATA);
+        if (nbt != null && nbt.contains("BlockEntityTag")) {
+            NbtCompound nbt2 = nbt.getCompound("BlockEntityTag");
 
             if (nbt2.contains("Items")) {
-                NbtList nbt3 = (NbtList) nbt2.getNbt().get("Items");
+                NbtList nbt3 = (NbtList) nbt2.get("Items");
 
                 for (int i = 0; i < nbt3.size(); i++) {
                     int slot = nbt3.getCompound(i).getByte("Slot"); // Apparently shulker boxes can store more than 27 items, good job Mojang
-                    // now NPEs when mc.world == null
-                    if (slot >= 0 && slot < items.length) items[slot] = ItemStack.fromNbtOrEmpty(mc.player.getRegistryManager(), nbt3.getCompound(i));
+                    if (slot >= 0 && slot < items.length) items[slot] = ItemStack.fromNbt(nbt3.getCompound(i));
                 }
             }
         }
@@ -252,10 +251,7 @@ public class Utils {
     }
 
     public static boolean hasItems(ItemStack itemStack) {
-        ContainerComponentAccessor container = ((ContainerComponentAccessor) (Object) itemStack.get(DataComponentTypes.CONTAINER));
-        if (container != null && !container.getStacks().isEmpty()) return true;
-
-        NbtCompound compoundTag = itemStack.getOrDefault(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT).getNbt();
+        NbtCompound compoundTag = itemStack.getSubTag("BlockEntityTag");
         return compoundTag != null && compoundTag.contains("Items", 9);
     }
 
@@ -354,7 +350,7 @@ public class Utils {
 
         // Multiplayer
         if (mc.getCurrentServerEntry() != null) {
-            return mc.getCurrentServerEntry().isRealm() ? "realms" : mc.getCurrentServerEntry().address;
+            return mc.isConnectedToRealms() ? "realms" : mc.getCurrentServerEntry().address;
         }
 
         return "";
@@ -504,18 +500,59 @@ public class Utils {
     }
 
     public static void addEnchantment(ItemStack itemStack, Enchantment enchantment, int level) {
-        ItemEnchantmentsComponent.Builder b = new ItemEnchantmentsComponent.Builder(EnchantmentHelper.getEnchantments(itemStack));
-        b.add(enchantment, level);
+        NbtCompound tag = itemStack.getOrCreateTag();
+        NbtList listTag;
 
-        EnchantmentHelper.set(itemStack, b.build());
+        // Get list tag
+        if (!tag.contains("Enchantments", 9)) {
+            listTag = new NbtList();
+            tag.put("Enchantments", listTag);
+        } else {
+            listTag = tag.getList("Enchantments", 10);
+        }
+
+        // Check if item already has the enchantment and modify the level
+        String enchId = Registry.ENCHANTMENT.getId(enchantment).toString();
+
+        for (NbtElement _t : listTag) {
+            NbtCompound t = (NbtCompound) _t;
+
+            if (t.getString("id").equals(enchId)) {
+                t.putShort("lvl", (short) level);
+                return;
+            }
+        }
+
+        // Add the enchantment if it doesn't already have it
+        NbtCompound enchTag = new NbtCompound();
+        enchTag.putString("id", enchId);
+        enchTag.putShort("lvl", (short) level);
+
+        listTag.add(enchTag);
     }
 
     public static void clearEnchantments(ItemStack itemStack) {
-        EnchantmentHelper.apply(itemStack, components -> components.remove(a -> true));
+        NbtCompound nbt = itemStack.getTag();
+        if (nbt != null) nbt.remove("Enchantments");
     }
 
     public static void removeEnchantment(ItemStack itemStack, Enchantment enchantment) {
-        EnchantmentHelper.apply(itemStack, components -> components.remove(enchantment1 -> enchantment1.value().equals(enchantment)));
+        NbtCompound nbt = itemStack.getTag();
+        if (nbt == null) return;
+
+        if (!nbt.contains("Enchantments", 9)) return;
+        NbtList list = nbt.getList("Enchantments", 10);
+
+        String enchId = Registry.ENCHANTMENT.getId(enchantment).toString();
+
+        for (Iterator<NbtElement> it = list.iterator(); it.hasNext();) {
+            NbtCompound ench = (NbtCompound) it.next();
+
+            if (ench.getString("id").equals(enchId)) {
+                it.remove();
+                break;
+            }
+        }
     }
 
     public static Color lerp(Color first, Color second, @Range(from = 0, to = 1) float v) {
@@ -524,11 +561,6 @@ public class Utils {
             (int) (first.g * (1 - v) + second.g * v),
             (int) (first.b * (1 - v) + second.b * v)
         );
-    }
-
-    public static boolean isLoading() {
-        ResourceReloadLogger.ReloadState state = ((ResourceReloadLoggerAccessor) ((MinecraftClientAccessor) mc).getResourceReloadLogger()).getReloadState();
-        return state == null || !((ReloadStateAccessor) state).isFinished();
     }
 
     public static int parsePort(String full) {

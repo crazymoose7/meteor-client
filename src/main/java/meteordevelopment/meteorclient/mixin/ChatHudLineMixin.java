@@ -16,13 +16,13 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(value = ChatHudLine.class)
 public abstract class ChatHudLineMixin implements IChatHudLine {
-    @Shadow @Final private Text content;
+    @Shadow @Final private Text text;
     @Unique private int id;
     @Unique private GameProfile sender;
 
     @Override
     public String meteor$getText() {
-        return content.getString();
+        return text.getString();
     }
 
     @Override

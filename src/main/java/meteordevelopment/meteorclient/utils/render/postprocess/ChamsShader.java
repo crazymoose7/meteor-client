@@ -5,7 +5,6 @@
 
 package meteordevelopment.meteorclient.utils.render.postprocess;
 
-import com.mojang.blaze3d.platform.TextureUtil;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.game.ResourcePacksReloadedEvent;
 import meteordevelopment.meteorclient.renderer.Texture;

@@ -217,9 +217,9 @@ public class BookBot extends Module {
 
             // Handle the file being empty
             if (file.length() == 0) {
-                MutableText message = Text.literal("");
-                message.append(Text.literal("The bookbot file is empty! ").formatted(Formatting.RED));
-                message.append(Text.literal("Click here to edit it.")
+                MutableText message = new LiteralText("");
+                message.append(new LiteralText("The bookbot file is empty! ").formatted(Formatting.RED));
+                message.append(new LiteralText("Click here to edit it.")
                     .setStyle(Style.EMPTY
                         .withFormatting(Formatting.UNDERLINE, Formatting.RED)
                         .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()))

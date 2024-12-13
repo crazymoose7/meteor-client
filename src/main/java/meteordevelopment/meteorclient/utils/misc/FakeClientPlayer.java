@@ -8,7 +8,6 @@ package meteordevelopment.meteorclient.utils.misc;
 import com.mojang.authlib.GameProfile;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.utils.PreInit;
-import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -39,7 +38,7 @@ public class FakeClientPlayer {
     }
 
     public static PlayerEntity getPlayer() {
-        UUID id = mc.getSession().getUuidOrNull();
+        UUID id = UUID.fromString(mc.getSession().getUuid());
 
         if (player == null || (!id.equals(lastId))) {
             if (world == null) {
@@ -68,7 +67,7 @@ public class FakeClientPlayer {
 
     public static PlayerListEntry getPlayerListEntry() {
         if (playerListEntry == null || needsNewEntry) {
-            playerListEntry = new PlayerListEntry(new GameProfile(lastId, mc.getSession().getUsername()), false);
+            playerListEntry = new PlayerListEntry(new GameProfile(lastId, mc.getSession().getUsername()));
             needsNewEntry = false;
         }
 

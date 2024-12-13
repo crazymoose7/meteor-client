@@ -6,7 +6,6 @@
 package meteordevelopment.meteorclient.mixin;
 
 import meteordevelopment.meteorclient.systems.config.Config;
-import net.minecraft.client.gui.screen.SplashTextRenderer;
 import net.minecraft.client.resource.SplashTextResourceSupplier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
