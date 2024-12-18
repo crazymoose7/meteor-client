@@ -16,7 +16,6 @@ import meteordevelopment.meteorclient.systems.macros.Macro;
 import meteordevelopment.meteorclient.systems.macros.Macros;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;

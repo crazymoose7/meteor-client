@@ -14,10 +14,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class ModulesCommand extends Command {
     public ModulesCommand() {

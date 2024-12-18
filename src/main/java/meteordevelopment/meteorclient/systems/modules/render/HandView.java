@@ -14,7 +14,6 @@ import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.RotationAxis;
 import org.joml.Vector3d;
 
 public class HandView extends Module {

@@ -13,12 +13,8 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FireworksComponent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.FireworkItem;
-import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
@@ -86,7 +82,7 @@ public class ElytraBoost extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        fireworks.removeIf(Entity::isRemoved);
+        fireworks.removeIf(fireworkRocketEntity -> fireworkRocketEntity.removed);
     }
 
     private void boost() {
@@ -94,12 +90,12 @@ public class ElytraBoost extends Module {
 
         if (mc.player.isFallFlying() && mc.currentScreen == null) {
             ItemStack itemStack = Items.FIREWORK_ROCKET.getDefaultStack();
-            itemStack.set(DataComponentTypes.FIREWORKS, new FireworksComponent(fireworkLevel.get(), itemStack.get(DataComponentTypes.FIREWORKS).explosions()));
+            itemStack.getOrCreateSubTag("Fireworks").putByte("Flight", fireworkLevel.get().byteValue());
 
             FireworkRocketEntity entity = new FireworkRocketEntity(mc.world, itemStack, mc.player);
             fireworks.add(entity);
             if (playSound.get()) mc.world.playSoundFromEntity(mc.player, entity, SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT, 3.0F, 1.0F);
-            mc.world.addEntity(entity);
+            mc.world.addEntity(entity.getEntityId(), entity);
         }
     }
 

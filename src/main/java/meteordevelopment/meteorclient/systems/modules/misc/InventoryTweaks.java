@@ -26,8 +26,8 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.CarvedPumpkinBlock;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Equipment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
@@ -296,7 +296,7 @@ public class InventoryTweaks extends Module {
     private boolean isWearable(ItemStack itemStack) {
         Item item = itemStack.getItem();
 
-        if (item instanceof Equipment) return true;
+        if (item instanceof ArmorItem) return true;
         return item instanceof BlockItem blockItem &&
             (blockItem.getBlock() instanceof AbstractSkullBlock || blockItem.getBlock() instanceof CarvedPumpkinBlock);
     }

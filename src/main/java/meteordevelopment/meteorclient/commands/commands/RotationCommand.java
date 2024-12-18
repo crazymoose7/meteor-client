@@ -8,13 +8,9 @@ package meteordevelopment.meteorclient.commands.commands;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import meteordevelopment.meteorclient.commands.arguments.DirectionArgumentType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class RotationCommand extends Command {
     public RotationCommand() {

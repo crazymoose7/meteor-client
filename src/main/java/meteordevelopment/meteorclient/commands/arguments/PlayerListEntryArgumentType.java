@@ -15,7 +15,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 
 import java.util.Collection;
 import java.util.List;

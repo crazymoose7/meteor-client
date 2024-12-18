@@ -12,10 +12,6 @@ import meteordevelopment.meteorclient.commands.arguments.PlayerArgumentType;
 import meteordevelopment.meteorclient.events.meteor.KeyEvent;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class SpectateCommand extends Command {
 

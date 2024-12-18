@@ -30,7 +30,6 @@ import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.EventPriority;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -118,7 +117,7 @@ public class Freecam extends Module {
     public float yaw, pitch;
     public float prevYaw, prevPitch;
 
-    private double fovScale;
+    private float fovScale;
     private boolean bobView;
 
     private boolean forward, backward, right, left, up, down;
@@ -129,11 +128,11 @@ public class Freecam extends Module {
 
     @Override
     public void onActivate() {
-        fovScale = mc.options.getFovEffectScale().getValue();
-        bobView = mc.options.getBobView().getValue();
+        fovScale = mc.options.fovEffectScale;
+        bobView = mc.options.bobView;
         if (staticView.get()) {
-            mc.options.getFovEffectScale().setValue((double)0);
-            mc.options.getBobView().setValue(false);
+            mc.options.fovEffectScale = 0;
+            mc.options.bobView = false;
         }
         yaw = mc.player.getYaw(mc.getTickDelta());
         pitch = mc.player.getPitch(mc.getTickDelta());
@@ -168,8 +167,8 @@ public class Freecam extends Module {
         if (reloadChunks.get()) mc.worldRenderer.reload();
         mc.options.setPerspective(perspective);
         if (staticView.get()) {
-            mc.options.getFovEffectScale().setValue(fovScale);
-            mc.options.getBobView().setValue(bobView);
+            mc.options.fovEffectScale = fovScale;
+            mc.options.bobView = bobView;
         }
     }
 

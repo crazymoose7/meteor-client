@@ -17,7 +17,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
@@ -110,10 +109,10 @@ public class PlayerModelHud extends HudElement {
 
             float offset = centerOrientation.get() == CenterOrientation.North ? 180 : 0;
 
-            float yaw = copyYaw.get() ? MathHelper.wrapDegrees(player.prevYaw + (player.getYaw() - player.prevYaw) * mc.getTickDelta() + offset) : (float) customYaw.get();
-            float pitch = copyPitch.get() ? player.getPitch() : (float) customPitch.get();
+            float yaw = copyYaw.get() ? MathHelper.wrapDegrees(player.prevYaw + (player.getYaw(mc.getTickDelta()) - player.prevYaw) * mc.getTickDelta() + offset) : (float) customYaw.get();
+            float pitch = copyPitch.get() ? player.getPitch(mc.getTickDelta()) : (float) customPitch.get();
 
-            drawEntity(renderer.drawContext, x, y, (int) (30 * scale.get()), -yaw, -pitch, player);
+            drawEntity(x, y, (int) (30 * scale.get()), -yaw, -pitch, player);
         });
 
         if (background.get()) {
@@ -137,7 +136,7 @@ public class PlayerModelHud extends HudElement {
      * Additionally, it uses OpenGL scissors, which causes the player model to get cut when the Minecraft GUI scale is not 1x.
      * This version of drawEntity should fix these issues.
      */
-    private void drawEntity(DrawContext context, int x, int y, int size, float yaw, float pitch, LivingEntity entity) {
+    private void drawEntity(int x, int y, int size, float yaw, float pitch, LivingEntity entity) {
 
         float tanYaw = (float) Math.atan((yaw) / 40.0f);
         float tanPitch = (float) Math.atan((pitch) / 40.0f);
@@ -146,22 +145,20 @@ public class PlayerModelHud extends HudElement {
         // This means that the player model is upside-down. We'll apply a rotation of PI radians (180 degrees) to fix this.
         // This does have the downside of setting the origin to the bottom-center corner, though, so we'll have
         // to compensate for this later.
-        Quaternionf quaternion = new Quaternionf().rotateZ((float) Math.PI);
-
         // The drawEntity command draws the entity using some entity parameters, so we'll have to manipulate some of
         // those to draw as we want. But first, we'll save the previous values, so we can restore them later.
         float previousBodyYaw = entity.bodyYaw;
-        float previousYaw = entity.getYaw();
-        float previousPitch = entity.getPitch();
+        float previousYaw = entity.getYaw(mc.getTickDelta());
+        float previousPitch = entity.getPitch(mc.getTickDelta());
         float previousPrevHeadYaw = entity.prevHeadYaw; // A perplexing name, I know!
         float prevHeadYaw = entity.headYaw;
 
         // Apply the rotation parameters
         entity.bodyYaw = 180.0f + tanYaw * 20.0f;
-        entity.setYaw(180.0f + tanYaw * 40.0f);
-        entity.setPitch(-tanPitch * 20.0f);
-        entity.headYaw = entity.getYaw();
-        entity.prevHeadYaw = entity.getYaw();
+        entity.yaw = 180.0f + tanYaw * 40.0f;
+        entity.pitch = -tanPitch * 20.0f;
+        entity.headYaw = entity.getYaw(mc.getTickDelta());
+        entity.prevHeadYaw = entity.getYaw(mc.getTickDelta());
 
         // Recall the player's origin is now the bottom-center corner, so we'll have to offset the draw by half the width
         // to get it to render in the center.
@@ -170,12 +167,12 @@ public class PlayerModelHud extends HudElement {
         // The vector3 parameter applies a translation to the player's model. Given that we're simply offsetting
         // the draw in the x and y parameters, we won't really need this, so we'll set it to default.
         // It doesn't seem like quaternionf2 does anything, so we'll leave it null to save some computation.
-        InventoryScreen.drawEntity(context, x + getWidth() / 2, y + getHeight() * 0.9f, size, new Vector3f(), quaternion, null, entity);
+        InventoryScreen.drawEntity(x + getWidth() / 2, (int) (y + getHeight() * 0.9), size, (float) mc.mouse.getX(), (float) mc.mouse.getY(), entity);
 
         // Restore the previous values
         entity.bodyYaw = previousBodyYaw;
-        entity.setYaw(previousYaw);
-        entity.setPitch(previousPitch);
+        entity.yaw = previousYaw;
+        entity.pitch = previousPitch;
         entity.prevHeadYaw = previousPrevHeadYaw;
         entity.headYaw = prevHeadYaw;
     }

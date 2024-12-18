@@ -22,7 +22,7 @@ import meteordevelopment.meteorclient.utils.render.NametagUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AbstractHorseEntity;
+import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -71,7 +71,7 @@ public class EntityOwner extends Module {
             UUID ownerUuid;
 
             if (entity instanceof TameableEntity tameable) ownerUuid = tameable.getOwnerUuid();
-            else if (entity instanceof AbstractHorseEntity horse) ownerUuid = horse.getOwnerUuid();
+            else if (entity instanceof HorseBaseEntity horse) ownerUuid = horse.getOwnerUuid();
             else if (entity instanceof ProjectileEntity && projectiles.get()) ownerUuid = ((ProjectileEntityAccessor) entity).getOwnerUuid();
             else continue;
 

@@ -6,7 +6,6 @@
 package meteordevelopment.meteorclient.mixin;
 
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.SocialInteractionsManager;
 import net.minecraft.client.util.Session;
@@ -33,18 +32,11 @@ public interface MinecraftClientAccessor {
     Proxy getProxy();
 
     @Invoker("doAttack")
-    boolean leftClick();
-
-    @Accessor("authenticationService")
-    YggdrasilAuthenticationService getAuthenticationService();
+    void leftClick();
 
     @Mutable
     @Accessor("sessionService")
     void setSessionService(MinecraftSessionService sessionService);
-
-    @Mutable
-    @Accessor("authenticationService")
-    void setAuthenticationService(YggdrasilAuthenticationService authenticationService);
 
     @Mutable
     @Accessor("skinProvider")

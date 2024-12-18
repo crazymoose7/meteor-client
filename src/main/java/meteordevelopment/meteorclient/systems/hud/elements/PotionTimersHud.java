@@ -5,8 +5,6 @@
 
 package meteordevelopment.meteorclient.systems.hud.elements;
 
-import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.hud.*;
 import meteordevelopment.meteorclient.utils.misc.Names;
@@ -16,7 +14,6 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -155,7 +152,6 @@ public class PotionTimersHud extends HudElement {
         .build()
     );
 
-    private final List<Pair<StatusEffectInstance, String>> texts = new ArrayList<>();
     private double rainbowHue;
 
     public PotionTimersHud() {
@@ -182,13 +178,10 @@ public class PotionTimersHud extends HudElement {
         double width = 0;
         double height = 0;
 
-        texts.clear();
-
         for (StatusEffectInstance statusEffectInstance : mc.player.getStatusEffects()) {
-            if (hiddenEffects.get().contains(statusEffectInstance.getEffectType().value())) continue;
+            if (hiddenEffects.get().contains(statusEffectInstance.getEffectType())) continue;
             if (!showAmbient.get() && statusEffectInstance.isAmbient()) continue;
             String text = getString(statusEffectInstance);
-            texts.add(new ObjectObjectImmutablePair<>(statusEffectInstance, text));
             width = Math.max(width, renderer.textWidth(text, shadow.get(), getScale()));
             height += renderer.textHeight(shadow.get(), getScale());
         }
@@ -216,10 +209,12 @@ public class PotionTimersHud extends HudElement {
 
         double localRainbowHue = rainbowHue;
 
-        for (Pair<StatusEffectInstance, String> potionEffectEntry : texts) {
+        for (StatusEffectInstance statusEffectInstance : mc.player.getStatusEffects()) {
+            if (hiddenEffects.get().contains(statusEffectInstance.getEffectType())) continue;
+            if (!showAmbient.get() && statusEffectInstance.isAmbient()) continue;
             Color color = switch (colorMode.get()) {
                 case Effect -> {
-                    int c = potionEffectEntry.left().getEffectType().value().getColor();
+                    int c = statusEffectInstance.getEffectType().getColor();
                     yield new Color(c).a(255);
                 }
                 case Flat -> {
@@ -233,7 +228,7 @@ public class PotionTimersHud extends HudElement {
                 }
             };
 
-            String text = potionEffectEntry.right();
+            String text = getString(statusEffectInstance);
             renderer.text(text, x + alignX(renderer.textWidth(text, shadow.get(), getScale()), alignment.get()), y, color, shadow.get(), getScale());
 
             y += renderer.textHeight(shadow.get(), getScale());
@@ -241,7 +236,7 @@ public class PotionTimersHud extends HudElement {
     }
 
     private String getString(StatusEffectInstance statusEffectInstance) {
-        return String.format("%s %d (%s)", Names.get(statusEffectInstance.getEffectType().value()), statusEffectInstance.getAmplifier() + 1, StatusEffectUtil.getDurationText(statusEffectInstance, 1, mc.world.getTickManager().getTickRate()).getString());
+        return String.format("%s %d (%s)", Names.get(statusEffectInstance.getEffectType()), statusEffectInstance.getAmplifier() + 1, StatusEffectUtil.durationToString(statusEffectInstance, 1));
     }
 
     private double getScale() {
@@ -250,7 +245,7 @@ public class PotionTimersHud extends HudElement {
 
     private boolean hasNoVisibleEffects() {
         for (StatusEffectInstance statusEffectInstance : mc.player.getStatusEffects()) {
-            if (hiddenEffects.get().contains(statusEffectInstance.getEffectType().value())) continue;
+            if (hiddenEffects.get().contains(statusEffectInstance.getEffectType())) continue;
             if (!showAmbient.get() && statusEffectInstance.isAmbient()) continue;
             return false;
         }

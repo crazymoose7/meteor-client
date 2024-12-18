@@ -13,8 +13,8 @@ import meteordevelopment.meteorclient.systems.modules.render.Freecam;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 import meteordevelopment.meteorclient.systems.modules.world.HighwayBuilder;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.CameraSubmersionType;
 import net.minecraft.entity.Entity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BlockView;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,9 +40,10 @@ public abstract class CameraMixin implements ICamera {
     @Unique
     private float tickDelta;
 
-    @Inject(method = "getSubmersionType", at = @At("HEAD"), cancellable = true)
-    private void getSubmergedFluidState(CallbackInfoReturnable<CameraSubmersionType> ci) {
-        if (Modules.get().get(NoRender.class).noLiquidOverlay()) ci.setReturnValue(CameraSubmersionType.NONE);
+    @Inject(method = "getSubmergedFluidState", at = @At("HEAD"), cancellable = true)
+    private void getSubmergedFluidState(CallbackInfoReturnable<FluidState> ci) {
+        // TODO - temp for now
+        if (Modules.get().get(NoRender.class).noLiquidOverlay()) ci.setReturnValue(new FluidState(null, null, null));
     }
 
     @ModifyVariable(method = "clipToSpace", at = @At("HEAD"), ordinal = 0, argsOnly = true)

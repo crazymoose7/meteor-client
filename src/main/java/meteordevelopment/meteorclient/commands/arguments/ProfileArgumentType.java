@@ -16,7 +16,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import meteordevelopment.meteorclient.systems.profiles.Profile;
 import meteordevelopment.meteorclient.systems.profiles.Profiles;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 
 import java.util.Collection;
 import java.util.List;

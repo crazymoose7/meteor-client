@@ -26,10 +26,10 @@ public abstract class SplashTextResourceSupplierMixin {
     private final List<String> meteorSplashes = getMeteorSplashes();
 
     @Inject(method = "get", at = @At("HEAD"), cancellable = true)
-    private void onApply(CallbackInfoReturnable<SplashTextRenderer> cir) {
+    private void onApply(CallbackInfoReturnable<String> cir) {
         if (Config.get() == null || !Config.get().titleScreenSplashes.get()) return;
 
-        if (override) cir.setReturnValue(new SplashTextRenderer(meteorSplashes.get(random.nextInt(meteorSplashes.size()))));
+        if (override) cir.setReturnValue(meteorSplashes.get(random.nextInt(meteorSplashes.size())));
         override = !override;
     }
 

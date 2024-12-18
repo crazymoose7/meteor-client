@@ -21,8 +21,7 @@ import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.SlotUtils;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.EventPriority;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FoodComponent;
+import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 
@@ -52,7 +51,7 @@ public class AutoEat extends Module {
             Items.SPIDER_EYE,
             Items.SUSPICIOUS_STEW
         )
-        .filter(item -> item.getComponents().get(DataComponentTypes.FOOD) != null)
+        .filter(Item::isFood)
         .build()
     );
 
@@ -123,7 +122,7 @@ public class AutoEat extends Module {
             // If we are eating check if we should still be eating
             if (shouldEat()) {
                 // Check if the item in current slot is not food
-                if (mc.player.inventory.getStack(slot).get(DataComponentTypes.FOOD) != null) {
+                if (mc.player.inventory.getStack(slot).isFood()) {
                     // If not try finding a new slot
                     int slot = findSlot();
 
@@ -241,11 +240,11 @@ public class AutoEat extends Module {
         for (int i = 0; i < 9; i++) {
             // Skip if item isn't food
             Item item = mc.player.inventory.getStack(i).getItem();
-            FoodComponent foodComponent = item.getComponents().get(DataComponentTypes.FOOD);
+            FoodComponent foodComponent = item.getFoodComponent();
             if (foodComponent == null) continue;
 
             // Check if hunger value is better
-            int hunger = foodComponent.nutrition();
+            int hunger = foodComponent.getHunger();
             if (hunger > bestHunger) {
                 // Skip if item is in blacklist
                 if (blacklist.get().contains(item)) continue;
@@ -257,7 +256,7 @@ public class AutoEat extends Module {
         }
 
         Item offHandItem = mc.player.getOffHandStack().getItem();
-        if (offHandItem.getComponents().get(DataComponentTypes.FOOD) != null && !blacklist.get().contains(offHandItem) && offHandItem.getComponents().get(DataComponentTypes.FOOD).nutrition() > bestHunger)
+        if (offHandItem.isFood() && !blacklist.get().contains(offHandItem) && offHandItem.getFoodComponent().getHunger() > bestHunger)
             slot = SlotUtils.OFFHAND;
 
         return slot;

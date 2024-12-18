@@ -15,7 +15,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import meteordevelopment.meteorclient.systems.waypoints.Waypoint;
 import meteordevelopment.meteorclient.systems.waypoints.Waypoints;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;

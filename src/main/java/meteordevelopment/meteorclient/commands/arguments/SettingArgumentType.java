@@ -16,7 +16,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;

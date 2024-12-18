@@ -13,10 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.PotionUtil;
 
-import java.util.Iterator;
 import java.util.List;
-
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class WItemWithLabel extends WHorizontalList {
     private ItemStack itemStack;

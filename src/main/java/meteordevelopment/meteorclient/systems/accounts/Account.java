@@ -6,23 +6,19 @@
 package meteordevelopment.meteorclient.systems.accounts;
 
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import com.mojang.authlib.minecraft.UserApiService;
-import com.mojang.authlib.yggdrasil.ServicesKeyType;
+
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import meteordevelopment.meteorclient.mixin.MinecraftClientAccessor;
 import meteordevelopment.meteorclient.mixin.PlayerSkinProviderAccessor;
 import meteordevelopment.meteorclient.utils.misc.ISerializable;
 import meteordevelopment.meteorclient.utils.misc.NbtException;
 import net.minecraft.client.network.SocialInteractionsManager;
-import net.minecraft.client.session.ProfileKeys;
 import net.minecraft.client.util.Session;
 import net.minecraft.client.texture.PlayerSkinProvider;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.encryption.SignatureVerifier;
 import net.minecraft.util.Util;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;

@@ -18,15 +18,14 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.render.model.json.Transformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.random.Random;
+
+import java.util.Random;
 
 public class ItemPhysics extends Module {
     private static final Direction[] FACES = { null, Direction.UP, Direction.DOWN, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.WEST };
@@ -41,7 +40,7 @@ public class ItemPhysics extends Module {
             .build()
     );
 
-    private final Random random = Random.createLocal();
+    private final Random random = null;
     private boolean renderingItem;
 
     public ItemPhysics() {
@@ -57,7 +56,7 @@ public class ItemPhysics extends Module {
         BakedModel model = getModel(event.itemEntity);
         ModelInfo info = getInfo(model);
 
-        random.setSeed(event.itemEntity.getId() * 2365798L);
+        random.setSeed(event.itemEntity.getEntityId() * 2365798L);
 
         applyTransformation(matrices, model);
         matrices.translate(0, info.offsetY, 0);

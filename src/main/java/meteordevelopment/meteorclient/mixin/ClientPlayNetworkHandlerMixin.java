@@ -5,33 +5,23 @@
 
 package meteordevelopment.meteorclient.mixin;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import meteordevelopment.meteorclient.MeteorClient;
-import meteordevelopment.meteorclient.commands.Commands;
 import meteordevelopment.meteorclient.events.entity.EntityDestroyEvent;
 import meteordevelopment.meteorclient.events.entity.player.PickItemsEvent;
 import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import meteordevelopment.meteorclient.events.game.GameLeftEvent;
-import meteordevelopment.meteorclient.events.game.SendMessageEvent;
 import meteordevelopment.meteorclient.events.packets.ContainerSlotUpdateEvent;
 import meteordevelopment.meteorclient.events.packets.InventoryEvent;
 import meteordevelopment.meteorclient.events.packets.PlaySoundPacketEvent;
 import meteordevelopment.meteorclient.events.world.ChunkDataEvent;
 import meteordevelopment.meteorclient.mixininterface.IExplosionS2CPacket;
-import meteordevelopment.meteorclient.pathing.BaritoneUtils;
-import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.movement.Velocity;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
-import meteordevelopment.meteorclient.utils.player.ChatUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientCommonNetworkHandler;
-import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.world.chunk.WorldChunk;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,12 +37,6 @@ import static meteordevelopment.meteorclient.MeteorClient.mc;
 public abstract class ClientPlayNetworkHandlerMixin {
     @Shadow
     private ClientWorld world;
-
-    @Shadow
-    public abstract void sendChatMessage(String content);
-
-    @Unique
-    private boolean ignoreChatMessage;
 
     @Unique
     private boolean worldNotNull;
@@ -78,12 +62,6 @@ public abstract class ClientPlayNetworkHandlerMixin {
         }
 
         MeteorClient.EVENT_BUS.post(GameJoinedEvent.get());
-    }
-
-    // the server sends a GameJoin packet after the reconfiguration phase
-    @Inject(method = "onEnterReconfiguration", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V", shift = At.Shift.AFTER))
-    private void onEnterReconfiguration(EnterReconfigurationS2CPacket packet, CallbackInfo info) {
-        MeteorClient.EVENT_BUS.post(GameLeftEvent.get());
     }
 
     @Inject(method = "onPlaySound", at = @At("HEAD"))
@@ -131,34 +109,6 @@ public abstract class ClientPlayNetworkHandlerMixin {
 
         if (itemEntity instanceof ItemEntity && entity == mc.player) {
             MeteorClient.EVENT_BUS.post(PickItemsEvent.get(((ItemEntity) itemEntity).getStack(), packet.getStackAmount()));
-        }
-    }
-
-    @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
-    private void onSendChatMessage(String message, CallbackInfo ci) {
-        if (ignoreChatMessage) return;
-
-        if (!message.startsWith(Config.get().prefix.get()) && !(BaritoneUtils.IS_AVAILABLE && message.startsWith(BaritoneUtils.getPrefix()))) {
-            SendMessageEvent event = MeteorClient.EVENT_BUS.post(SendMessageEvent.get(message));
-
-            if (!event.isCancelled()) {
-                ignoreChatMessage = true;
-                sendChatMessage(event.message);
-                ignoreChatMessage = false;
-            }
-            ci.cancel();
-            return;
-        }
-
-        if (message.startsWith(Config.get().prefix.get())) {
-            try {
-                Commands.dispatch(message.substring(Config.get().prefix.get().length()));
-            } catch (CommandSyntaxException e) {
-                ChatUtils.error(e.getMessage());
-            }
-
-            mc.inGameHud.getChatHud().addToMessageHistory(message);
-            ci.cancel();
         }
     }
 }

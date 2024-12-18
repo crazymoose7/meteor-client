@@ -23,7 +23,6 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -218,7 +217,6 @@ public class CombatHud extends HudElement {
 
             // Player Model
             InventoryScreen.drawEntity(
-                renderer.drawContext,
                 (int) x,
                 (int) y,
                 (int) (x + (25 * scale.get())),
@@ -437,7 +435,7 @@ public class CombatHud extends HudElement {
         return switch (i) {
             case 4 -> playerEntity.getOffHandStack();
             case 5 -> playerEntity.getMainHandStack();
-            default -> playerEntity.getInventory().getArmorStack(i);
+            default -> playerEntity.inventory.getArmorStack(i);
         };
     }
 

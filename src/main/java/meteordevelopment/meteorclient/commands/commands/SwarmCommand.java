@@ -27,22 +27,20 @@ import net.minecraft.command.argument.BlockStateArgument;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.ClickEvent;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Random;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
-
 public class SwarmCommand extends Command {
 
     private final static SimpleCommandExceptionType SWARM_NOT_ACTIVE = new SimpleCommandExceptionType(Text.of("The swarm module must be active to use this command."));
-    private @Nullable ObjectIntPair<String> pendingConnection;
+    String ip;
+    int port;
 
     public SwarmCommand() {
         super("swarm", "Sends commands to connected swarm workers.");
@@ -66,13 +64,11 @@ public class SwarmCommand extends Command {
                 .then(argument("ip", StringArgumentType.string())
                         .then(argument("port", IntegerArgumentType.integer(0, 65535))
                                 .executes(context -> {
-                                    String ip = StringArgumentType.getString(context, "ip");
-                                    int port = IntegerArgumentType.getInteger(context, "port");
-
-                                    pendingConnection = new ObjectIntImmutablePair<>(ip, port);
+                                    ip = StringArgumentType.getString(context, "ip");
+                                    port = IntegerArgumentType.getInteger(context, "port");
 
                                     info("Are you sure you want to connect to '%s:%s'?", ip, port);
-                                    info(Text.of("Click here to confirm").setStyle(Style.EMPTY
+                                    info(new LiteralText("Click here to confirm").setStyle(Style.EMPTY
                                         .withFormatting(Formatting.UNDERLINE, Formatting.GREEN)
                                         .withClickEvent(new MeteorClickEvent(ClickEvent.Action.RUN_COMMAND, ".swarm join confirm"))
                                     ));
@@ -82,7 +78,7 @@ public class SwarmCommand extends Command {
                         )
                 )
                 .then(literal("confirm").executes(ctx -> {
-                    if (pendingConnection == null) {
+                    if (ip == null || port == 0) {
                         error("No pending swarm connections.");
                         return SINGLE_SUCCESS;
                     }
@@ -92,9 +88,10 @@ public class SwarmCommand extends Command {
 
                     swarm.close();
                     swarm.mode.set(Swarm.Mode.Worker);
-                    swarm.worker = new SwarmWorker(pendingConnection.left(), pendingConnection.rightInt());
+                    swarm.worker = new SwarmWorker(ip, port);
 
-                    pendingConnection = null;
+                    ip = null;
+                    port = 0;
 
                     try {
                         info("Connected to (highlight)%s.", swarm.worker.getConnection());
@@ -207,7 +204,7 @@ public class SwarmCommand extends Command {
             }
             return SINGLE_SUCCESS;
         })
-        .then(argument("target", BlockStateArgumentType.blockState(REGISTRY_ACCESS)).executes(context -> {
+        .then(argument("target", BlockStateArgumentType.blockState()).executes(context -> {
             Swarm swarm = Modules.get().get(Swarm.class);
             if (swarm.isActive()) {
                 if (swarm.isHost()) {
@@ -223,7 +220,7 @@ public class SwarmCommand extends Command {
             }
             return SINGLE_SUCCESS;
         })
-        .then(argument("repair", BlockStateArgumentType.blockState(REGISTRY_ACCESS)).executes(context -> {
+        .then(argument("repair", BlockStateArgumentType.blockState()).executes(context -> {
             Swarm swarm = Modules.get().get(Swarm.class);
             if (swarm.isActive()) {
                 if (swarm.isHost()) {
@@ -270,7 +267,7 @@ public class SwarmCommand extends Command {
         }))));
 
         builder.then(literal("mine")
-                .then(argument("block", BlockStateArgumentType.blockState(REGISTRY_ACCESS)).executes(context -> {
+                .then(argument("block", BlockStateArgumentType.blockState()).executes(context -> {
                     Swarm swarm = Modules.get().get(Swarm.class);
                     if (swarm.isActive()) {
                         if (swarm.isHost()) {
