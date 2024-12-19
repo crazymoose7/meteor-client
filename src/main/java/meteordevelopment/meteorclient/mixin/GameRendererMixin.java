@@ -61,7 +61,7 @@ public abstract class GameRendererMixin {
     protected abstract void bobView(MatrixStack matrices, float tickDelta);
 
     @Shadow
-    protected abstract void tiltViewWhenHurt(MatrixStack matrices, float tickDelta);
+    protected abstract void bobViewWhenHurt(MatrixStack matrices, float tickDelta);
 
     @Unique
     private Renderer3D renderer;
@@ -69,7 +69,7 @@ public abstract class GameRendererMixin {
     @Unique
     private final MatrixStack matrices = new MatrixStack();
 
-    // FIXME: unsure
+    // TODO: unsure
     @Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = {"ldc=hand"}), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private void onRenderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci, MatrixStack matrix2, boolean bl, Camera camera, MatrixStack matrixStack, float f, Matrix4f matrix4f) {
         if (!Utils.canUpdate()) return;
@@ -79,26 +79,19 @@ public abstract class GameRendererMixin {
         // Create renderer and event
 
         if (renderer == null) renderer = new Renderer3D();
-        Render3DEvent event = Render3DEvent.get(matrixStack, renderer, tickDelta, camera.getPos().x, camera.getPos().y, camera.getPos().z);
+        Render3DEvent event = Render3DEvent.get(matrices, renderer, tickDelta, camera.getPos().x, camera.getPos().y, camera.getPos().z);
 
         // Call utility classes
 
         RenderUtils.updateScreenCenter();
-        NametagUtils.onRender(matrix4f2);
-
-        // Update model view matrix
-
-        RenderSystem.getModelViewStack().pushMatrix().mul(matrix4f2);
+        NametagUtils.onRender(matrix, matrix4f);
 
         matrices.push();
 
-        tiltViewWhenHurt(matrices, camera.getLastTickDelta());
-        if (client.options.getBobView().getValue()) bobView(matrices, camera.getLastTickDelta());
+        bobViewWhenHurt(matrices, f);
+        if (client.options.bobView) bobView(matrices, f);
 
-        RenderSystem.getModelViewStack().mul(matrices.peek().getPositionMatrix().invert());
         matrices.pop();
-
-        RenderSystem.applyModelViewMatrix();
 
         // Render
 
@@ -108,8 +101,7 @@ public abstract class GameRendererMixin {
 
         // Revert model view matrix
 
-        RenderSystem.getModelViewStack().popMatrix();
-        RenderSystem.applyModelViewMatrix();
+        RenderSystem.popMatrix();
 
         client.getProfiler().pop();
     }
@@ -119,7 +111,7 @@ public abstract class GameRendererMixin {
         MeteorClient.EVENT_BUS.post(RenderAfterWorldEvent.get());
     }
 
-    @Inject(method = "updateTargetedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;findCrosshairTarget(Lnet/minecraft/entity/Entity;DDF)Lnet/minecraft/util/hit/HitResult;"), cancellable = true)
+    @Inject(method = "updateTargetedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileUtil;raycast(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;D)Lnet/minecraft/util/hit/EntityHitResult;"), cancellable = true)
     private void onUpdateTargetedEntity(float tickDelta, CallbackInfo info) {
         if (Modules.get().get(NoMiningTrace.class).canWork() && client.crosshairTarget.getType() == HitResult.Type.BLOCK) {
             client.getProfiler().pop();
@@ -155,7 +147,7 @@ public abstract class GameRendererMixin {
     @Unique
     private boolean freecamSet = false;
 
-    @Inject(method = "updateCrosshairTarget", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "updateTargetedEntity", at = @At("HEAD"), cancellable = true)
     private void updateTargetedEntityInvoke(float tickDelta, CallbackInfo info) {
         Freecam freecam = Modules.get().get(Freecam.class);
         boolean highwayBuilder = Modules.get().isActive(HighwayBuilder.class);
@@ -170,21 +162,21 @@ public abstract class GameRendererMixin {
             double prevX = cameraE.prevX;
             double prevY = cameraE.prevY;
             double prevZ = cameraE.prevZ;
-            float yaw = cameraE.getYaw();
-            float pitch = cameraE.getPitch();
+            float yaw = cameraE.getYaw(tickDelta);
+            float pitch = cameraE.getPitch(tickDelta);
             float prevYaw = cameraE.prevYaw;
             float prevPitch = cameraE.prevPitch;
 
             if (highwayBuilder) {
-                cameraE.setYaw(camera.getYaw());
-                cameraE.setPitch(camera.getPitch());
+                cameraE.yaw = (camera.getYaw());
+                cameraE.pitch = (camera.getPitch());
             } else {
                 ((IVec3d) cameraE.getPos()).set(freecam.pos.x, freecam.pos.y - cameraE.getEyeHeight(cameraE.getPose()), freecam.pos.z);
                 cameraE.prevX = freecam.prevPos.x;
                 cameraE.prevY = freecam.prevPos.y - cameraE.getEyeHeight(cameraE.getPose());
                 cameraE.prevZ = freecam.prevPos.z;
-                cameraE.setYaw(freecam.yaw);
-                cameraE.setPitch(freecam.pitch);
+                cameraE.yaw = (freecam.yaw);
+                cameraE.pitch = (freecam.pitch);
                 cameraE.prevYaw = freecam.prevYaw;
                 cameraE.prevPitch = freecam.prevPitch;
             }
@@ -197,8 +189,8 @@ public abstract class GameRendererMixin {
             cameraE.prevX = prevX;
             cameraE.prevY = prevY;
             cameraE.prevZ = prevZ;
-            cameraE.setYaw(yaw);
-            cameraE.setPitch(pitch);
+            cameraE.yaw = (yaw);
+            cameraE.pitch = (pitch);
             cameraE.prevYaw = prevYaw;
             cameraE.prevPitch = prevPitch;
         }

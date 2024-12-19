@@ -30,6 +30,7 @@ import net.minecraft.item.BedItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4fStack;
@@ -222,9 +223,6 @@ public class CombatHud extends HudElement {
                 (int) (x + (25 * scale.get())),
                 (int) (y + (66 * scale.get())),
                 (int) (30 * scale.get()),
-                0,
-                -MathHelper.wrapDegrees(playerEntity.prevYaw + (playerEntity.getYaw() - playerEntity.prevYaw) * mc.getTickDelta()),
-                -playerEntity.getPitch(),
                 playerEntity
             );
 
@@ -331,11 +329,8 @@ public class CombatHud extends HudElement {
             double armorY;
             int slot = 5;
 
-            // Drawing armor
-            Matrix4fStack matrices = RenderSystem.getModelViewStack();
-
-            matrices.pushMatrix();
-            matrices.scale(scale.get().floatValue(), scale.get().floatValue(), 1);
+            RenderSystem.pushMatrix();
+            RenderSystem.scaled(scale.get().floatValue(), scale.get().floatValue(), 1);
 
             x /= scale.get();
             y /= scale.get();
@@ -352,12 +347,12 @@ public class CombatHud extends HudElement {
 
                 armorY += 18;
 
-                ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(itemStack);
+                Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(itemStack);
                 Map<Enchantment, Integer> enchantmentsToShow = new HashMap<>();
 
                 for (Enchantment enchantment : displayedEnchantments.get()) {
-                    if (enchantments.getEnchantments().contains(Registry.ENCHANTMENT.getEntry(enchantment))) {
-                        enchantmentsToShow.put(enchantment, enchantments.getLevel(enchantment));
+                    if (enchantments.containsKey(enchantment)) {
+                        enchantmentsToShow.put(enchantment, enchantments.get(enchantment));
                     }
                 }
 
@@ -413,7 +408,7 @@ public class CombatHud extends HudElement {
             Renderer2D.COLOR.quad(x + healthWidth, y, absorbWidth, 7, healthColor2.get(), healthColor3.get(), healthColor3.get(), healthColor2.get());
             Renderer2D.COLOR.render(null);
 
-            matrices.popMatrix();
+            RenderSystem.popMatrix();
         });
     }
 

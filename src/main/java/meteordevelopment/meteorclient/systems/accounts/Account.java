@@ -60,19 +60,11 @@ public abstract class Account<T extends Account<?>> implements ISerializable<T> 
     public static void setSession(Session session) {
         MinecraftClientAccessor mca = (MinecraftClientAccessor) mc;
         mca.setSession(session);
-        UserApiService apiService;
-        apiService = mca.getAuthenticationService().createUserApiService(session.getAccessToken());
-        mca.setUserApiService(apiService);
-        mca.setSocialInteractionsManager(new SocialInteractionsManager(mc, apiService));
-        mca.setProfileKeys(ProfileKeys.create(apiService, session, mc.runDirectory.toPath()));
-        mca.setAbuseReportContext(AbuseReportContext.create(ReporterEnvironment.ofIntegratedServer(), apiService));
-        mca.setGameProfileFuture(CompletableFuture.supplyAsync(() -> mc.getSessionService().fetchProfile(mc.getSession().getUuidOrNull(), true), Util.getIoWorkerExecutor()));
+        mc.getSessionProperties().clear();
     }
 
     public static void applyLoginEnvironment(YggdrasilAuthenticationService authService, MinecraftSessionService sessService) {
         MinecraftClientAccessor mca = (MinecraftClientAccessor) mc;
-        mca.setAuthenticationService(authService);
-        SignatureVerifier.create(authService.getServicesKeySet(), ServicesKeyType.PROFILE_KEY);
         mca.setSessionService(sessService);
         File skinCache = ((PlayerSkinProviderAccessor) mc.getSkinProvider()).getSkinCacheDir();
         mca.setSkinProvider(new PlayerSkinProvider(mc.getTextureManager(), skinCache, sessService));

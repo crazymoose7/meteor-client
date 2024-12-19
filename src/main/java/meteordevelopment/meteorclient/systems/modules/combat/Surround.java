@@ -428,7 +428,7 @@ public class Surround extends Module {
         BlockState blockState = mc.world.getBlockState(pos);
 
         // Unbreakable eg. bedrock
-        if (blockState.getBlock().getHardness() < 0) return BlockType.Safe;
+        if (blockState.getHardness(mc.world, pos) < 0) return BlockType.Safe;
         // Blast resistant eg. obsidian
         else if (blockState.getBlock().getBlastResistance() >= 600) return BlockType.Normal;
         // Anything else

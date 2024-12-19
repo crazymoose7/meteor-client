@@ -59,8 +59,8 @@ public class EasyMCAccount extends Account<EasyMCAccount> implements TokenAccoun
 
     @Override
     public boolean login() {
-        applyLoginEnvironment(SERVICE, YggdrasilMinecraftSessionServiceAccessor.createYggdrasilMinecraftSessionService(SERVICE.getServicesKeySet(), SERVICE.getProxy(), ENVIRONMENT));
-        setSession(new Session(cache.username, UndashedUuid.fromStringLenient(cache.uuid), name, Optional.empty(), Optional.empty(), Session.AccountType.MOJANG));
+        applyLoginEnvironment(SERVICE, YggdrasilMinecraftSessionServiceAccessor.createYggdrasilMinecraftSessionService(SERVICE, ENVIRONMENT));
+        setSession(new Session(cache.username, cache.uuid, name, Session.AccountType.MOJANG.toString()));
 
         cache.loadHead();
         return true;

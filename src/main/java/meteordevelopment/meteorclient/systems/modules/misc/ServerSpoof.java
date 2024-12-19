@@ -24,21 +24,6 @@ import java.util.List;
 public class ServerSpoof extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
-    private final Setting<Boolean> spoofBrand = sgGeneral.add(new BoolSetting.Builder()
-        .name("spoof-brand")
-        .description("Whether or not to spoof the brand.")
-        .defaultValue(true)
-        .build()
-    );
-
-    private final Setting<String> brand = sgGeneral.add(new StringSetting.Builder()
-        .name("brand")
-        .description("Specify the brand that will be send to the server.")
-        .defaultValue("vanilla")
-        .visible(spoofBrand::get)
-        .build()
-    );
-
     private final Setting<Boolean> resourcePack = sgGeneral.add(new BoolSetting.Builder()
         .name("resource-pack")
         .description("Spoof accepting server resource pack.")
@@ -79,14 +64,6 @@ public class ServerSpoof extends Module {
                     return;
                 }
             }
-        }
-
-        if (spoofBrand.get() && id.equals(BrandCustomPayload.ID.id())) {
-            CustomPayloadC2SPacket spoofedPacket = new CustomPayloadC2SPacket(new BrandCustomPayload(brand.get()));
-
-            // PacketEvent.Send doesn't trigger if we send the packet like this
-            event.connection.send(spoofedPacket, null, true);
-            event.cancel();
         }
     }
 

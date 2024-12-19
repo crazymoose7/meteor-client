@@ -49,7 +49,7 @@ public class VClipCommand extends Command {
                 // No vehicle version
                 // For each 10 blocks, send a player move packet with no delta
                 for (int packetNumber = 0; packetNumber < (packetsRequired - 1); packetNumber++) {
-                    mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+                    mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly());
                 }
                 // Now send the final player move packet
                 mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionOnly(mc.player.getX(), mc.player.getY() + blocks, mc.player.getZ(), true));

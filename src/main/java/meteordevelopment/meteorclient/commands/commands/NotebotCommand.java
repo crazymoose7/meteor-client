@@ -22,6 +22,7 @@ import net.minecraft.block.enums.Instrument;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Util;
 
 import java.io.FileWriter;
@@ -143,7 +144,7 @@ public class NotebotCommand extends Command {
 
     @EventHandler
     private void onReadPacket(PacketEvent.Receive event) {
-        if (event.packet instanceof PlaySoundS2CPacket sound && sound.getSound().value().getId().getPath().contains("note_block")) {
+        if (event.packet instanceof PlaySoundS2CPacket sound && sound.getSound().getId().getPath().contains("note_block")) {
             if (ticks == -1) ticks = 0;
             List<Note> notes = song.computeIfAbsent(ticks, tick -> new ArrayList<>());
             var note = getNote(sound);
@@ -197,13 +198,13 @@ public class NotebotCommand extends Command {
         }
 
         if (noteLevel == -1) {
-            error("Error while bruteforcing a note level! Sound: " + soundPacket.getSound().value() + " Pitch: " + pitch);
+            error("Error while bruteforcing a note level! Sound: " + soundPacket.getSound() + " Pitch: " + pitch);
             return null;
         }
 
-        Instrument instrument = getInstrumentFromSound(soundPacket.getSound().value());
+        Instrument instrument = getInstrumentFromSound(soundPacket.getSound());
         if (instrument == null) {
-            error("Can't find the instrument from sound! Sound: " + soundPacket.getSound().value());
+            error("Can't find the instrument from sound! Sound: " + soundPacket.getSound());
             return null;
         }
 

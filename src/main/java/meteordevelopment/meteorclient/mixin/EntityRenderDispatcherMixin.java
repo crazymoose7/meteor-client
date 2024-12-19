@@ -40,7 +40,7 @@ public abstract class EntityRenderDispatcherMixin {
             int cY = MathHelper.floor(this.camera.getPos().y);
             int cZ = MathHelper.floor(this.camera.getPos().z);
 
-            if (cX == entity.getBlockX() && cZ == entity.getBlockZ() && (cY == entity.getBlockY() || cY == entity.getBlockY() + 1)) info.cancel();
+            if (cX == entity.getBlockPos().getX() && cZ == entity.getBlockPos().getZ() && (cY == entity.getBlockPos().getY() || cY == entity.getBlockPos().getY() + 1)) info.cancel();
         }
     }
 

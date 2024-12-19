@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Random;
 
@@ -27,8 +28,8 @@ import java.util.Random;
 public abstract class BlockModelRendererMixin {
     @Unique private final ThreadLocal<Integer> alphas = new ThreadLocal<>();
 
-    @Inject(method = "render(Lnet/minecraft/world/BlockRenderView;Lnet/minecraft/client/render/model/BakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;ZLnet/minecraft/util/math/random/Random;JI)V", at = @At("HEAD"), cancellable = true)
-    private void onRender(BlockRenderView world, BakedModel model, BlockState state, BlockPos pos, MatrixStack matrices, VertexConsumer vertexConsumer, boolean cull, Random random, long seed, int overlay, CallbackInfo info) {
+    @Inject(method = "render(Lnet/minecraft/world/BlockRenderView;Lnet/minecraft/client/render/model/BakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;ZLjava/util/Random;JI)Z", at = @At("HEAD"), cancellable = true)
+    private void onRender(BlockRenderView world, BakedModel model, BlockState state, BlockPos pos, MatrixStack matrix, VertexConsumer vertexConsumer, boolean cull, Random random, long seed, int overlay, CallbackInfoReturnable<Boolean> info) {
         int alpha = Xray.getAlpha(state, pos);
 
         if (alpha == 0) info.cancel();
@@ -49,7 +50,7 @@ public abstract class BlockModelRendererMixin {
             int prevOffset = bufferBuilderAccessor.getElementOffset();
 
             if (prevOffset > 0) {
-                int i = bufferBuilderAccessor.getVertexFormat().getVertexSizeByte();
+                int i = bufferBuilderAccessor.getVertexFormat().getVertexSize();
 
                 for (int l = 1; l <= 4; l++) {
                     bufferBuilderAccessor.setElementOffset(prevOffset - i * l);

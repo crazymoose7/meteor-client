@@ -14,6 +14,7 @@ import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Vec3f;
 import org.joml.Vector3d;
 
 public class HandView extends Module {
@@ -200,9 +201,9 @@ public class HandView extends Module {
     }
 
     private void rotate(MatrixStack matrix, Vector3d rotation) {
-        matrix.multiply(RotationAxis.POSITIVE_X.rotationDegrees((float) rotation.x));
-        matrix.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float) rotation.y));
-        matrix.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((float) rotation.z));
+        matrix.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion((float) rotation.x));
+        matrix.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion((float) rotation.y));
+        matrix.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion((float) rotation.z));
     }
 
     private void scale(MatrixStack matrix, Vector3d scale) {
@@ -214,8 +215,8 @@ public class HandView extends Module {
     }
 
     private void applyServerRotations(MatrixStack matrix) {
-        matrix.multiply(RotationAxis.POSITIVE_X.rotationDegrees(mc.player.getPitch(mc.getTickDelta()) - Rotations.serverPitch));
-        matrix.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(mc.player.getYaw(mc.getTickDelta()) - Rotations.serverYaw));
+        matrix.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(mc.player.getPitch(mc.getTickDelta()) - Rotations.serverPitch));
+        matrix.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(mc.player.getYaw(mc.getTickDelta()) - Rotations.serverYaw));
     }
 
     public boolean oldAnimations() {

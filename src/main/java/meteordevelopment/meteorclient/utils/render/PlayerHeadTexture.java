@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.renderer.Texture;
 import meteordevelopment.meteorclient.utils.misc.MeteorIdentifier;
 import meteordevelopment.meteorclient.utils.network.Http;
+import net.minecraft.client.texture.TextureUtil;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -67,7 +68,7 @@ public class PlayerHeadTexture extends Texture {
 
     public PlayerHeadTexture() {
         try (InputStream inputStream = mc.getResourceManager().getResource(new MeteorIdentifier("textures/steve.png")).getInputStream()) {
-            ByteBuffer data = TextureUtil.readResource(inputStream);
+            ByteBuffer data = TextureUtil.readAllToByteBuffer(inputStream);
             data.rewind();
 
             try (MemoryStack stack = MemoryStack.stackPush()) {

@@ -268,7 +268,7 @@ public class Scaffold extends Module {
         if (fastTower.get() && mc.options.keyJump.isPressed() && !mc.options.keySneak.isPressed() && result.found() && (autoSwitch.get() || result.getHand() != null)) {
             Vec3d velocity = mc.player.getVelocity();
             Box playerBox = mc.player.getBoundingBox();
-            if (Streams.stream(mc.world.getBlockCollisions(mc.player, playerBox.offset(0, 1, 0))).toList().isEmpty()) {
+            if (mc.world.getBlockCollisions(mc.player, playerBox.offset(0, 1, 0)).toList().isEmpty()) {
                 // If there is no block above the player: move the player up, so he can place another block
                 if (whileMoving.get() || !PlayerUtils.isMoving()) {
                     velocity = new Vec3d(velocity.x, towerSpeed.get(), velocity.z);

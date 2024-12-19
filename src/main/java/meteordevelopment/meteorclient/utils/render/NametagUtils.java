@@ -5,11 +5,12 @@
 
 package meteordevelopment.meteorclient.utils.render;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
-import org.joml.Matrix4f;
+import net.minecraft.util.math.Matrix4f;
 import org.joml.Matrix4fStack;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
@@ -22,8 +23,8 @@ public class NametagUtils {
     private static final Vector4f pmMat4 = new Vector4f();
     private static final Vector3d camera = new Vector3d();
     private static final Vector3d cameraNegated = new Vector3d();
-    private static final Matrix4f model = new Matrix4f();
-    private static final Matrix4f projection = new Matrix4f();
+    private static Matrix4f model = new Matrix4f();
+    private static Matrix4f projection = new Matrix4f();
     private static double windowScale;
 
     public static double scale;
@@ -31,9 +32,9 @@ public class NametagUtils {
     private NametagUtils() {
     }
 
-    public static void onRender(Matrix4f modelView) {
-        model.set(modelView);
-        NametagUtils.projection.set(RenderSystem.getProjectionMatrix());
+    public static void onRender(MatrixStack matrices, Matrix4f projection) {
+        model = new Matrix4f(matrices.peek().getModel());
+        NametagUtils.projection = projection;
 
         Utils.set(camera, mc.gameRenderer.getCamera().getPos());
         cameraNegated.set(camera);
@@ -58,8 +59,8 @@ public class NametagUtils {
 
         vec4.set(cameraNegated.x + pos.x, cameraNegated.y + pos.y, cameraNegated.z + pos.z, 1);
 
-        vec4.mul(model, mmMat4);
-        mmMat4.mul(projection, pmMat4);
+        ((IMatrix4f) (Object) model).multiplyMatrix(vec4, mmMat4);
+        ((IMatrix4f) (Object) projection).multiplyMatrix(mmMat4, pmMat4);
 
         boolean behind = pmMat4.w <= 0.f;
 
@@ -81,8 +82,9 @@ public class NametagUtils {
     }
 
     public static void begin(Vector3d pos) {
-        Matrix4fStack matrices = RenderSystem.getModelViewStack();
-        begin(matrices, pos);
+        GlStateManager.pushMatrix();
+        GlStateManager.translated(pos.x, pos.y, 0);
+        GlStateManager.scaled(scale, scale, 1);
     }
 
     public static void begin(Vector3d pos, MatrixStack matrices) {
@@ -93,14 +95,8 @@ public class NametagUtils {
         matrices.scale((float) scale, (float) scale, 1);
     }
 
-    private static void begin(Matrix4fStack matrices, Vector3d pos) {
-        matrices.pushMatrix();
-        matrices.translate((float) pos.x, (float) pos.y, 0);
-        matrices.scale((float) scale, (float) scale, 1);
-    }
-
     public static void end() {
-        RenderSystem.getModelViewStack().popMatrix();
+        RenderSystem.popMatrix();
     }
 
     public static void end(MatrixStack matrices) {

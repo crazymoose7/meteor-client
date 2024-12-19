@@ -16,6 +16,7 @@ import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.systems.accounts.AccountType;
 import meteordevelopment.meteorclient.systems.accounts.TokenAccount;
 import meteordevelopment.meteorclient.utils.misc.NbtException;
+import net.minecraft.client.util.Session;
 import net.minecraft.nbt.NbtCompound;
 
 import java.util.Optional;
@@ -50,13 +51,13 @@ public class TheAlteningAccount extends Account<TheAlteningAccount> implements T
 
     @Override
     public boolean login() {
-        applyLoginEnvironment(SERVICE, YggdrasilMinecraftSessionServiceAccessor.createYggdrasilMinecraftSessionService(SERVICE.getServicesKeySet(), SERVICE.getProxy(), ENVIRONMENT));
+        applyLoginEnvironment(SERVICE, YggdrasilMinecraftSessionServiceAccessor.createYggdrasilMinecraftSessionService(SERVICE, ENVIRONMENT));
 
         WaybackAuthLib auth = getAuth();
 
         try {
             auth.logIn();
-            setSession(new Session(auth.getCurrentProfile().getName(), auth.getCurrentProfile().getId(), auth.getAccessToken(), Optional.empty(), Optional.empty(), Session.AccountType.MOJANG));
+            setSession(new Session(auth.getCurrentProfile().getName(), auth.getCurrentProfile().getId().toString(), auth.getAccessToken(), Session.AccountType.MOJANG.toString()));
 
             cache.username = auth.getCurrentProfile().getName();
             cache.loadHead();
@@ -72,7 +73,7 @@ public class TheAlteningAccount extends Account<TheAlteningAccount> implements T
     }
 
     private WaybackAuthLib getAuth() {
-        WaybackAuthLib auth = new WaybackAuthLib(ENVIRONMENT.servicesHost());
+        WaybackAuthLib auth = new WaybackAuthLib(ENVIRONMENT.getAuthHost());
 
         auth.setUsername(name);
         auth.setPassword("Meteor on Crack!");

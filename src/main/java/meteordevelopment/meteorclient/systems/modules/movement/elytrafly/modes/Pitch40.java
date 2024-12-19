@@ -53,7 +53,7 @@ public class Pitch40 extends ElytraFlightMode {
             if (pitch > 40) pitch = 40;
         }
 
-        mc.player.setPitch(pitch);
+        mc.player.pitch = pitch;
     }
 
     @Override

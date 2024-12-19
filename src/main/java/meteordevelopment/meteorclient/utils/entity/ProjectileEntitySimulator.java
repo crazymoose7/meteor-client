@@ -47,10 +47,7 @@ public class ProjectileEntitySimulator {
         }
         else if (item instanceof CrossbowItem) {
             if (!CrossbowItem.isCharged(itemStack)) return false;
-            if (itemStack.get(DataComponentTypes.CHARGED_PROJECTILES).contains(Items.FIREWORK_ROCKET)) {
-                set(user, 0, CrossbowItemAccessor.getSpeed(itemStack.get(DataComponentTypes.CHARGED_PROJECTILES)), simulated, 0, 0.6, accurate, tickDelta);
-            }
-            else set(user, 0, CrossbowItemAccessor.getSpeed(itemStack.get(DataComponentTypes.CHARGED_PROJECTILES)), simulated, 0.05, 0.6, accurate, tickDelta);
+            this.set(user, 0, CrossbowItemAccessor.getSpeed(itemStack), simulated, 0, 0.6, accurate, tickDelta);
         }
         else if (item instanceof FishingRodItem) {
             setFishingBobber(user, tickDelta);
@@ -77,8 +74,8 @@ public class ProjectileEntitySimulator {
     public void set(Entity user, double roll, double speed, double simulated, double gravity, double waterDrag, boolean accurate, double tickDelta) {
         Utils.set(pos, user, tickDelta).add(0, user.getEyeHeight(user.getPose()), 0);
 
-        double yaw = MathHelper.lerp(tickDelta, user.prevYaw, user.getYaw());
-        double pitch = MathHelper.lerp(tickDelta, user.prevPitch, user.getPitch());
+        double yaw = MathHelper.lerp(tickDelta, user.prevYaw, user.getYaw(mc.getTickDelta()));
+        double pitch = MathHelper.lerp(tickDelta, user.prevPitch, user.getPitch(mc.getTickDelta()));
 
         double x, y, z;
 
@@ -162,8 +159,8 @@ public class ProjectileEntitySimulator {
     }
 
     public void setFishingBobber(Entity user, double tickDelta) {
-        double yaw = MathHelper.lerp(tickDelta, user.prevYaw, user.getYaw());
-        double pitch = MathHelper.lerp(tickDelta, user.prevPitch, user.getPitch());
+        double yaw = MathHelper.lerp(tickDelta, user.prevYaw, user.getYaw(mc.getTickDelta()));
+        double pitch = MathHelper.lerp(tickDelta, user.prevPitch, user.getPitch(mc.getTickDelta()));
 
         double h = Math.cos(-yaw * 0.017453292F - 3.1415927F);
         double i = Math.sin(-yaw * 0.017453292F - 3.1415927F);
@@ -195,8 +192,8 @@ public class ProjectileEntitySimulator {
         if (pos.y < 0) return MissHitResult.INSTANCE;
 
         // Check if chunk is loaded
-        int chunkX = ChunkSectionPos.getSectionCoord(pos.x);
-        int chunkZ = ChunkSectionPos.getSectionCoord(pos.z);
+        int chunkX = ChunkSectionPos.getSectionCoord((int) pos.x);
+        int chunkZ = ChunkSectionPos.getSectionCoord((int) pos.z);
         if (!mc.world.getChunkManager().isChunkLoaded(chunkX, chunkZ)) return MissHitResult.INSTANCE;
 
         // Check for collision

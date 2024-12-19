@@ -77,7 +77,6 @@ public class GuiRenderer {
 
     public void begin() {
         GL.enableBlend();
-        GL.enableScissorTest();
         scissorStart(0, 0, getWindowWidth(), getWindowHeight());
     }
 
@@ -86,8 +85,6 @@ public class GuiRenderer {
 
         for (Runnable task : postTasks) task.run();
         postTasks.clear();
-
-        GL.disableScissorTest();
     }
 
     public void beginRender() {

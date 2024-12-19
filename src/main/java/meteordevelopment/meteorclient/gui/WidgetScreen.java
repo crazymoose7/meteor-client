@@ -254,13 +254,13 @@ public abstract class WidgetScreen extends Screen {
         RENDERER.theme = theme;
         theme.beforeRender();
 
-        RENDERER.begin(context);
+        RENDERER.begin();
         RENDERER.setAlpha(animProgress);
         root.render(RENDERER, mouseX, mouseY, delta / 20);
         RENDERER.setAlpha(1);
         RENDERER.end();
 
-        boolean tooltip = RENDERER.renderTooltip(context, mouseX, mouseY, delta / 20);
+        boolean tooltip = RENDERER.renderTooltip(mouseX, mouseY, delta / 20);
 
         if (debug) {
             DEBUG_RENDERER.render(root, matrices);
@@ -348,11 +348,6 @@ public abstract class WidgetScreen extends Screen {
     @Override
     public boolean shouldCloseOnEsc() {
         return !locked || lockedAllowClose;
-    }
-
-    @Override
-    public boolean shouldPause() {
-        return false;
     }
 
     private static class WFullScreenRoot extends WContainer implements WRoot {

@@ -21,6 +21,7 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
@@ -70,18 +71,16 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         InventoryTweaks invTweaks = Modules.get().get(InventoryTweaks.class);
 
         if (invTweaks.isActive() && invTweaks.showButtons() && invTweaks.canSteal(getScreenHandler())) {
-            addDrawableChild(
-                new ButtonWidget.Builder(new LiteralText("Steal"), button -> invTweaks.steal(getScreenHandler()))
-                    .position(x, y - 22)
-                    .size(40, 20)
-                    .build()
+            addButton(
+                new ButtonWidget(x, y - 22,
+                    40, 20,
+                    new LiteralText("Steal"), button -> invTweaks.steal(getScreenHandler()))
             );
 
-            addDrawableChild(
-                new ButtonWidget.Builder(new LiteralText("Dump"), button -> invTweaks.dump(getScreenHandler()))
-                    .position(x + 42, y - 22)
-                    .size(40, 20)
-                    .build()
+            addButton(
+                new ButtonWidget(x + 42, y - 22,
+                    40, 20,
+                    new LiteralText("Dump"), button -> invTweaks.dump(getScreenHandler()))
             );
         }
     }

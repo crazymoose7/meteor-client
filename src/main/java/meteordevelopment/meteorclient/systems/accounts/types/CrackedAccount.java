@@ -27,7 +27,7 @@ public class CrackedAccount extends Account<CrackedAccount> {
         super.login();
 
         cache.loadHead();
-        setSession(new Session(name, Uuids.getOfflinePlayerUuid(name), "", Optional.empty(), Optional.empty(), Session.AccountType.MOJANG));
+        setSession(new Session(name, "", "", Session.AccountType.MOJANG.toString()));
         return true;
     }
 

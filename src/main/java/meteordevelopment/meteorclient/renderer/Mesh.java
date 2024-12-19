@@ -5,6 +5,7 @@
 
 package meteordevelopment.meteorclient.renderer;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -46,7 +47,7 @@ public class Mesh {
     private final DrawMode drawMode;
     private final int primitiveVerticesSize;
 
-    private final int vao, vbo, ibo;
+    private final int vbo, ibo;
 
     private ByteBuffer vertices;
     private long verticesPointerStart, verticesPointer;
@@ -73,9 +74,6 @@ public class Mesh {
         indices = BufferUtils.createByteBuffer(drawMode.indicesCount * 512 * 4);
         indicesPointer = memAddress0(indices);
 
-        vao = GL.genVertexArray();
-        GL.bindVertexArray(vao);
-
         vbo = GL.genBuffer();
         GL.bindVertexBuffer(vbo);
 
@@ -92,7 +90,6 @@ public class Mesh {
             offset += attrib.size;
         }
 
-        GL.bindVertexArray(0);
         GL.bindVertexBuffer(0);
         GL.bindIndexBuffer(0);
     }
@@ -100,7 +97,6 @@ public class Mesh {
     public void destroy() {
         GL.deleteBuffer(ibo);
         GL.deleteBuffer(vbo);
-        GL.deleteVertexArray(vao);
     }
 
     public void begin() {
@@ -253,13 +249,10 @@ public class Mesh {
         GL.enableLineSmooth();
 
         if (rendering3D) {
-            Matrix4fStack matrixStack = RenderSystem.getModelViewStack();
-            matrixStack.pushMatrix();
-
-            if (matrices != null) matrixStack.mul(matrices.peek().getPositionMatrix());
+            RenderSystem.pushMatrix();
 
             Vec3d cameraPos = mc.gameRenderer.getCamera().getPos();
-            matrixStack.translate(0, (float) -cameraPos.y, 0);
+            RenderSystem.translated(0, (float) -cameraPos.y, 0);
         }
 
         beganRendering = true;
@@ -278,18 +271,14 @@ public class Mesh {
 
             Shader.BOUND.setDefaults();
 
-            GL.bindVertexArray(vao);
             GL.drawElements(drawMode.getGL(), indicesCount, GL_UNSIGNED_INT);
-
-            // Cleanup opengl state and matrix stack
-            GL.bindVertexArray(0);
 
             if (!wasBeganRendering) endRender();
         }
     }
 
     public void endRender() {
-        if (rendering3D) RenderSystem.getModelViewStack().popMatrix();
+        if (rendering3D) GlStateManager.popMatrix();
 
         GL.restoreState();
 

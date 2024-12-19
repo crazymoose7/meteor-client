@@ -35,23 +35,22 @@ public class EditBookTitleAndAuthorScreen extends WindowScreen {
         WTable t = add(theme.table()).expandX().widget();
 
         t.add(theme.label("Title"));
-        WTextBox title = t.add(theme.textBox(itemStack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT).title().get(mc.shouldFilterText()))).minWidth(220).expandX().widget();
+        WTextBox title = t.add(theme.textBox(itemStack.getTag().getString("title"))).minWidth(220).expandX().widget();
         t.row();
 
         t.add(theme.label("Author"));
-        WTextBox author = t.add(theme.textBox(itemStack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT).author())).minWidth(220).expandX().widget();
+        WTextBox author =  t.add(theme.textBox(itemStack.getTag().getString("author"))).minWidth(220).expandX().widget();
         t.row();
 
         t.add(theme.button("Done")).expandX().widget().action = () -> {
-            WrittenBookContentComponent component = itemStack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT);
-            WrittenBookContentComponent newComponent = new WrittenBookContentComponent(RawFilteredPair.of(title.get()), author.get(), component.generation(), component.pages(), component.resolved());
-            itemStack.set(DataComponentTypes.WRITTEN_BOOK_CONTENT, newComponent);
+            itemStack.getTag().putString("author", author.get());
+            itemStack.getTag().putString("title", title.get());
 
-            BookScreen.Contents contents = new BookScreen.Contents(itemStack.get(DataComponentTypes.WRITTEN_BOOK_CONTENT).getPages(mc.shouldFilterText()));
+            BookScreen.Contents contents = new BookScreen.WrittenBookContents(itemStack);
             List<String> pages = new ArrayList<>(contents.getPageCount());
             for (int i = 0; i < contents.getPageCount(); i++) pages.add(contents.getPage(i).getString());
 
-            mc.getNetworkHandler().sendPacket(new BookUpdateC2SPacket(hand == Hand.MAIN_HAND ? mc.player.inventory.selectedSlot : 40, pages, Optional.of(title.get())));
+            mc.getNetworkHandler().sendPacket(new BookUpdateC2SPacket(itemStack, false, mc.player.inventory.selectedSlot));
 
             close();
         };

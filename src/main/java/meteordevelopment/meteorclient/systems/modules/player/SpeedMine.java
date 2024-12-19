@@ -35,7 +35,7 @@ public class SpeedMine extends Module {
     private final Setting<List<Block>> blocks = sgGeneral.add(new BlockListSetting.Builder()
         .name("blocks")
         .description("Selected blocks.")
-        .filter(block -> block.getHardness() > 0)
+        .filter(block -> block.getDefaultState().getHardness(mc.world, new BlockPos(0, 0 ,0)) > 0)
         .visible(() -> mode.get() != Mode.Haste)
         .build()
     );
@@ -100,7 +100,7 @@ public class SpeedMine extends Module {
             StatusEffectInstance haste = mc.player.getStatusEffect(HASTE);
 
             if (haste == null || haste.getAmplifier() <= hasteAmplifier.get() - 1) {
-                mc.player.setStatusEffect(new StatusEffectInstance(HASTE, -1, hasteAmplifier.get() - 1, false, false, false), null);
+                mc.player.addStatusEffect(new StatusEffectInstance(HASTE, -1, hasteAmplifier.get() - 1, false, false, false));
             }
         }
         else if (mode.get() == Mode.Damage) {

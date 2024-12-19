@@ -46,140 +46,127 @@ public class GL {
 
     // Generation
 
-    public static int genVertexArray() {
-        return GlStateManager._glGenVertexArrays();
-    }
-
     public static int genBuffer() {
-        return GlStateManager._glGenBuffers();
+        return GlStateManager.genBuffers();
     }
 
     public static int genTexture() {
-        return GlStateManager._genTexture();
+        return GlStateManager.genTextures();
     }
 
     public static int genFramebuffer() {
-        return GlStateManager.glGenFramebuffers();
+        return GlStateManager.genFramebuffers();
     }
 
     // Deletion
 
     public static void deleteBuffer(int buffer) {
-        GlStateManager._glDeleteBuffers(buffer);
-    }
-
-    public static void deleteVertexArray(int vao) {
-        GlStateManager._glDeleteVertexArrays(vao);
+        GlStateManager.deleteBuffers(buffer);
     }
 
     public static void deleteShader(int shader) {
-        GlStateManager.glDeleteShader(shader);
+        GlStateManager.deleteShader(shader);
     }
 
     public static void deleteTexture(int id) {
-        GlStateManager._deleteTexture(id);
+        GlStateManager.deleteTexture(id);
     }
 
     public static void deleteFramebuffer(int fbo) {
-        GlStateManager._glDeleteFramebuffers(fbo);
+        GlStateManager.deleteFramebuffers(fbo);
     }
 
     public static void deleteProgram(int program) {
-        GlStateManager.glDeleteProgram(program);
+        GlStateManager.deleteProgram(program);
     }
 
     // Binding
 
-    public static void bindVertexArray(int vao) {
-        GlStateManager._glBindVertexArray(vao);
-        if (changeBufferRenderer) BufferRendererAccessor.setCurrentVertexBuffer(null);
-    }
-
     public static void bindVertexBuffer(int vbo) {
-        GlStateManager._glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        GlStateManager.bindBuffers(GL_ARRAY_BUFFER, vbo);
     }
 
     public static void bindIndexBuffer(int ibo) {
         if (ibo != 0) prevIbo = CURRENT_IBO;
-        GlStateManager._glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo != 0 ? ibo : prevIbo);
+        GlStateManager.bindBuffers(GL_ELEMENT_ARRAY_BUFFER, ibo != 0 ? ibo : prevIbo);
     }
 
     public static void bindFramebuffer(int fbo) {
-        GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        GlStateManager.bindFramebuffer(GL_FRAMEBUFFER, fbo);
     }
 
     // Buffers
 
     public static void bufferData(int target, ByteBuffer data, int usage) {
-        GlStateManager._glBufferData(target, data, usage);
+        GlStateManager.bufferData(target, data, usage);
     }
 
     public static void drawElements(int mode, int first, int type) {
-        GlStateManager._drawElements(mode, first, type, 0);
+        GlStateManager.drawArrays(mode, first, type);
     }
 
     // Vertex attributes
 
     public static void enableVertexAttribute(int i) {
-        GlStateManager._enableVertexAttribArray(i);
+        GlStateManager.enableVertexAttribArray(i);
     }
 
     public static void vertexAttribute(int index, int size, int type, boolean normalized, int stride, long pointer) {
-        GlStateManager._vertexAttribPointer(index, size, type, normalized, stride, pointer);
+        GlStateManager.vertexAttribPointer(index, size, type, normalized, stride, pointer);
     }
 
     // Shaders
 
     public static int createShader(int type) {
-        return GlStateManager.glCreateShader(type);
+        return GlStateManager.createShader(type);
     }
 
-    public static void shaderSource(int shader, String source) {
-        GlStateManager.glShaderSource(shader, List.of(source));
+    public static void shaderSource(int shader, CharSequence source) {
+        GlStateManager.shaderSource(shader, source);
     }
 
     public static String compileShader(int shader) {
-        GlStateManager.glCompileShader(shader);
+        GlStateManager.compileShader(shader);
 
-        if (GlStateManager.glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
-            return GlStateManager.glGetShaderInfoLog(shader, 512);
+        if (GlStateManager.getShader(shader, GL_COMPILE_STATUS) == GL_FALSE) {
+            return GlStateManager.getShaderInfoLog(shader, 512);
         }
 
         return null;
     }
 
     public static int createProgram() {
-        return GlStateManager.glCreateProgram();
+        return GlStateManager.createProgram();
     }
 
     public static String linkProgram(int program, int vertShader, int fragShader) {
-        GlStateManager.glAttachShader(program, vertShader);
-        GlStateManager.glAttachShader(program, fragShader);
-        GlStateManager.glLinkProgram(program);
+        GlStateManager.attachShader(program, vertShader);
+        GlStateManager.attachShader(program, fragShader);
+        GlStateManager.linkProgram(program);
 
-        if (GlStateManager.glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
-            return GlStateManager.glGetProgramInfoLog(program, 512);
+        if (GlStateManager.getProgram(program, GL_LINK_STATUS) == GL_FALSE) {
+            return GlStateManager.getShaderInfoLog(program, 512);
         }
 
         return null;
     }
 
     public static void useProgram(int program) {
-        GlStateManager._glUseProgram(program);
+        GlStateManager.useProgram(program);
     }
 
     public static void viewport(int x, int y, int width, int height) {
-        GlStateManager._viewport(x, y, width, height);
+        GlStateManager.viewport(x, y, width, height);
     }
 
     // Uniforms
 
     public static int getUniformLocation(int program, String name) {
-        return GlStateManager._glGetUniformLocation(program, name);
+        return GlStateManager.getUniformLocation(program, name);
     }
 
     public static void uniformInt(int location, int v) {
-        GlStateManager._glUniform1i(location, v);
+        GlStateManager.uniform1(location, v);
     }
 
     public static void uniformFloat(int location, float v) {
@@ -204,17 +191,17 @@ public class GL {
 
     public static void uniformMatrix(int location, Matrix4f v) {
         v.get(MAT);
-        GlStateManager._glUniformMatrix4(location, false, MAT);
+        GlStateManager.uniformMatrix4(location, false, MAT);
     }
 
     // Textures
 
     public static void pixelStore(int name, int param) {
-        GlStateManager._pixelStore(name, param);
+        GlStateManager.pixelStore(name, param);
     }
 
     public static void textureParam(int target, int name, int param) {
-        GlStateManager._texParameter(target, name, param);
+        GlStateManager.texParameter(target, name, param);
     }
 
     public static void textureImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, ByteBuffer pixels) {
@@ -239,12 +226,12 @@ public class GL {
     // Framebuffers
 
     public static void framebufferTexture2D(int target, int attachment, int textureTarget, int texture, int level) {
-        GlStateManager._glFramebufferTexture2D(target, attachment, textureTarget, texture, level);
+        GlStateManager.framebufferTexture2D(target, attachment, textureTarget, texture, level);
     }
 
     public static void clear(int mask) {
-        GlStateManager._clearColor(0, 0, 0, 1);
-        GlStateManager._clear(mask,false);
+        GlStateManager.clearColor(0, 0, 0, 1);
+        GlStateManager.clear(mask,false);
     }
 
     // State
@@ -266,32 +253,25 @@ public class GL {
     }
 
     public static void enableDepth() {
-        GlStateManager._enableDepthTest();
+        GlStateManager.enableDepthTest();
     }
     public static void disableDepth() {
-        GlStateManager._disableDepthTest();
+        GlStateManager.disableDepthTest();
     }
 
     public static void enableBlend() {
-        GlStateManager._enableBlend();
-        GlStateManager._blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     public static void disableBlend() {
-        GlStateManager._disableBlend();
+        GlStateManager.disableBlend();
     }
 
     public static void enableCull() {
-        GlStateManager._enableCull();
+        GlStateManager.enableCull();
     }
     public static void disableCull() {
-        GlStateManager._disableCull();
-    }
-
-    public static void enableScissorTest() {
-        GlStateManager._enableScissorTest();
-    }
-    public static void disableScissorTest() {
-        GlStateManager._disableScissorTest();
+        GlStateManager.disableCull();
     }
 
     public static void enableLineSmooth() {
@@ -303,20 +283,20 @@ public class GL {
     }
 
     public static void bindTexture(Identifier id) {
-        GlStateManager._activeTexture(GL_TEXTURE0);
+        GlStateManager.activeTexture(GL_TEXTURE0);
         mc.getTextureManager().bindTexture(id);
     }
 
     public static void bindTexture(int i, int slot) {
-        GlStateManager._activeTexture(GL_TEXTURE0 + slot);
-        GlStateManager._bindTexture(i);
+        GlStateManager.activeTexture(GL_TEXTURE0 + slot);
+        GlStateManager.bindTexture(i);
     }
     public static void bindTexture(int i) {
         bindTexture(i, 0);
     }
 
     public static void resetTextureSlot() {
-        GlStateManager._activeTexture(GL_TEXTURE0);
+        GlStateManager.activeTexture(GL_TEXTURE0);
     }
 
     private static ICapabilityTracker getTracker(String fieldName) {

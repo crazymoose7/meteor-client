@@ -112,14 +112,14 @@ public class FreeLook extends Module {
                         if (Input.isKeyPressed(GLFW.GLFW_KEY_UP)) pitch -= 0.5;
                         if (Input.isKeyPressed(GLFW.GLFW_KEY_DOWN)) pitch += 0.5;
 
-                        mc.player.setYaw(yaw);
-                        mc.player.setPitch(pitch);
+                        mc.player.yaw = (yaw);
+                        mc.player.pitch = (pitch);
                     }
                 }
             }
         }
 
-        mc.player.setPitch(MathHelper.clamp(mc.player.getPitch(mc.getTickDelta()), -90, 90));
+        mc.player.pitch = (MathHelper.clamp(mc.player.getPitch(mc.getTickDelta()), -90, 90));
         cameraPitch = MathHelper.clamp(cameraPitch, -90, 90);
     }
 

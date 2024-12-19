@@ -23,8 +23,8 @@ public class FakePlayerEntity extends OtherClientPlayerEntity {
 
         copyPositionAndRotation(player);
 
-        prevYaw = getYaw();
-        prevPitch = getPitch();
+        prevYaw = getYaw(mc.getTickDelta());
+        prevPitch = getPitch(mc.getTickDelta());
         headYaw = player.headYaw;
         prevHeadYaw = headYaw;
         bodyYaw = player.bodyYaw;
@@ -47,26 +47,16 @@ public class FakePlayerEntity extends OtherClientPlayerEntity {
             setAbsorptionAmount(health - 20);
         }
 
-        if (copyInv) getInventory().clone(player.inventory);
+        if (copyInv) this.inventory.clone(player.inventory);
     }
 
     public void spawn() {
-        unsetRemoved();
-        mc.world.addEntity(this);
+        this.removed = false;
+        mc.world.addEntity(this.getEntityId(), this);
     }
 
     public void despawn() {
-        mc.world.removeEntity(getId(), RemovalReason.DISCARDED);
-        setRemoved(RemovalReason.DISCARDED);
-    }
-
-    @Nullable
-    @Override
-    protected PlayerListEntry getPlayerListEntry() {
-        if (playerListEntry == null) {
-            playerListEntry = mc.getNetworkHandler().getPlayerListEntry(mc.player.getUuid());
-        }
-
-        return playerListEntry;
+        mc.world.removeEntity(this.getEntityId());
+        this.removed = true;
     }
 }

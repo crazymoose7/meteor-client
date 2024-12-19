@@ -25,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 @Mixin(value = Screen.class, priority = 500) // needs to be before baritone
 public abstract class ScreenMixin {
     @Inject(method = "renderBackground", at = @At("HEAD"), cancellable = true)

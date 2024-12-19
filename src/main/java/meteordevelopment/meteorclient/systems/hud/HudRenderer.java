@@ -30,6 +30,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HudRenderer {
     public static final HudRenderer INSTANCE = new HudRenderer();
@@ -42,7 +43,7 @@ public class HudRenderer {
     private final Int2ObjectMap<FontHolder> fontsInUse = new Int2ObjectOpenHashMap<>();
     private final LoadingCache<Integer, FontHolder> fontCache = CacheBuilder.newBuilder()
         .maximumSize(4)
-        .expireAfterAccess(Duration.ofMinutes(10))
+        .expireAfterAccess(10, TimeUnit.MINUTES)
         .removalListener(notification -> {
             if (notification.wasEvicted())
                 ((FontHolder) notification.getValue()).destroy();

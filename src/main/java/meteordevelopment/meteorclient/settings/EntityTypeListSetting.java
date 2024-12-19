@@ -58,9 +58,7 @@ public class EntityTypeListSetting extends Setting<Set<EntityType<?>>> {
                             }
                             case "wateranimal" -> {
                                 if (entityType.getSpawnGroup() == SpawnGroup.WATER_AMBIENT
-                                    || entityType.getSpawnGroup() == SpawnGroup.WATER_CREATURE
-                                    || entityType.getSpawnGroup() == SpawnGroup.UNDERGROUND_WATER_CREATURE
-                                    || entityType.getSpawnGroup() == SpawnGroup.AXOLOTLS) entities.add(entityType);
+                                    || entityType.getSpawnGroup() == SpawnGroup.WATER_CREATURE) entities.add(entityType);
                             }
                             case "monster" -> {
                                 if (entityType.getSpawnGroup() == SpawnGroup.MONSTER) entities.add(entityType);

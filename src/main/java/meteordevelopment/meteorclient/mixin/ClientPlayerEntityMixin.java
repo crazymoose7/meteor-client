@@ -65,7 +65,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
     @Inject(method = "shouldSlowDown", at = @At("HEAD"), cancellable = true)
     private void onShouldSlowDown(CallbackInfoReturnable<Boolean> info) {
         if (Modules.get().get(NoSlow.class).sneaking()) {
-            info.setReturnValue(isCrawling());
+            info.setReturnValue(isInSwimmingPose());
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Inject(method = "damage", at = @At("HEAD"))
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-        if (Utils.canUpdate() && world.isClient && canTakeDamage()) MeteorClient.EVENT_BUS.post(DamageEvent.get(this, source));
+        if (Utils.canUpdate() && world.isClient && !isInvulnerable()) MeteorClient.EVENT_BUS.post(DamageEvent.get(this, source));
     }
 
     @ModifyExpressionValue(method = "canSprint", at = @At(value = "CONSTANT", args = "floatValue=6.0f"))

@@ -19,9 +19,4 @@ public abstract class CreativeSlotMixin implements ISlot {
     public int getId() {
         return slot.id;
     }
-
-    @Override
-    public int getIndex() {
-        return slot.getIndex();
-    }
 }

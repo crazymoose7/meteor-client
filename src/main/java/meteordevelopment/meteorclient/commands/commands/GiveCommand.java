@@ -15,6 +15,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
+import net.minecraft.text.LiteralText;
 
 public class GiveCommand extends Command {
     private final static SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(new LiteralText("You must be in creative mode to use this."));
@@ -26,7 +27,7 @@ public class GiveCommand extends Command {
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        builder.then(argument("item", ItemStackArgumentType.itemStack(REGISTRY_ACCESS)).executes(context -> {
+        builder.then(argument("item", ItemStackArgumentType.itemStack()).executes(context -> {
             if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
 
             ItemStack item = ItemStackArgumentType.getItemStackArgument(context, "item").createStack(1, false);

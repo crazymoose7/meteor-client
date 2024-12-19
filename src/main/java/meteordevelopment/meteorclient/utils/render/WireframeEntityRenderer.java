@@ -24,6 +24,7 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector4f;
@@ -277,20 +278,20 @@ public class WireframeEntityRenderer {
             matrices.translate(0.0D, -0.5D, 0.0D);
             if (crystalEntity.shouldShowBottom()) render(event.renderer, renderer.bottom);
 
-            if (chamsEnabled) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(j * chams.crystalsRotationSpeed.get().floatValue()));
-            else matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(j));
+            if (chamsEnabled) matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(j * chams.crystalsRotationSpeed.get().floatValue()));
+            else matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(j));
             matrices.translate(0.0D, 1.5F + h / 2.0F, 0.0D);
             matrices.multiply(new Quaternionf().setAngleAxis(60.0F, EndCrystalEntityRenderer.SINE_45_DEGREES, 0.0F, EndCrystalEntityRenderer.SINE_45_DEGREES));
             if (!chamsEnabled || chams.renderFrame1.get()) render(event.renderer, renderer.frame);
             matrices.scale(0.875F, 0.875F, 0.875F);
             matrices.multiply(new Quaternionf().setAngleAxis(60.0F, EndCrystalEntityRenderer.SINE_45_DEGREES, 0.0F, EndCrystalEntityRenderer.SINE_45_DEGREES));
-            if (chamsEnabled) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(j * chams.crystalsRotationSpeed.get().floatValue()));
-            else matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(j));
+            if (chamsEnabled) matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(j * chams.crystalsRotationSpeed.get().floatValue()));
+            else matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(j));
             if (!chamsEnabled || chams.renderFrame2.get()) render(event.renderer, renderer.frame);
             matrices.scale(0.875F, 0.875F, 0.875F);
             matrices.multiply(new Quaternionf().setAngleAxis(60.0F, EndCrystalEntityRenderer.SINE_45_DEGREES, 0.0F, EndCrystalEntityRenderer.SINE_45_DEGREES));
-            if (chamsEnabled) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(j * chams.crystalsRotationSpeed.get().floatValue()));
-            else matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(j));
+            if (chamsEnabled) matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(j * chams.crystalsRotationSpeed.get().floatValue()));
+            else matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(j));
             if (!chamsEnabled || chams.renderCore.get()) render(event.renderer, renderer.core);
             matrices.pop();
             matrices.pop();
@@ -300,13 +301,13 @@ public class WireframeEntityRenderer {
 
             matrices.push();
             matrices.translate(0.0D, 0.375D, 0.0D);
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0F - MathHelper.lerp(event.tickDelta, entity.prevYaw, entity.getYaw())));
+            matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F - MathHelper.lerp(event.tickDelta, entity.prevYaw, entity.getYaw())));
             float h = (float)boatEntity.getDamageWobbleTicks() - event.tickDelta;
             float j = boatEntity.getDamageWobbleStrength() - event.tickDelta;
             if (j < 0.0F) j = 0.0F;
 
             if (h > 0.0F) {
-                matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(MathHelper.sin(h) * h * j / 10.0F * (float)boatEntity.getDamageWobbleSide()));
+                matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(MathHelper.sin(h) * h * j / 10.0F * (float)boatEntity.getDamageWobbleSide()));
             }
 
             float k = boatEntity.interpolateBubbleWobble(event.tickDelta);
@@ -316,7 +317,7 @@ public class WireframeEntityRenderer {
 
             CompositeEntityModel<BoatEntity> boatEntityModel = renderer.texturesAndModels.get(boatEntity.getVariant()).getSecond();
             matrices.scale(-1.0F, -1.0F, 1.0F);
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0F));
+            matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
             boatEntityModel.setAngles(boatEntity, event.tickDelta, 0.0F, -0.1F, 0.0F, 0.0F);
             boatEntityModel.getParts().forEach(modelPart -> render(event.renderer, modelPart));
             if (!boatEntity.isSubmergedInWater() && boatEntityModel instanceof ModelWithWaterPatch modelWithWaterPatch) render(event.renderer, modelWithWaterPatch.getWaterPatch());

@@ -147,7 +147,7 @@ public class AutoReplenish extends Module {
         for (int i = mc.player.inventory.size() - 2; i >= (searchHotbar.get() ? 0 : 9); i--) {
             ItemStack stack = mc.player.inventory.getStack(i);
 
-            if (i != excludedSlot && stack.getItem() == itemStack.getItem() && ItemStack.areItemsAndComponentsEqual(itemStack, stack)) {
+            if (i != excludedSlot && stack.getItem() == itemStack.getItem() && ItemStack.areItemsEqual(itemStack, stack)) {
                 if (stack.getCount() > count) {
                     slot = i;
                     count = stack.getCount();

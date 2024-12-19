@@ -79,7 +79,7 @@ public class VanillaTextRenderer implements TextRenderer {
             matrix = matrices.peek().getPositionMatrix();
         }
 
-        double x2 = mc.textRenderer.draw(text, (float) (x / scale), (float) (y / scale), color.getPacked(), shadow, matrix, immediate, TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+        double x2 = mc.textRenderer.draw(text, (float) (x / scale), (float) (y / scale), color.getPacked(), shadow, matrix, immediate);
 
         if (scaleIndividually) matrices.pop();
 
@@ -104,13 +104,11 @@ public class VanillaTextRenderer implements TextRenderer {
         matrixStack.pushMatrix();
         if (matrices != null) matrixStack.mul(matrices.peek().getPositionMatrix());
         if (!scaleIndividually) matrixStack.scale((float) scale, (float) scale, 1);
-        RenderSystem.applyModelViewMatrix();
 
         immediate.draw();
 
         matrixStack.popMatrix();
         RenderSystem.enableDepthTest();
-        RenderSystem.applyModelViewMatrix();
 
         this.scale = 2;
         this.building = false;

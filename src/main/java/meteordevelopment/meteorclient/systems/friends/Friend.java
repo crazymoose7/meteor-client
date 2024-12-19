@@ -49,7 +49,7 @@ public class Friend implements ISerializable<Friend>, Comparable<Friend> {
         APIResponse res = Http.get("https://api.mojang.com/users/profiles/minecraft/" + name).sendJson(APIResponse.class);
         if (res == null || res.name == null || res.id == null) return;
         name = res.name;
-        id = UndashedUuid.fromStringLenient(res.id);
+        id = UUID.fromString(res.id);
         headTexture = PlayerHeadUtils.fetchHead(id);
         updating = false;
     }

@@ -257,23 +257,18 @@ public class LocateCommand extends Command {
                 error("You need to hold a (highlight)lodestone(default) compass!");
                 return SINGLE_SUCCESS;
             }
-            ComponentMap components = stack.getComponents();
-            if (components == null) {
+            NbtCompound tag = stack.getTag();
+            if (tag == null) {
                 error("Couldn't get the components data. Are you holding a (highlight)lodestone(default) compass?");
                 return SINGLE_SUCCESS;
             }
-            LodestoneTrackerComponent lodestoneTrackerComponent = components.get(DataComponentTypes.LODESTONE_TRACKER);
-            if (lodestoneTrackerComponent == null) {
+            NbtCompound nbt1 = tag.getCompound("LodestonePos");
+            if (nbt1 == null) {
                 error("Couldn't get the components data. Are you holding a (highlight)lodestone(default) compass?");
                 return SINGLE_SUCCESS;
             }
 
-            if (lodestoneTrackerComponent.target().isEmpty()) {
-                error("Couldn't get the lodestone's target!");
-                return SINGLE_SUCCESS;
-            }
-
-            Vec3d coords = Vec3d.of(lodestoneTrackerComponent.target().get().pos());
+            Vec3d coords = new Vec3d(nbt1.getDouble("X"), nbt1.getDouble("Y") ,nbt1.getDouble("Z"));
             MutableText text = new LiteralText("Lodestone located at ");
             text.append(ChatUtils.formatCoords(coords));
             text.append(".");
@@ -305,11 +300,11 @@ public class LocateCommand extends Command {
 
     @EventHandler
     private void onReadPacket(PacketEvent.Receive event) {
-        if (event.packet instanceof EntitySpawnS2CPacket packet && packet.getEntityType() == EntityType.EYE_OF_ENDER) {
+        if (event.packet instanceof EntitySpawnS2CPacket packet && packet.getEntityTypeId() == EntityType.EYE_OF_ENDER) {
             firstPosition(packet.getX(), packet.getY(), packet.getZ());
         }
 
-        if (event.packet instanceof PlaySoundS2CPacket packet && packet.getSound().value() == SoundEvents.ENTITY_ENDER_EYE_DEATH) {
+        if (event.packet instanceof PlaySoundS2CPacket packet && packet.getSound() == SoundEvents.ENTITY_ENDER_EYE_DEATH) {
             lastPosition(packet.getX(), packet.getY(), packet.getZ());
         }
     }

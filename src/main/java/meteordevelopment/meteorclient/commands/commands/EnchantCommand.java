@@ -14,6 +14,7 @@ import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.EnchantmentArgumentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.registry.Registry;
@@ -31,7 +32,7 @@ public class EnchantCommand extends Command {
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        builder.then(literal("one").then(argument("enchantment", RegistryEntryReferenceArgumentType.registryEntry(REGISTRY_ACCESS, RegistryKeys.ENCHANTMENT))
+        builder.then(literal("one").then(argument("enchantment", EnchantmentArgumentType.enchantment())
             .then(literal("level").then(argument("level", IntegerArgumentType.integer()).executes(context -> {
                 one(context, enchantment -> context.getArgument("level", Integer.class));
                 return SINGLE_SUCCESS;
@@ -72,7 +73,7 @@ public class EnchantCommand extends Command {
             return SINGLE_SUCCESS;
         }));
 
-        builder.then(literal("remove").then(argument("enchantment", ItemEnchantmentArgumentType.itemEnchantment()).executes(context -> {
+        builder.then(literal("remove").then(argument("enchantment", EnchantmentArgumentType.enchantment()).executes(context -> {
             ItemStack itemStack = tryGetItemStack();
             Enchantment enchantment = context.getArgument("enchantment", Enchantment.class);
             Utils.removeEnchantment(itemStack, enchantment);
@@ -85,8 +86,8 @@ public class EnchantCommand extends Command {
     private void one(CommandContext<CommandSource> context, ToIntFunction<Enchantment> level) throws CommandSyntaxException {
         ItemStack itemStack = tryGetItemStack();
 
-        RegistryEntry.Reference<Enchantment> enchantment = context.getArgument("enchantment", RegistryEntry.Reference.class);
-        Utils.addEnchantment(itemStack, enchantment.value(), level.applyAsInt(enchantment.value()));
+        Enchantment enchantment = context.getArgument("enchantment", Enchantment.class);
+        Utils.addEnchantment(itemStack, enchantment, level.applyAsInt(enchantment));
 
         syncItem();
     }

@@ -18,6 +18,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
@@ -49,8 +50,10 @@ public abstract class BookScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
-        addDrawableChild(
-            new ButtonWidget.Builder(new LiteralText("Copy"), button -> {
+        addButton(
+            new ButtonWidget(4, 4,
+                120, 20,
+                new LiteralText("Copy"), button -> {
                     NbtList listTag = new NbtList();
                     for (int i = 0; i < contents.getPageCount(); i++) listTag.add(NbtString.of(contents.getPage(i).getString()));
 
@@ -77,10 +80,8 @@ public abstract class BookScreenMixin extends Screen {
                     } else {
                         GLFW.glfwSetClipboardString(mc.getWindow().getHandle(), encoded);
                     }
-                })
-                .position(4, 4)
-                .size(120, 20)
-                .build()
+                }
+            )
         );
 
         // Edit title & author
@@ -96,13 +97,13 @@ public abstract class BookScreenMixin extends Screen {
         ItemStack book = itemStack; // Fuck you Java
         Hand hand2 = hand; // Honestly
 
-        addDrawableChild(
-                new ButtonWidget.Builder(new LiteralText("Edit title & author"), button -> {
+        addButton(
+                new ButtonWidget(4, 4 + 20 + 2,
+                    120, 20,
+                    new LiteralText("Edit title & author"), button -> {
                     mc.openScreen(new EditBookTitleAndAuthorScreen(GuiThemes.get(), book, hand2));
-                })
-                .position(4, 4 + 20 + 2)
-                .size(120, 20)
-                .build()
+                }
+            )
         );
     }
 }

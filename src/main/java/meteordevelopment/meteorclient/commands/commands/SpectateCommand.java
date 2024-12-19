@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.commands.arguments.PlayerArgumentType;
 import meteordevelopment.meteorclient.events.meteor.KeyEvent;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.LiteralText;
 
 public class SpectateCommand extends Command {
 

@@ -24,6 +24,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
 
 import java.util.Random;
 
@@ -64,16 +65,16 @@ public class ItemPhysics extends Module {
         preventZFighting(matrices, event.itemEntity);
 
         if (info.flat) {
-            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+            matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
             matrices.translate(0, 0, info.offsetZ);
         }
 
         if (randomRotation.get()) {
-            RotationAxis axis = RotationAxis.POSITIVE_Y;
-            if (info.flat) axis = RotationAxis.POSITIVE_Z;
+            Vec3f axis = Vec3f.POSITIVE_Y;
+            if (info.flat) axis = Vec3f.POSITIVE_Z;
 
             float degrees = (random.nextFloat() * 2 - 1) * 90;
-            matrices.multiply(axis.rotationDegrees(degrees));
+            matrices.multiply(axis.getDegreesQuaternion(degrees));
         }
 
         renderItem(event, matrices, itemStack, model, info);
@@ -135,7 +136,7 @@ public class ItemPhysics extends Module {
     private void applyTransformation(MatrixStack matrices, BakedModel model) {
         Transformation transformation = model.getTransformation().ground;
 
-        float prevY = transformation.translation.y;
+        float prevY = transformation.translation.getY();
         transformation.translation.y = 0;
 
         transformation.apply(false, matrices);
@@ -163,7 +164,6 @@ public class ItemPhysics extends Module {
 
         // Mojang be like
         if (itemStack.isOf(Items.TRIDENT)) return mc.getItemRenderer().getModels().getModelManager().getModel(ItemRenderer.TRIDENT);
-        if (itemStack.isOf(Items.SPYGLASS)) return mc.getItemRenderer().getModels().getModelManager().getModel(ItemRenderer.SPYGLASS);
 
         return mc.getItemRenderer().getModel(itemStack, entity.getWorld(), null, entity.getId());
     }

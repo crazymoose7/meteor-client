@@ -766,8 +766,8 @@ public class Notebot extends Module {
     private void scanForNoteblocks() {
         if (mc.interactionManager == null || mc.world == null || mc.player == null) return;
         scannedNoteblocks.clear();
-        int min = (int) (-mc.player.getBlockInteractionRange()) - 2;
-        int max = (int) mc.player.getBlockInteractionRange() + 2;
+        int min = (int) (-mc.interactionManager.getReachDistance()) - 2;
+        int max = (int) mc.interactionManager.getReachDistance() + 2;
 
         // Scan for noteblocks horizontally
         // 6^3 kek
@@ -797,9 +797,9 @@ public class Notebot extends Module {
     private void onTickPreview() {
         for (Note note : song.getNotesMap().get(currentTick)) {
             if (mode.get() == NotebotUtils.NotebotMode.ExactInstruments) {
-                mc.player.playSound(note.getInstrument().getSound().value(), 2f, (float) Math.pow(2.0D, (note.getNoteLevel() - 12) / 12.0D));
+                mc.player.playSound(note.getInstrument().getSound(), 2f, (float) Math.pow(2.0D, (note.getNoteLevel() - 12) / 12.0D));
             } else {
-                mc.player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP.value(), 2f, (float) Math.pow(2.0D, (note.getNoteLevel() - 12) / 12.0D));
+                mc.player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, 2f, (float) Math.pow(2.0D, (note.getNoteLevel() - 12) / 12.0D));
             }
         }
     }
@@ -872,7 +872,7 @@ public class Notebot extends Module {
 
     private void tuneNoteblockWithPackets(BlockPos pos) {
         // We don't need to raycast here. Server handles this packet fine
-        mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.DOWN, pos, false), 0));
+        mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.DOWN, pos, false)));
 
         anyNoteblockTuned = true;
     }
@@ -929,7 +929,7 @@ public class Notebot extends Module {
     private void playRotate(BlockPos pos) {
         if (mc.interactionManager == null) return;
         try {
-            mc.player.networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, pos, Direction.DOWN, 0));
+            mc.player.networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, pos, Direction.DOWN));
         } catch (NullPointerException ignored) {
         }
     }

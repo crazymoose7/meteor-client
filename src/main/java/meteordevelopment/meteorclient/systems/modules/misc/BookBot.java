@@ -23,6 +23,8 @@ import net.minecraft.client.font.TextHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.c2s.play.BookUpdateC2SPacket;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -164,12 +166,7 @@ public class BookBot extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        Predicate<ItemStack> bookPredicate = i -> {
-            WritableBookContentComponent component = i.get(DataComponentTypes.WRITABLE_BOOK_CONTENT);
-            return i.getItem() == Items.WRITABLE_BOOK && (component != null || component.pages().isEmpty());
-        };
-
-        FindItemResult writableBook = InvUtils.find(bookPredicate);
+        FindItemResult writableBook = InvUtils.find(Items.WRITABLE_BOOK);
 
         // Check if there is a book to write
         if (!writableBook.found()) {
@@ -178,7 +175,7 @@ public class BookBot extends Module {
         }
 
         // Move the book into hand
-        if (!InvUtils.testInMainHand(bookPredicate)) {
+        if (!writableBook.isMainHand()) {
             InvUtils.move().from(writableBook.slot()).toHotbar(mc.player.inventory.selectedSlot);
             return;
         }
@@ -248,7 +245,7 @@ public class BookBot extends Module {
 
     private void writeBook(PrimitiveIterator.OfInt chars) {
         ArrayList<String> pages = new ArrayList<>();
-        ArrayList<RawFilteredPair<Text>> filteredPages = new ArrayList<>();
+        NbtList pageList = new NbtList();
         TextHandler.WidthRetriever widthRetriever = ((TextHandlerAccessor) mc.textRenderer.getTextHandler()).getWidthRetriever();
 
         int maxPages = mode.get() == Mode.File ? 100 : this.pages.get();
@@ -287,7 +284,7 @@ public class BookBot extends Module {
 
             // Reached end of page
             if (lineIndex == 14) {
-                filteredPages.add(RawFilteredPair.of(Text.of(page.toString())));
+                pageList.addElement(pageIndex, NbtString.of(page.toString()));
                 pages.add(page.toString());
                 page.setLength(0);
                 pageIndex++;
@@ -303,21 +300,15 @@ public class BookBot extends Module {
             }
         }
 
-        // No more characters, end current page
-        if (!page.isEmpty() && pageIndex != maxPages) {
-            filteredPages.add(RawFilteredPair.of(Text.of(page.toString())));
-            pages.add(page.toString());
-        }
-
         // Get the title with count
         String title = name.get();
         if (count.get() && bookCount != 0) title += " #" + bookCount;
 
-        // Write data to book
-        mc.player.getMainHandStack().set(DataComponentTypes.WRITTEN_BOOK_CONTENT, new WrittenBookContentComponent(RawFilteredPair.of(title), mc.player.getGameProfile().getName(), 0, filteredPages, true));
-
-        // Send book update to server
-        mc.player.networkHandler.sendPacket(new BookUpdateC2SPacket(mc.player.inventory.selectedSlot, pages, sign.get() ? Optional.of(title) : Optional.empty()));
+        // Write the pages to the book and sign it
+        mc.player.getMainHandStack().putSubTag("title", NbtString.of(title));
+        mc.player.getMainHandStack().putSubTag("author", NbtString.of(mc.player.getGameProfile().getName()));
+        mc.player.getMainHandStack().putSubTag("pages", pageList);
+        mc.player.networkHandler.sendPacket(new BookUpdateC2SPacket(mc.player.getMainHandStack(), true, mc.player.inventory.selectedSlot));
 
         bookCount++;
     }

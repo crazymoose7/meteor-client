@@ -15,6 +15,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.LiteralText;
 
 public class DropCommand extends Command {
     private static final SimpleCommandExceptionType NOT_SPECTATOR = new SimpleCommandExceptionType(new LiteralText("Can't drop items while in spectator."));
@@ -62,7 +63,7 @@ public class DropCommand extends Command {
                 })));
 
         // Specific item
-        builder.then(argument("item", ItemStackArgumentType.itemStack(REGISTRY_ACCESS)).executes(context -> drop(player -> {
+        builder.then(argument("item", ItemStackArgumentType.itemStack()).executes(context -> drop(player -> {
             ItemStack stack = ItemStackArgumentType.getItemStackArgument(context, "item").createStack(1, false);
 
             if (stack == null || stack.getItem() == Items.AIR) throw NO_SUCH_ITEM.create();

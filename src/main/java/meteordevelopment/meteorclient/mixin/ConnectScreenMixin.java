@@ -18,6 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ConnectScreenMixin {
     @Inject(method = "connect", at = @At("HEAD"))
     private void tryConnectEvent(String address, int port, CallbackInfo ci) {
-        MeteorClient.EVENT_BUS.post(ServerConnectBeginEvent.get(ServerAddress(address, port), info));
+        MeteorClient.EVENT_BUS.post(ServerConnectBeginEvent.get(new ServerAddress(address, port), info));
     }
 }

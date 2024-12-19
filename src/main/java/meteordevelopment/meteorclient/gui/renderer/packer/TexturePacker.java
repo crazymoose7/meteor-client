@@ -6,6 +6,7 @@
 package meteordevelopment.meteorclient.gui.renderer.packer;
 
 import meteordevelopment.meteorclient.utils.render.ByteTexture;
+import net.minecraft.client.texture.TextureUtil;
 import net.minecraft.util.Identifier;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImage;
@@ -37,7 +38,7 @@ public class TexturePacker {
                 ByteBuffer rawImageBuffer = null;
 
                 try {
-                    rawImageBuffer = TextureUtil.readResource(in);
+                    rawImageBuffer = TextureUtil.readAllToByteBuffer(in);
                     ((Buffer) rawImageBuffer).rewind();
 
                     IntBuffer w = stack.mallocInt(1);

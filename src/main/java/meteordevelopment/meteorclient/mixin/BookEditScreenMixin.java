@@ -43,8 +43,10 @@ public abstract class BookEditScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
-        addDrawableChild(
-            new ButtonWidget.Builder(new LiteralText("Copy"), button -> {
+        addButton(
+            new ButtonWidget(4, 4,
+                120, 20,
+                new LiteralText("Copy"), button -> {
                 NbtList listTag = new NbtList();
                     pages.stream().map(NbtString::of).forEach(listTag::add);
 
@@ -65,14 +67,14 @@ public abstract class BookEditScreenMixin extends Screen {
                     } catch (OutOfMemoryError exception) {
                         GLFW.glfwSetClipboardString(mc.getWindow().getHandle(), exception.toString());
                     }
-                })
-                .position(4, 4)
-                .size(120, 20)
-                .build()
+                }
+            )
         );
 
-        addDrawableChild(
-                new ButtonWidget.Builder(new LiteralText("Paste"), button -> {
+        addButton(
+                new ButtonWidget(4, 4 + 20 + 2,
+                    120, 20,
+                    new LiteralText("Paste"), button -> {
                     String clipboard = GLFW.glfwGetClipboardString(mc.getWindow().getHandle());
                     if (clipboard == null) return;
 
@@ -85,7 +87,7 @@ public abstract class BookEditScreenMixin extends Screen {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
 
                     try {
-                        NbtCompound tag = NbtIo.readCompressed(in, NbtSizeTracker.ofUnlimitedBytes());
+                        NbtCompound tag = NbtIo.readCompressed(in);
 
                         NbtList listTag = tag.getList("pages", 8).copy();
 
@@ -105,10 +107,8 @@ public abstract class BookEditScreenMixin extends Screen {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                })
-                .position(4, 4 + 20 + 2)
-                .size(120, 20)
-                .build()
+                }
+            )
         );
     }
 }
