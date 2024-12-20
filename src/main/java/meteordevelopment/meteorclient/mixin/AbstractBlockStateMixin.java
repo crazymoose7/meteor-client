@@ -25,7 +25,7 @@ public abstract class AbstractBlockStateMixin {
     private BlockPos modifyPos(BlockPos pos) {
         if (Modules.get() == null) return pos;
 
-        if (Modules.get().get(NoRender.class).noTextureRotations()) return pos.multiply(RANDOM.nextInt());
+        if (Modules.get().get(NoRender.class).noTextureRotations()) return new BlockPos(pos.getX() + RANDOM.nextInt(), pos.getY() + RANDOM.nextInt(), pos.getZ() + RANDOM.nextInt());
         return pos;
     }
 }

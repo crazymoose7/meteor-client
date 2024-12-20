@@ -19,6 +19,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -32,6 +33,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,28 +55,28 @@ public abstract class ClientPlayerInteractionManagerMixin implements IClientPlay
     @Shadow protected abstract void syncSelectedSlot();
 
     @Shadow
-    public abstract void clickSlot(int syncId, int slotId, int button, SlotActionType actionType, PlayerEntity player);
-
-    @Shadow
     @Final
     private ClientPlayNetworkHandler networkHandler;
 
     @Shadow
     public abstract boolean breakBlock(BlockPos pos);
 
+    @Shadow
+    public abstract ItemStack clickSlot(int syncId, int slotId, int clickData, SlotActionType actionType, PlayerEntity player);
+
     @Inject(method = "clickSlot", at = @At("HEAD"), cancellable = true)
-    private void onClickSlot(int syncId, int slotId, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo info) {
+    private void onClickSlot(int syncId, int slotId, int clickData, SlotActionType actionType, PlayerEntity player, CallbackInfoReturnable<ItemStack> info) {
         if (actionType == SlotActionType.THROW && slotId >= 0 && slotId < player.currentScreenHandler.slots.size()) {
             if (MeteorClient.EVENT_BUS.post(DropItemsEvent.get(player.currentScreenHandler.slots.get(slotId).getStack())).isCancelled()) info.cancel();
         }
         else if (slotId == -999) {
             // Clicking outside of inventory
-            if (MeteorClient.EVENT_BUS.post(DropItemsEvent.get(player.currentScreenHandler.getCursorStack())).isCancelled()) info.cancel();
+            if (MeteorClient.EVENT_BUS.post(DropItemsEvent.get(player.inventory.getCursorStack())).isCancelled()) info.cancel();
         }
     }
 
     @Inject(method = "clickSlot", at = @At("HEAD"), cancellable = true)
-    public void onClickArmorSlot(int syncId, int slotId, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
+    public void onClickArmorSlot(int syncId, int slotId, int button, SlotActionType actionType, PlayerEntity player, CallbackInfoReturnable<ItemStack> ci) {
         if (!Modules.get().get(InventoryTweaks.class).armorStorage()) return;
 
         ScreenHandler screenHandler = player.currentScreenHandler;
@@ -82,7 +84,7 @@ public abstract class ClientPlayerInteractionManagerMixin implements IClientPlay
         if (screenHandler instanceof PlayerScreenHandler) {
             if (slotId >= 5 && slotId <= 8) {
                 int armorSlot = (8 - slotId) + 36;
-                if (actionType == SlotActionType.PICKUP && !screenHandler.getCursorStack().isEmpty()) {
+                if (actionType == SlotActionType.PICKUP && !player.inventory.getCursorStack().isEmpty()) {
                     clickSlot(syncId, 17, armorSlot, SlotActionType.SWAP, player); //armor slot <-> inv slot
                     clickSlot(syncId, 17, button, SlotActionType.PICKUP, player); //inv slot <-> cursor slot
                     clickSlot(syncId, 17, armorSlot, SlotActionType.SWAP, player); //armor slot <-> inv slot
@@ -119,7 +121,7 @@ public abstract class ClientPlayerInteractionManagerMixin implements IClientPlay
     }
 
     @Inject(method = "interactBlock", at = @At("HEAD"), cancellable = true)
-    public void interactBlock(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+    public void interactBlock(ClientPlayerEntity player, ClientWorld world, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         if (MeteorClient.EVENT_BUS.post(InteractBlockEvent.get(player.getMainHandStack().isEmpty() ? Hand.OFF_HAND : hand, hitResult)).isCancelled()) cir.setReturnValue(ActionResult.FAIL);
     }
 
@@ -156,7 +158,7 @@ public abstract class ClientPlayerInteractionManagerMixin implements IClientPlay
         blockBreakingCooldown = event.cooldown;
     }
 
-    @Redirect(method = "method_41930", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;calcBlockBreakingDelta(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F"))
+    @Redirect(method = "method_41930", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/AbstractBlock$AbstractBlockState;calcBlockBreakingDelta(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F"))
     private float deltaChange(BlockState blockState, PlayerEntity player, BlockView world, BlockPos pos) {
         float delta = blockState.calcBlockBreakingDelta(player, world, pos);
         if (Modules.get().get(BreakDelay.class).preventInstaBreak() && delta >= 1) {
@@ -173,7 +175,7 @@ public abstract class ClientPlayerInteractionManagerMixin implements IClientPlay
     }
 
     @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
-    private void onInteractItem(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> info) {
+    private void onInteractItem(PlayerEntity player, World world, Hand hand, CallbackInfoReturnable<ActionResult> info) {
         InteractItemEvent event = MeteorClient.EVENT_BUS.post(InteractItemEvent.get(hand));
         if (event.toReturn != null) info.setReturnValue(event.toReturn);
     }

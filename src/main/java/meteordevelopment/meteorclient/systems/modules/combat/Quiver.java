@@ -25,6 +25,7 @@ import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.potion.PotionUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
@@ -136,11 +137,11 @@ public class Quiver extends Module {
 
             if (item.getItem() != Items.TIPPED_ARROW)  continue;
 
-            Iterator<StatusEffectInstance> effects = item.getItem().getComponents().get(DataComponentTypes.POTION_CONTENTS).getEffects().iterator();
+            List<StatusEffectInstance> effects = PotionUtil.getPotionEffects(item);
 
-            if (!effects.hasNext()) continue;
+            if (effects.isEmpty()) continue;
 
-            StatusEffect effect = effects.next().getEffectType();
+            StatusEffect effect = effects.get(0).getEffectType();
 
             if (this.effects.get().contains(effect)
                 && !usedEffects.contains(effect)

@@ -212,9 +212,9 @@ public class LogoutSpots extends Module {
             y = entity.getY();
             z = entity.getZ() - halfWidth;
 
-            xWidth = entity.getBoundingBox().getLengthX();
-            zWidth = entity.getBoundingBox().getLengthZ();
-            height = entity.getBoundingBox().getLengthY();
+            xWidth = entity.getBoundingBox().getXLength();
+            zWidth = entity.getBoundingBox().getZLength();
+            height = entity.getBoundingBox().getYLength();
 
             uuid = entity.getUuid();
             name = entity.getName().getString();
@@ -230,7 +230,7 @@ public class LogoutSpots extends Module {
         }
 
         public void render2D() {
-            if (!PlayerUtils.isWithinCamera(x, y, z, mc.options.getViewDistance().getValue() * 16)) return;
+            if (!PlayerUtils.isWithinCamera(x, y, z, mc.options.viewDistance * 16)) return;
 
             TextRenderer text = TextRenderer.get();
             double scale = LogoutSpots.this.scale.get();

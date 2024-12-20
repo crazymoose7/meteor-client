@@ -63,7 +63,7 @@ public abstract class BannerBlockEntityRendererMixin {
         BlockState blockState = bannerBlockEntity.getCachedState();
         matrixStack.translate(0.5D, 0.5D, 0.5D);
         float h = (-(Integer)blockState.get(BannerBlock.ROTATION) * 360) / 16.0F;
-        matrixStack.multiply(Vector3f.POSITIVE_Y.rotationDegrees(h));
+        matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(h));
         matrixStack.push();
         matrixStack.scale(0.6666667F, -0.6666667F, -0.6666667F);
         VertexConsumer vertexConsumer = ModelLoader.BANNER_BASE.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntitySolid);

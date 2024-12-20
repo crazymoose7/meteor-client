@@ -203,7 +203,7 @@ public class InvUtils {
     }
 
     public static void dropHand() {
-        if (!mc.player.currentScreenHandler.getCursorStack().isEmpty()) mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, ScreenHandler.EMPTY_SPACE_SLOT_INDEX, 0, SlotActionType.PICKUP, mc.player);
+        if (!mc.player.inventory.getCursorStack().isEmpty()) mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, ScreenHandler.EMPTY_SPACE_SLOT_INDEX, 0, SlotActionType.PICKUP, mc.player);
     }
 
     public static class Action {
@@ -302,7 +302,7 @@ public class InvUtils {
         // Other
 
         private void run() {
-            boolean hadEmptyCursor = mc.player.currentScreenHandler.getCursorStack().isEmpty();
+            boolean hadEmptyCursor = mc.player.inventory.getCursorStack().isEmpty();
 
             if (type == SlotActionType.SWAP) {
                 data = from;
@@ -325,7 +325,7 @@ public class InvUtils {
             to = -1;
             data = 0;
 
-            if (!isRecursive && hadEmptyCursor && preType == SlotActionType.PICKUP && preTwo && (preFrom != -1 && preTo != -1) && !mc.player.currentScreenHandler.getCursorStack().isEmpty()) {
+            if (!isRecursive && hadEmptyCursor && preType == SlotActionType.PICKUP && preTwo && (preFrom != -1 && preTo != -1) && !mc.player.inventory.getCursorStack().isEmpty()) {
                 isRecursive = true;
                 InvUtils.click().slotId(preFrom);
                 isRecursive = false;

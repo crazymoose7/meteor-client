@@ -280,7 +280,7 @@ public class InventoryTweaks extends Module {
         if (!sortingEnabled.get() || !(mc.currentScreen instanceof HandledScreen<?> screen) || sorter != null)
             return false;
 
-        if (!mc.player.currentScreenHandler.getCursorStack().isEmpty()) {
+        if (!mc.player.inventory.getCursorStack().isEmpty()) {
             FindItemResult empty = InvUtils.findEmpty();
             if (!empty.found()) InvUtils.click().slot(-999);
             else InvUtils.click().slot(empty.slot());

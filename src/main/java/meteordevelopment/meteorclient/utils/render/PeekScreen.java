@@ -38,7 +38,7 @@ public class PeekScreen extends ShulkerBoxScreen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         BetterTooltips tooltips = Modules.get().get(BetterTooltips.class);
 
-        if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE && focusedSlot != null && !focusedSlot.getStack().isEmpty() && mc.player.currentScreenHandler.getCursorStack().isEmpty() && tooltips.middleClickOpen()) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE && focusedSlot != null && !focusedSlot.getStack().isEmpty() && mc.player.inventory.getCursorStack().isEmpty() && tooltips.middleClickOpen()) {
             ItemStack itemStack = focusedSlot.getStack();
             if (Utils.hasItems(itemStack) || itemStack.getItem() == Items.ENDER_CHEST) {
                 return Utils.openContainer(focusedSlot.getStack(), contents, false);

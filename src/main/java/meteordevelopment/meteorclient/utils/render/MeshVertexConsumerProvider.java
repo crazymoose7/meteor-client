@@ -105,8 +105,5 @@ public class MeshVertexConsumerProvider implements IVertexConsumerProvider {
         public void fixedColor(int red, int green, int blue, int alpha) {
             color.set(red, green, blue, alpha);
         }
-
-        @Override
-        public void unfixColor() {}
     }
 }

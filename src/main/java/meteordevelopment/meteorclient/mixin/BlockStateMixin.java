@@ -28,6 +28,6 @@ public abstract class BlockStateMixin extends AbstractBlock.AbstractBlockState {
     @Override
     public ActionResult onUse(World world, PlayerEntity player, BlockHitResult hit) {
         MeteorClient.EVENT_BUS.post(BlockActivateEvent.get((BlockState) (Object) this));
-        return super.onUse(world, player, hit);
+        return super.onUse(world, player, player.getActiveHand(), hit);
     }
 }

@@ -380,7 +380,7 @@ public class Nametags extends Module {
 
     private void renderNametagPlayer(Render2DEvent event, PlayerEntity player, boolean shadow) {
         TextRenderer text = TextRenderer.get();
-        NametagUtils.begin(pos, event.drawContext);
+        NametagUtils.begin(pos);
 
         // Gamemode
         GameMode gm = EntityUtils.getGameMode(player);
@@ -480,12 +480,12 @@ public class Nametags extends Module {
                 if (!itemStack.isEmpty()) hasItems = true;
 
                 if (displayEnchants.get()) {
-                    ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(itemStack);
+                    Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(itemStack);
 
                     int size = 0;
-                    for (RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
-                        if (!shownEnchantments.get().contains(enchantment.value())) continue;
-                        String enchantName = Utils.getEnchantSimpleName(enchantment.value(), enchantLength.get()) + " " + enchantments.getLevel(enchantment.value());
+                    for (var enchantment : enchantments.keySet()) {
+                        if (!shownEnchantments.get().contains(enchantment)) continue;
+                        String enchantName = Utils.getEnchantSimpleName(enchantment, enchantLength.get()) + " " + enchantments.get(enchantment);
                         itemWidths[i] = Math.max(itemWidths[i], (text.getWidth(enchantName, shadow) / 2));
                         size++;
                     }
@@ -506,7 +506,7 @@ public class Nametags extends Module {
             for (int i = 0; i < 6; i++) {
                 ItemStack stack = getItem(player, i);
 
-                RenderUtils.drawItem(event.drawContext, stack, (int) x, (int) y, 2, true);
+                RenderUtils.drawItem(stack, (int) x, (int) y, 2, true);
 
                 if (stack.isDamageable() && itemDurability.get() != Durability.None) {
                     text.begin(0.75, false, true);
@@ -525,12 +525,12 @@ public class Nametags extends Module {
                 if (maxEnchantCount > 0 && displayEnchants.get()) {
                     text.begin(0.5 * enchantTextScale.get(), false, true);
 
-                    ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(stack);
+                    Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
                     Map<Enchantment, Integer> enchantmentsToShow = new HashMap<>();
 
-                    for (RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
-                        if (shownEnchantments.get().contains(enchantment.value())) {
-                            enchantmentsToShow.put(enchantment.value(), enchantments.getLevel(enchantment.value()));
+                    for (Enchantment enchantment : enchantments.keySet()) {
+                        if (shownEnchantments.get().contains(enchantment)) {
+                            enchantmentsToShow.put(enchantment, enchantments.get(enchantment));
                         }
                     }
 
@@ -567,7 +567,7 @@ public class Nametags extends Module {
             }
         } else if (displayEnchants.get()) displayEnchants.set(false);
 
-        NametagUtils.end(event.drawContext);
+        NametagUtils.end();
     }
 
     private void renderNametagItem(ItemStack stack, boolean shadow) {
@@ -664,10 +664,10 @@ public class Nametags extends Module {
     private ItemStack getItem(PlayerEntity entity, int index) {
         return switch (index) {
             case 0 -> entity.getMainHandStack();
-            case 1 -> entity.getInventory().armor.get(3);
-            case 2 -> entity.getInventory().armor.get(2);
-            case 3 -> entity.getInventory().armor.get(1);
-            case 4 -> entity.getInventory().armor.get(0);
+            case 1 -> entity.inventory.armor.get(3);
+            case 2 -> entity.inventory.armor.get(2);
+            case 3 -> entity.inventory.armor.get(1);
+            case 4 -> entity.inventory.armor.get(0);
             case 5 -> entity.getOffHandStack();
             default -> ItemStack.EMPTY;
         };

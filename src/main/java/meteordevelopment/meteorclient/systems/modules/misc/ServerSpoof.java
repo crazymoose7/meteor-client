@@ -6,6 +6,7 @@
 package meteordevelopment.meteorclient.systems.modules.misc;
 
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
+import meteordevelopment.meteorclient.mixin.CustomPayloadC2SPacketAccessor;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -55,7 +56,8 @@ public class ServerSpoof extends Module {
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
         if (!isActive() || !(event.packet instanceof CustomPayloadC2SPacket)) return;
-        Identifier id = ((CustomPayloadC2SPacket) event.packet).payload().getId().id();
+        CustomPayloadC2SPacketAccessor packet = (CustomPayloadC2SPacketAccessor) event.packet;
+        Identifier id = packet.getChannel();
 
         if (blockChannels.get()) {
             for (String channel : channels.get()) {
@@ -75,9 +77,7 @@ public class ServerSpoof extends Module {
             if (!(event.packet instanceof ResourcePackSendS2CPacket packet)) return;
             event.cancel();
 
-            MutableText msg = new LiteralText("This server has ");
-            msg.append(packet.required() ? "a required " : "an optional ").append("resource pack. ");
-
+            MutableText msg = new LiteralText("");
             MutableText link = new LiteralText("[Download]");
             link.setStyle(link.getStyle()
                 .withColor(Formatting.BLUE)
@@ -91,8 +91,8 @@ public class ServerSpoof extends Module {
                 .withColor(Formatting.DARK_GREEN)
                 .withUnderline(true)
                 .withClickEvent(new RunnableClickEvent(() -> {
-                    event.connection.send(new ResourcePackStatusC2SPacket(packet.id(), ResourcePackStatusC2SPacket.Status.ACCEPTED));
-                    event.connection.send(new ResourcePackStatusC2SPacket(packet.id(), ResourcePackStatusC2SPacket.Status.SUCCESSFULLY_LOADED));
+                    event.connection.send(new ResourcePackStatusC2SPacket(ResourcePackStatusC2SPacket.Status.ACCEPTED));
+                    event.connection.send(new ResourcePackStatusC2SPacket(ResourcePackStatusC2SPacket.Status.SUCCESSFULLY_LOADED));
                 }))
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to spoof accepting the recourse pack.")))
             );

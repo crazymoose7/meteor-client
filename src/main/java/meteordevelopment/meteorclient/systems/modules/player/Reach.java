@@ -38,12 +38,12 @@ public class Reach extends Module {
     }
 
     public double blockReach() {
-        if (!isActive()) return mc.player.getAttributeValue(EntityAttributes.PLAYER_BLOCK_INTERACTION_RANGE);
+        if (!isActive()) return mc.interactionManager.getCurrentGameMode().isCreative() ? 5.0F : 4.5F;
         return blockReach.get().floatValue();
     }
 
     public double entityReach() {
-        if (!isActive()) return mc.player.getAttributeValue(EntityAttributes.PLAYER_ENTITY_INTERACTION_RANGE);
+        if (!isActive()) return 3;
         return entityReach.get().floatValue();
     }
 }

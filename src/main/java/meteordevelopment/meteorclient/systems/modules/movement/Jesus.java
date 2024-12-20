@@ -332,7 +332,7 @@ public class Jesus extends Module {
 
 
 
-        List<Box> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0, -0.5, 0)))
+        List<Box> blockCollisions = mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0, -0.5, 0))
             .map(VoxelShape::getBoundingBox)
             .collect(Collectors.toCollection(ArrayList::new));
 

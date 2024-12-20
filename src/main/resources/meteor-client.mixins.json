@@ -177,5 +177,8 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "CustomPayloadC2SPacketAccessor"
+  ]
 }

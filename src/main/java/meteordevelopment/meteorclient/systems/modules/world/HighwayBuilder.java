@@ -378,7 +378,7 @@ public class HighwayBuilder extends Module {
     public void onDeactivate() {
         mc.player.input = prevInput;
 
-        mc.player.setYaw(dir.yaw);
+        mc.player.yaw = (dir.yaw);
 
         if (displayInfo) {
             info("Distance: (highlight)%.0f", PlayerUtils.distanceTo(start));
@@ -715,7 +715,7 @@ public class HighwayBuilder extends Module {
                     return;
                 }
 
-                if (!b.mc.player.currentScreenHandler.getCursorStack().isEmpty()) {
+                if (!b.mc.player.inventory.getCursorStack().isEmpty()) {
                     InvUtils.dropHand();
                     return;
                 }
